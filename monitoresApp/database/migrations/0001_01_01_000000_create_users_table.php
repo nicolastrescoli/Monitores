@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('url_image')->nullable();
+            $table->text('description')->nullable();
+            $table->enum('role', ['user', 'organization', 'admin'])->default('user'); // Default role is 'user'
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

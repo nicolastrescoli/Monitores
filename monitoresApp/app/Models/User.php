@@ -45,4 +45,33 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Usuarios normales en organizaciones
+    public function organizations()
+    {
+        return $this->belongsToMany(User::class, 'organization_user', 'user_id', 'organization_id');
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'organization_user', 'organization_id', 'user_id');
+    }
+
+    // Actividades creadas (originales o copias)
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'activity_id');
+    }
+
+    // Programaciones creadas
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    // Reseñas hechas por el usuario
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
