@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model
 {
+
+    protected $fillable = [
+        'title', 'num_participants', 'min_age', 'max_age', 'duration', 'objectives', 'introduction', 'description', 'conclusion', 'is_public', 'type_id', 'user_id', 'original_activity_id'
+    ];
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
@@ -50,5 +55,11 @@ class Activity extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    public function favoredBy()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
 }
 

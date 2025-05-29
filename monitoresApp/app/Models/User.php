@@ -57,12 +57,6 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'organization_user', 'organization_id', 'user_id');
     }
 
-    // Actividades creadas (originales o copias)
-    public function activities()
-    {
-        return $this->hasMany(Activity::class, 'activity_id');
-    }
-
     // Programaciones creadas
     public function schedules()
     {
@@ -74,4 +68,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    public function favoriteActivities()
+    {
+        return $this->belongsToMany(Activity::class);
+    }
+
 }

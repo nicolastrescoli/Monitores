@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\activity;
+use App\Models\Activity;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
@@ -10,17 +12,20 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+public function index()
+{
+    $activities = Activity::where('is_public', true)->get();
+    return view('activities.index', compact('activities'));
+}
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        $types = \App\Models\Type::all(); // Asegúrate de que el modelo Type exista
+        return view('activities.create', compact('types'));
     }
 
     /**
@@ -28,16 +33,35 @@ class ActivityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'num_participants' => 'required|integer|min:1',
+            'min_age' => 'required|integer|min:0',
+            'max_age' => 'required|integer|min:0',
+            'duration' => 'required|integer|min:1',
+            'objectives' => 'required|string',
+            'introduction' => 'required|string',
+            'description' => 'required|string',
+            'conclusion' => 'required|string',
+            'is_public' => 'boolean',
+            'type_id' => 'required|exists:types,id', // Asegúrate de que el tipo exista
+        ]);
+
+        $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
+
+        auth()->user()->favoriteActivities()->attach($activity->id);
+
+        return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(activity $activity)
-    {
-        //
-    }
+public function show(Activity $activity)
+{
+    return view('activities.show', compact('activity'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
@@ -62,4 +86,18 @@ class ActivityController extends Controller
     {
         //
     }
+
+    public function toggleFavorite(Activity $activity)
+    {
+        $user = auth()->user();
+
+        if ($user->favoriteActivities()->where('activity_id', $activity->id)->exists()) {
+            $user->favoriteActivities()->detach($activity->id);
+        } else {
+            $user->favoriteActivities()->attach($activity->id);
+        }
+
+        return redirect()->back()->with('success', 'Favorito actualizado.');
+    }
+
 }

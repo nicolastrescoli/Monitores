@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('introduction')->nullable();
             $table->text('description')->nullable();
             $table->text('conclusion')->nullable();
-            $table->boolean('is_public');
+            $table->boolean('is_public')->default(false);
             $table->foreignId('type_id')->nullable()->constrained('types')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('original_activity_id')->nullable()->constrained('activities')->onDelete('set null');
