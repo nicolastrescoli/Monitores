@@ -26,37 +26,24 @@
 
                     <hr>
 
-                    <h5 class="mb-3">Mis actividades</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-3">Mis actividades</h5>
 
-                    <button><a href="{{route('activities.create')}}">Crear nueva actividad</a></button>
+                        <div class="d-flex gap-2">
+                        <button><a href="{{route('activities.create')}}">Nueva actividad</a></button>
+                        <button><a href="{{route('activities.create')}}">Nueva a partir de otra</a></button>
+                        </div>
+                    </div>
 
                     @if ($user->favoriteActivities->isEmpty())
         <div class="alert alert-info">Aún no has añadido ninguna actividad a favoritos.</div>
     @else
         <div class="row">
-            @foreach ($user->favoriteActivities as $activity)
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm border-success h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-success">{{ $activity->title }}</h5>
-                            <p class="card-text">
-                                <strong>Tipo:</strong> {{ $activity->type->name }}<br>
-                                <strong>Edad mínima:</strong> {{ $activity->min_age }}+<br>
-                                <strong>Participantes:</strong> {{ $activity->participants }}
-                            </p>
-
-                            {{-- <form action="{{ route('activities.favorite', $activity) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-danger btn-sm">
-                                    Quitar de favoritos
-                                </button>
-                            </form> --}}
+            <div id="listaactivities" class="row gy-4">
+                @each ('partials.activityCard', $user->favoriteActivities, 'activity')
+            </div>
                         </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
+                    @endif
 
                     <hr>
                     

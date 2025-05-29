@@ -9,7 +9,7 @@
                     <h4 class="mb-0">Iniciar sesión</h4>
                 </div>
                 <div class="card-body bg-light">
-                    <form action="{{ route('login') }}" method="POST">
+                    <form action="{{ route('login.submit') }}" method="POST">
                         @csrf
 
                         @if ($errors->any())

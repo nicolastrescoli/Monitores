@@ -35,7 +35,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect('/activities');
+            return redirect('');
         }
 
         return redirect()->back()->withErrors(['email' => 'Credenciales inválidas.']);
@@ -52,20 +52,22 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:user,organization',
         ]);
 
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'role' => $validatedData['role'],
         ]);
 
-        return redirect('activities.index')->withSuccess('Registro exitoso');
+        return redirect('/')->withSuccess('Registro exitoso');
     }
 
     public function show(User $user)
     {
-        $user = User::first();
+        $user = Auth::user();
         return view('profile.show', compact('user'));
     }
 
