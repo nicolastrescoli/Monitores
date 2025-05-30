@@ -12,12 +12,11 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index()
-{
-    $activities = Activity::where('is_public', true)->get();
-    return view('activities.index', compact('activities'));
-}
-
+    public function index()
+    {
+        $activities = Activity::where('is_public', true)->get();
+        return view('activities.index', compact('activities'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -147,7 +146,7 @@ public function index()
 
     public function createFromExistent(Request $request)
     {
-//
+        //
     }
 
 }

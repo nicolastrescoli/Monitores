@@ -25,7 +25,7 @@
                         <div class="mb-3">
                             <label for="role" class="form-label">Eres monitor/a u organización</label>
                             <select name="role" id="role" class="form-select" required>
-                                <option value="monitor" {{ old('role') == 'user' ? 'selected' : '' }}>Monitor/a</option>
+                                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Monitor/a</option>
                                 <option value="organization" {{ old('role') == 'organization' ? 'selected' : '' }}>Organización</option>
                             </select>
                         </div>

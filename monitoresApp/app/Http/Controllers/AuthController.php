@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-
     public function showLoginForm()
     {
         return view('auth.login');
@@ -20,21 +19,13 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:8',
-        ], [
-            'email.required' => 'El campo de correo electrónico es obligatorio.',
-            'email.email' => 'El formato del correo electrónico no es válido.',
-            'password.required' => 'El campo de contraseña es obligatorio.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator->errors());
+            return redirect()->back()->withErrors($validator->errors());
         }
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($request->only('email', 'password'))) {
             return redirect('');
         }
 
@@ -55,7 +46,7 @@ class AuthController extends Controller
             'role' => 'required|in:user,organization',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
@@ -75,6 +66,76 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('activities.index');
+    }
+
+    // -------------------------
+    // Relaciones de comunidad
+    // -------------------------
+
+    public function sendRequest(User $receiver)
+    {
+        $sender = auth()->user();
+
+        if ($sender->id === $receiver->id) return back()->with('error', 'No puedes agregarte a ti mismo.');
+        if ($sender->sentFriendRequests()->where('friend_id', $receiver->id)->exists()) {
+            return back()->with('error', 'Solicitud ya enviada.');
+        }
+
+        $sender->friends()->attach($receiver->id, ['status' => 'pending']);
+        return back()->with('success', 'Solicitud enviada.');
+    }
+
+    public function acceptRequest(User $sender)
+    {
+        $receiver = auth()->user();
+        $receiver->friendOf()->updateExistingPivot($sender->id, ['status' => 'accepted']);
+        return back()->with('success', 'Solicitud aceptada.');
+    }
+
+    public function rejectRequest(User $sender)
+    {
+        $receiver = auth()->user();
+        $receiver->friendOf()->detach($sender->id);
+        return back()->with('success', 'Solicitud rechazada.');
+    }
+
+    public function cancelRequest(User $receiver)
+    {
+        $sender = auth()->user();
+        $sender->friends()->detach($receiver->id);
+        return back()->with('success', 'Solicitud de amistad cancelada.');
+    }
+
+    // Eliminar amistad
+    public function removeFriend(User $user)
+    {
+        $authUser = auth()->user();
+
+        // Eliminar si el usuario autenticado envió la solicitud
+        if ($authUser->friends()->where('friend_id', $user->id)->exists()) {
+            $authUser->friends()->detach($user->id);
+            return back()->with('success', 'Amistad eliminada.');
+        }
+
+        // Eliminar si el otro usuario envió la solicitud
+        if ($authUser->friendOf()->where('user_id', $user->id)->exists()) {
+            $authUser->friendOf()->detach($user->id);
+            return back()->with('success', 'Amistad eliminada.');
+        }
+
+        return back()->with('error', 'No tienes una amistad con este usuario.');
+    }
+
+    // Mostrar la comunidad y el perfil de los usuarios/comunidad
+    public function index()
+    {
+        $users = User::where('id', '!=', auth()->id())->get();
+        return view('community.index', compact('users'));
+    }
+
+    public function showUser(User $user)
+    {
+        return view('community.show', compact('user'));
     }
 
 }

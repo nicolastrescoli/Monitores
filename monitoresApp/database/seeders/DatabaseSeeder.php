@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             MaterialSeeder::class,
             RiskSeeder::class,
             ActivitySeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

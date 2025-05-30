@@ -3,7 +3,7 @@
             <a class="navbar-brand" href="{{ route('activities.index')}}">Inicio</a>
             @if(Auth::check())
             <a class="navbar-brand" href="{{ route('profile.show')}}">Perfil</a>
-            <a class="navbar-brand" href="#">Comunidad</a>
+            <a class="navbar-brand" href="{{ route('community.index')}}">Comunidad</a>
             @else
             <a class="navbar-brand" href="{{ route('login')}}">Login</a>
             <a class="navbar-brand" href="{{ route('register')}}">Registro</a>

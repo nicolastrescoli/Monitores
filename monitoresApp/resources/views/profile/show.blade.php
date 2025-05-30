@@ -21,6 +21,9 @@
                             <p><strong>Email:</strong> {{ $user->email }}</p>
                             <p><strong>Descripción:</strong> {{ $user->description ?? 'Empieza a escribir tu descripción' }}</p>
                             <p><strong>Registrado desde:</strong> {{ $user->created_at->format('d/m/Y') }}</p>
+                            <button>
+                                <a href="{{ route('community.index')}}">Encontrar Usuarios / Organizaciones</a>
+                            </button>
                         </div>
                     </div>
 
