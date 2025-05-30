@@ -15,22 +15,11 @@
                     @if (!empty($activity->duration))
                         <p><strong>Duración estimada:</strong> {{ $activity->duration }} minutos</p>
                     @endif
-                    {{-- @if (!empty($activity->materials))
-                        <p><strong>Materiales necesarios:</strong> {{ $activity->materials }}</p>
-                    @endif
-                    @if (!empty($activity->score))
+                    {{-- @if (!empty($activity->score))
                         <p><strong>Puntuación:</strong> {!! str_repeat('⭐', $activity->score) !!}</p>
                     @endif --}}
                 </div>
-                <div class="col-md-4">
-                    {{-- Imagen opcional --}}
-                    @if($activity->image)
-                        <img src="{{ asset('storage/' . $activity->image) }}" class="img-fluid rounded" alt="{{ $activity->title }}">
-                    @else
-                        <img src="https://via.placeholder.com/300x200?text=Actividad" class="img-fluid rounded" alt="Sin imagen">
-                    @endif
-                </div>
-                <p><strong>Autor:</strong> {{ $creator->name }}</p>
+                <p><strong>Autor:</strong> {{ $creator->name ?? 'Anónimo' }}</p>
             </div>
 
             <hr>
