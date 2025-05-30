@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Autenticación
@@ -84,3 +85,11 @@ Route::post('/contact', function () {
     // Procesar envío de contacto
     return back()->with('success', 'Mensaje enviado correctamente.');
 })->name('contact.send');
+
+/*
+|--------------------------------------------------------------------------
+| Generador de PDF
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name('activity.pdf');

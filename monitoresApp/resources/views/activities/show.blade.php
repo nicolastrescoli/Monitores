@@ -9,6 +9,7 @@
         <div class="card-body bg-light text-dark">
             <div class="row">
                 <div class="col-md-8">
+                    <button class="btn"><a href="{{ route('activity.pdf', $activity) }}">Imprimir en PDF</a></button>
                     <p><strong>Tipo:</strong> {{ $activity->type->name }}</p>
                     <p><strong>Edad recomendada:</strong> {{ $activity->min_age }}+</p>
                     <p><strong>Nº de participantes:</strong> {{ $activity->num_participants }}</p>
