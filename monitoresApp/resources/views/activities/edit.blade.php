@@ -7,7 +7,9 @@
     <form action="{{ route('activities.update', $activity) }}" method="POST">
         @include('activities.partials._form')
 
-        <button type="submit" class="btn btn-primary">Actualizar actividad</button>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">Actualizar actividad</button>
+        </div>
     </form>
 </div>
 @endsection

@@ -7,7 +7,9 @@
     <form action="{{ route('activities.store') }}" method="POST">
         @include('activities.partials._form')
 
-        <button type="submit" class="btn btn-success">Guardar actividad</button>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">Guardar actividad</button>
+        </div>
     </form>
 </div>
 @endsection

@@ -29,7 +29,7 @@ class Activity extends Model
 
     public function materials()
     {
-        return $this->belongsToMany(Material::class);
+        return $this->belongsToMany(Material::class, 'activity_material')->withPivot(['quantity', 'notes']);
     }
 
     public function risks()

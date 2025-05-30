@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activity_materials', function (Blueprint $table) {
+        Schema::create('activity_material', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->foreignId('activity_id')
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('material_id')
                 ->constrained('materials')
                 ->onDelete('cascade');
-            $table->integer('quantity')->default(1); // Quantity of the material needed for the activity per number of participants
+            $table->integer('quantity')->default(1);
             $table->text('notes')->nullable(); // Additional notes about the material usage
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('activity_materials');
+        Schema::dropIfExists('activity_material');
     }
 };

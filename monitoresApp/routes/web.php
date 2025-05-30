@@ -45,7 +45,7 @@ Route::middleware('auth')->controller(ActivityController::class)->group(function
     Route::get('/activities/{activity}/edit', 'edit')->name('activities.edit');
     Route::post('/activities', 'store')->name('activities.store');
     Route::put('/activities/{activity}', 'update')->name('activities.update');
-    Route::post('/activities/delete/{activity}', 'destroy')->name('activities.destroy');
+    Route::delete('/activities/delete/{activity}', 'destroy')->name('activities.destroy');
     Route::post('/activities/{activity}/favorite', 'toggleFavorite')->name('activities.favorite');
 
     // Enviar para revisión

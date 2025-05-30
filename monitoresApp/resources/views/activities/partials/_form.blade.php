@@ -65,3 +65,122 @@
     <label for="conclusion" class="form-label">Conclusión</label>
     <textarea class="form-control" id="conclusion" name="conclusion" rows="3" required>{{ old('conclusion', $activity->conclusion ?? '') }}</textarea>
 </div>
+
+<hr>
+<h5>Materiales necesarios</h5>
+
+<div id="materials-container" class="mb-3">
+    {{-- Se agregará automáticamente una fila al cargar --}}
+</div>
+
+<button type="button" class="btn btn-outline-primary" onclick="addMaterialRow()">Añadir otro material</button>
+
+<hr class="my-4">
+
+<h5>Riesgos</h5>
+<div id="risks-container"></div>
+<button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addRiskRow()">Añadir otro riesgo</button>
+
+@push('scripts')
+<script>
+    let materialIndex = 0;
+    const materials = {!! json_encode($materials) !!};
+    const existingMaterials = {!! json_encode(old('materials', isset($activity) ? $activity->materials->map(function ($material) {
+        return [
+            'id' => $material->id,
+            'quantity' => $material->pivot->quantity,
+            'notes' => $material->pivot->notes,
+        ];
+    }) : [])) !!};
+
+    function addMaterialRow(material = {}, showLabels = false) {
+        const container = document.getElementById('materials-container');
+
+        const row = document.createElement('div');
+        row.classList.add('row', 'g-2', 'mb-2', 'align-items-end');
+
+        let options = `<option value="">Selecciona</option>`;
+        materials.forEach(mat => {
+            const selected = mat.id == material.id ? 'selected' : '';
+            options += `<option value="${mat.id}" ${selected}>${mat.name}</option>`;
+        });
+
+        row.innerHTML = `
+            <div class="col-md-4">
+                ${showLabels ? '<label class="form-label">Material</label>' : ''}
+                <select name="materials[${materialIndex}][id]" class="form-select" required>
+                    ${options}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                ${showLabels ? '<label class="form-label">Cantidad</label>' : ''}
+                <input type="number" name="materials[${materialIndex}][quantity]" class="form-control" value="${material.quantity ?? ''}" min="1" required>
+            </div>
+
+            <div class="col-md-4">
+                ${showLabels ? '<label class="form-label">Notas</label>' : ''}
+                <input type="text" name="materials[${materialIndex}][notes]" class="form-control" value="${material.notes ?? ''}">
+            </div>
+
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.row').remove()">✕</button>
+            </div>
+        `;
+
+        container.appendChild(row);
+        materialIndex++;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (existingMaterials.length > 0) {
+            existingMaterials.forEach((m, i) => addMaterialRow(m, i === 0));
+        } else {
+            addMaterialRow({}, true); // primera fila con labels
+        }
+    });
+</script>
+
+<script>
+    let riskIndex = 0;
+    const risks = {!! json_encode($risks) !!};
+    const existingRisks = {!! json_encode(old('risks', isset($activity) ? $activity->risks->pluck('id') : [])) !!};
+
+    function addRiskRow(selectedRiskId = '', showLabels = false) {
+        const container = document.getElementById('risks-container');
+
+        const row = document.createElement('div');
+        row.classList.add('row', 'g-2', 'mb-2', 'align-items-end');
+
+        let options = `<option value="">Selecciona</option>`;
+        risks.forEach(risk => {
+            const selected = risk.id == selectedRiskId ? 'selected' : '';
+            options += `<option value="${risk.id}" ${selected}>${risk.name}</option>`;
+        });
+
+        row.innerHTML = `
+            <div class="col-md-11">
+                ${showLabels ? '<label class="form-label">Riesgo</label>' : ''}
+                <select name="risks[${riskIndex}]" class="form-select" required>
+                    ${options}
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.row').remove()">✕</button>
+            </div>
+        `;
+
+        container.appendChild(row);
+        riskIndex++;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (existingRisks.length > 0) {
+            existingRisks.forEach((riskId, i) => addRiskRow(riskId, i === 0));
+        } else {
+            addRiskRow('', true); // primera fila con label
+        }
+    });
+</script>
+@endpush

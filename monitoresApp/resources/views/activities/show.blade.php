@@ -11,7 +11,7 @@
                 <div class="col-md-8">
                     <p><strong>Tipo:</strong> {{ $activity->type->name }}</p>
                     <p><strong>Edad recomendada:</strong> {{ $activity->min_age }}+</p>
-                    <p><strong>Nº de participantes:</strong> {{ $activity->participants }}</p>
+                    <p><strong>Nº de participantes:</strong> {{ $activity->num_participants }}</p>
                     @if (!empty($activity->duration))
                         <p><strong>Duración estimada:</strong> {{ $activity->duration }} minutos</p>
                     @endif
@@ -30,12 +30,53 @@
                         <img src="https://via.placeholder.com/300x200?text=Actividad" class="img-fluid rounded" alt="Sin imagen">
                     @endif
                 </div>
+                <p><strong>Autor:</strong> {{ $creator->name }}</p>
             </div>
 
             <hr>
 
+            <h4>Objetivos</h4>
+            <p>{{ $activity->objectives }}</p>
+
+            <h4>Introducción</h4>
+            <p>{{ $activity->introduction }}</p>
+
             <h4>Descripción</h4>
             <p>{{ $activity->description }}</p>
+
+            <h4>Conclusion</h4>
+            <p>{{ $activity->conclusion }}</p>
+
+            <hr>
+
+            <h4>Materiales</h4>
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td>Material</td><td>Cantidad</td><td>Notas</td>
+                </tr>
+                @foreach ($materials as $material)
+                    <tr>
+                        <td>{{ $material->name }}</td>
+                        <td>{{ $material->pivot->quantity }}</td>
+                        <td>{{ $material->privot?->notes }}</td>
+                    </tr>
+                @endforeach
+            </table>
+
+            <hr>
+
+            <h4>Riesgos</h4>
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td>Riesgo</td><td>Medidas de prevención</td>
+                </tr>
+                @foreach ($risks as $risk)
+                    <tr>
+                        <td>{{ $risk->description }}</td>
+                        <td>{{ $risk->prevention }}</td>
+                    </tr>
+                @endforeach
+            </table>
 
             <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('home') }}" class="btn btn-outline-success mt-3">
                 ← Volver

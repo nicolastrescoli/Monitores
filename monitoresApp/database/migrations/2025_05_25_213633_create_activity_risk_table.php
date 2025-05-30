@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activity_risks', function (Blueprint $table) {
+        Schema::create('activity_risk', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('activity_id')
+                ->constrained('activities')
+                ->onDelete('cascade');
+            $table->foreignId('risk_id')
+                ->constrained('risks')
+                ->onDelete('cascade');
         });
     }
 
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('activity_risks');
+        Schema::dropIfExists('activity_risk');
     }
 };

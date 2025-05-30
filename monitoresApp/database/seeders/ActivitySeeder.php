@@ -104,5 +104,31 @@ class ActivitySeeder extends Seeder
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
         ]);
+
+        Activity::create([
+            'title' => 'Trampantojo',
+            'num_participants' => 30,
+            'min_age' => 5,
+            'max_age' => 7,
+            'duration' => 60, // Duración en minutos
+            'objectives' => 'Fomentar la curiosidad por la cocina y la ciencia, y desarrollar la creatividad en ambas. Comprendiendo conceptos como la gelificación.',
+
+            'introduction' => 'El monitor divide a los participantes por grupos de 4 y se situaran por las bancadas del laboratorio. Y seguidamente se les explicará el cuidado que se debe tener en un laboratorio y la importancia de los materiales que los rodean. Seguidamente se les repartirá un "contrato" con las normas del laboratorio adaptadas a cada edad. En cada bancada habrá para cada 4 un vasito de plástico con cacao en polvo, otro con azúcar glas, otro con mantequilla y otro con agua; 2 láminas de gelatina, 1 cuchillo y un trozo de papel film.',
+
+            'description' => 'Picar bien las galletas metidas en la bolsa.
+            Poner en el vaso de agua la gelatina.
+            Derretir la mantequilla y juntarla con la gelatina.
+            Mezclar las galletas con el cacao y el azúcar.
+            Mezclar la mantequilla con gelatina en las galletas con cacao y azúcar.
+            Hacer una bola con toda la masa y estirar en el film haciendo forma de morcilla.
+            Reposar media hora en el congelador.',
+
+            'conclusion' => 'En el cierre de la actividad se explicará la importancia de que un buen cocinero también tenga nociones de ciencia y lo cerca que esta de nosotros.',
+
+            'visibility' => 'public',
+            'type_id' => 1, // Asegúrate de que este ID exista en tu tabla types
+            'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
+            'original_activity_id' => null, // Si es una actividad original, deja null
+        ]);
     }
 }

@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\User;
+use App\Models\Type;
+use App\Models\Material;
+use App\Models\Risk;
+use App\Models\AlternativeName;
+use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -23,13 +28,19 @@ class ActivityController extends Controller
      */
     public function create()
     {
-        $types = \App\Models\Type::all();
+        $types = Type::all();
+        $materials = Material::all();
+        $risks = Risk::all();
 
         if (Auth::user()->favoriteActivities()->count() >= 6) {
             return redirect()->route('profile.show')->withErrors(['error' => 'No puedes crear más actividades, ya tienes 5 favoritas.']);
         }
 
-        return view('activities.create', compact('types'));
+        return view('activities.create', [
+            'types' => $types,
+            'materials' => $materials,
+            'risks' => $risks,
+        ]);
     }
 
     /**
@@ -47,14 +58,40 @@ class ActivityController extends Controller
             'introduction' => 'required|string',
             'description' => 'required|string',
             'conclusion' => 'required|string',
-            'visibility' => 'private',
-            'type_id' => 'required|exists:types,id', // Asegúrate de que el tipo exista
+            'visibility' => 'in:private,pending,public',
+            'type_id' => 'required|exists:types,id',
+
+            // Otros campos...
+            'materials' => 'required|array|min:1',
+            'materials.*.id' => 'required|integer|exists:materials,id',
+            'materials.*.quantity' => 'nullable|integer|min:1',
+            'materials.*.notes' => 'nullable|string|max:255',
         ]);
 
         $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
 
-        auth()->user()->favoriteActivities()->attach($activity->id);
+        // Guardar materiales (pivote con quantity y notes)
+        // Recoger el array completo con id, quantity y notes
+        $materials = $request->input('materials', []);
 
+        $materialData = [];
+
+        foreach ($materials as $material) {
+            if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
+                $materialData[(int)$material['id']] = [
+                    'quantity' => $material['quantity'] ?? null,
+                    'notes' => $material['notes'] ?? null,
+                ];
+            }
+        }
+
+        $activity->materials()->attach($materialData);
+
+        $risks = array_filter($request->input('risks', []));
+        $activity->risks()->sync($risks);
+
+        auth()->user()->favoriteActivities()->attach($activity->id);
+        
         return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
     }
 
@@ -63,8 +100,20 @@ class ActivityController extends Controller
      */
     public function show(Activity $activity)
     {
-        return view('activities.show', compact('activity'));
+        // Cargar las relaciones 'materials' y 'risks' con eager loading
+        $activity->load('materials', 'risks');
+
+        $creator = $activity->creator;
+
+        // Pasamos la actividad completa, con las relaciones ya cargadas
+        return view('activities.show', [
+            'activity' => $activity,
+            'materials' => $activity->materials,  // colección de materiales con datos pivote
+            'risks' => $activity->risks,          // colección de riesgos
+            'creator' => $creator,
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -72,28 +121,28 @@ class ActivityController extends Controller
     public function edit(activity $activity)
     {
         $user = auth()->user();
+        $types = Type::all();
+        $materials = Material::all();
+        $risks = Risk::all();
 
         // Verifica si el usuario es el creador de la actividad
         if ($user->id !== $activity->user_id) {
             return redirect()->back()->withErrors(['error' => 'No tienes permiso para editar esta actividad.']);
         }
 
-        $types = \App\Models\Type::all(); // Asegúrate de que el modelo Type exista
-        return view('activities.edit', compact('activity', 'types'));
+        return view('activities.edit', [
+            'activity' => $activity,
+            'types' => $types,
+            'materials' => $materials,
+            'risks' => $risks,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, activity $activity)
+    public function update(Request $request, Activity $activity)
     {
-        $user = auth()->user();
-
-        // Verifica si el usuario es el creador de la actividad
-        if ($user->id !== $activity->user_id) {
-            return redirect()->back()->withErrors(['error' => 'No tienes permiso para actualizar esta actividad.']);
-        }
-
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'num_participants' => 'required|integer|min:1',
@@ -104,11 +153,36 @@ class ActivityController extends Controller
             'introduction' => 'required|string',
             'description' => 'required|string',
             'conclusion' => 'required|string',
-            'visibility' => 'private',
-            'type_id' => 'required|exists:types,id', // Asegúrate de que el tipo exista
+            'visibility' => 'in:private,pending,public',
+            'type_id' => 'required|exists:types,id',
+
+            // Otros campos...
+            'materials' => 'required|array|min:1',
+            'materials.*.id' => 'required|integer|exists:materials,id',
+            'materials.*.quantity' => 'nullable|integer|min:1',
+            'materials.*.notes' => 'nullable|string|max:255',
         ]);
 
         $activity->update($validatedData);
+
+        // Actualizar materiales: sincronizar tabla pivote con quantity y notes
+        $materials = $request->input('materials', []);
+        $materialData = [];
+
+        foreach ($materials as $material) {
+            if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
+                $materialData[(int)$material['id']] = [
+                    'quantity' => $material['quantity'] ?? null,
+                    'notes' => $material['notes'] ?? null,
+                ];
+            }
+        }
+
+        $activity->materials()->sync($materialData);
+
+        // Sincronizar riesgos
+        $risks = array_filter($request->input('risks', []));
+        $activity->risks()->sync($risks);
 
         return redirect()->route('profile.show')->with('success', 'Actividad actualizada exitosamente.');
     }
