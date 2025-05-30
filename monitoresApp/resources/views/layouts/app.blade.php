@@ -18,6 +18,10 @@
         <h1 class="mb-0">🌿 Actividades y Juegos</h1>
     </header>
 
+    @if(Auth::check() && Auth::user()->role === 'admin')
+        <h2 class="mb-0 py-3 text-center"><a href="{{ route('activities.pending')}}">Panel de Administración</a></h2>
+    @endif
+
     <!-- Navbar opcional -->
     @include('partials.navbar')
 

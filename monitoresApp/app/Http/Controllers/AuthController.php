@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Activity;
 
 class AuthController extends Controller
 {
@@ -59,7 +60,8 @@ class AuthController extends Controller
     public function show(User $user)
     {
         $user = Auth::user();
-        return view('profile.show', compact('user'));
+        $activities = Activity::where('user_id', $user->id)->get();
+        return view('profile.show', ['user' => $user, 'activities' => $activities]);
     }
 
     public function logout()

@@ -48,6 +48,17 @@ Route::middleware('auth')->controller(ActivityController::class)->group(function
     Route::post('/activities/delete/{activity}', 'destroy')->name('activities.destroy');
     Route::post('/activities/{activity}/favorite', 'toggleFavorite')->name('activities.favorite');
 
+    // Enviar para revisión
+    Route::post('/activities/{activity}/submit', 'submitPublic')->name('activities.submit');
+    // Cancelar envio para revisión
+    Route::put('/activities/{activity}/unsubmit', 'cancelSubmission')->name('activities.cancelSubmission');
+    // Panel de revisión
+    Route::get('/admin/activities/pending','pending')->name('activities.pending');
+    // Aprobar publicación
+    Route::put('/activities/{activity}/approve', 'setPublic')->name('activities.approve');
+    // Denegar publicación
+    Route::put('/activities/{activity}/reject', 'rejectPublic')->name('activities.reject');
+
 });
 
 /*

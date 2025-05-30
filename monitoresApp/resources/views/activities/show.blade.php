@@ -37,8 +37,8 @@
             <h4>Descripción</h4>
             <p>{{ $activity->description }}</p>
 
-            <a href="{{ route('activities.index') }}" class="btn btn-outline-success mt-3">
-                ← Volver a la lista de actividades
+            <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('home') }}" class="btn btn-outline-success mt-3">
+                ← Volver
             </a>
         </div>
     </div>

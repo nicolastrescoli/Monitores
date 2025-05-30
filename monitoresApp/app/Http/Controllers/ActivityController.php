@@ -14,7 +14,7 @@ class ActivityController extends Controller
      */
     public function index()
     {
-        $activities = Activity::where('is_public', true)->get();
+        $activities = Activity::where('visibility', 'public')->get();
         return view('activities.index', compact('activities'));
     }
 
@@ -47,7 +47,7 @@ class ActivityController extends Controller
             'introduction' => 'required|string',
             'description' => 'required|string',
             'conclusion' => 'required|string',
-            'is_public' => 'boolean',
+            'visibility' => 'private',
             'type_id' => 'required|exists:types,id', // Asegúrate de que el tipo exista
         ]);
 
@@ -104,7 +104,7 @@ class ActivityController extends Controller
             'introduction' => 'required|string',
             'description' => 'required|string',
             'conclusion' => 'required|string',
-            'is_public' => 'boolean',
+            'visibility' => 'private',
             'type_id' => 'required|exists:types,id', // Asegúrate de que el tipo exista
         ]);
 
@@ -147,6 +147,69 @@ class ActivityController extends Controller
     public function createFromExistent(Request $request)
     {
         //
+    }
+
+    public function submitPublic(Request $request, Activity $activity)
+    {
+        if (!$activity) {
+            return redirect()->back()->withErrors(['error' => 'Actividad no encontrada.']);
+        }
+
+        // Verifica si el usuario es el creador de la actividad
+        if (auth()->user()->id !== $activity->user_id) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para públicar esta actividad.']);
+        }
+
+        $activity->visibility = 'pending'; // Cambia a 'pending' para revisión
+        $activity->save();
+
+        return redirect()->route('profile.show')->with('success', 'Actividad enviada para revisar.');
+    }
+
+    public function cancelSubmission(Request $request, Activity $activity)
+    {
+        // Verifica si el usuario es el creador de la actividad
+        if (auth()->user()->id !== $activity->user_id) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para cancelar la publicación de esta actividad.']);
+        }
+
+        $activity->visibility = 'private'; // Cambia a 'private'
+        $activity->save();
+
+        return redirect()->route('profile.show')->with('success', 'Actividad retirada de revisión.');
+    }
+
+    public function pending()
+    {
+        $activities = Activity::where('visibility', 'pending')->with('creator')->get();
+        return view('admin.activities_pending', compact('activities'));
+    }
+
+
+    public function setPublic(Request $request, Activity $activity)
+    {
+        // Verifica si el usuario es el creador de la actividad
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para hacer pública esta actividad.']);
+        }
+
+        $activity->visibility = 'public'; // Cambia a 'public'
+        $activity->save();
+
+        return redirect()->route('profile.show')->with('success', 'Actividad publicada exitosamente.');
+    }
+
+    public function rejectPublic(Request $request, Activity $activity)
+    {
+        // Verifica si el usuario es el creador de la actividad
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para denegar la publicación de esta actividad.']);
+        }
+
+        $activity->visibility = 'private'; // Cambia a 'private'
+        $activity->save();
+
+        return redirect()->route('profile.show')->with('success', 'Actividad denegada exitosamente.');
     }
 
 }

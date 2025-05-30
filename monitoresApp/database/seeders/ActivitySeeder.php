@@ -23,7 +23,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 1',
             'description' => 'Descripción de la actividad 1',
             'conclusion' => 'Conclusión de la actividad 1',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 1, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
@@ -39,7 +39,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 2',
             'description' => 'Descripción de la actividad 2',
             'conclusion' => 'Conclusión de la actividad 2',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 2, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
@@ -54,7 +54,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 3',
             'description' => 'Descripción de la actividad 3',
             'conclusion' => 'Conclusión de la actividad 3',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 3, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
@@ -69,7 +69,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 4',
             'description' => 'Descripción de la actividad 4',
             'conclusion' => 'Conclusión de la actividad 4',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 1, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
@@ -84,7 +84,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 5',
             'description' => 'Descripción de la actividad 5',
             'conclusion' => 'Conclusión de la actividad 5',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 2, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
@@ -99,7 +99,7 @@ class ActivitySeeder extends Seeder
             'introduction' => 'Introducción a la actividad 6',
             'description' => 'Descripción de la actividad 6',
             'conclusion' => 'Conclusión de la actividad 6',
-            'is_public' => true, // Cambia a false si la actividad no es pública
+            'visibility' => 'public',
             'type_id' => 3, // Asegúrate de que este ID exista en tu tabla types
             'user_id' => null, // Asegúrate de que este ID exista en tu tabla materials
             'original_activity_id' => null, // Si es una actividad original, deja null
