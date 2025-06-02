@@ -1,6 +1,6 @@
 @csrf
 
-@if(isset($activity))
+@if(isset($activity->id) && $activity->visibility == 'private')
     @method('PUT')
 @endif
 
@@ -48,12 +48,12 @@
 
 <div class="mb-3">
     <label for="objectives" class="form-label">Objetivos</label>
-    <textarea class="form-control" id="objectives" name="objectives" rows="3" required>{{ old('objectives', $activity->objectives ?? '') }}</textarea>
+    <textarea class="form-control" id="objectives" name="objectives" rows="3">{{ old('objectives', $activity->objectives ?? '') }}</textarea>
 </div>
 
 <div class="mb-3">
     <label for="introduction" class="form-label">Introducción</label>
-    <textarea class="form-control" id="introduction" name="introduction" rows="3" required>{{ old('introduction', $activity->introduction ?? '') }}</textarea>
+    <textarea class="form-control" id="introduction" name="introduction" rows="3">{{ old('introduction', $activity->introduction ?? '') }}</textarea>
 </div>
 
 <div class="mb-3">
@@ -63,7 +63,7 @@
 
 <div class="mb-3">
     <label for="conclusion" class="form-label">Conclusión</label>
-    <textarea class="form-control" id="conclusion" name="conclusion" rows="3" required>{{ old('conclusion', $activity->conclusion ?? '') }}</textarea>
+    <textarea class="form-control" id="conclusion" name="conclusion" rows="3">{{ old('conclusion', $activity->conclusion ?? '') }}</textarea>
 </div>
 
 <hr>
@@ -108,14 +108,14 @@
         row.innerHTML = `
             <div class="col-md-4">
                 ${showLabels ? '<label class="form-label">Material</label>' : ''}
-                <select name="materials[${materialIndex}][id]" class="form-select" required>
+                <select name="materials[${materialIndex}][id]" class="form-select">
                     ${options}
                 </select>
             </div>
 
             <div class="col-md-3">
                 ${showLabels ? '<label class="form-label">Cantidad</label>' : ''}
-                <input type="number" name="materials[${materialIndex}][quantity]" class="form-control" value="${material.quantity ?? ''}" min="1" required>
+                <input type="number" name="materials[${materialIndex}][quantity]" class="form-control" value="${material.quantity ?? ''}" min="1">
             </div>
 
             <div class="col-md-4">
@@ -161,7 +161,7 @@
         row.innerHTML = `
             <div class="col-md-11">
                 ${showLabels ? '<label class="form-label">Riesgo</label>' : ''}
-                <select name="risks[${riskIndex}]" class="form-select" required>
+                <select name="risks[${riskIndex}]" class="form-select">
                     ${options}
                 </select>
             </div>

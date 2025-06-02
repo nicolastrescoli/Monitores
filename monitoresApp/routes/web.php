@@ -44,6 +44,7 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware('auth')->controller(ActivityController::class)->group(function () {
     Route::get('/activities/create', 'create')->name('activities.create');
     Route::get('/activities/{activity}/edit', 'edit')->name('activities.edit');
+    Route::post('/activities/{activity}/clone', 'clone')->name('activities.clone');
     Route::post('/activities', 'store')->name('activities.store');
     Route::put('/activities/{activity}', 'update')->name('activities.update');
     Route::delete('/activities/delete/{activity}', 'destroy')->name('activities.destroy');

@@ -61,7 +61,14 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $activities = Activity::where('user_id', $user->id)->get();
-        return view('profile.show', ['user' => $user, 'activities' => $activities]);
+
+        // Carga explícitamente las relaciones
+        $user->load(['sentFriendRequests', 'receivedFriendRequests']);
+
+        // Une y elimina duplicados
+        $contacts = $user->sentFriendRequests->merge($user->receivedFriendRequests)->unique('id');
+
+        return view('profile.show', ['user' => $user, 'activities' => $activities, 'contacts' => $contacts,]);
     }
 
     public function logout()
@@ -116,13 +123,13 @@ class AuthController extends Controller
         // Eliminar si el usuario autenticado envió la solicitud
         if ($authUser->friends()->where('friend_id', $user->id)->exists()) {
             $authUser->friends()->detach($user->id);
-            return back()->with('success', 'Amistad eliminada.');
+            return redirect('profile.show')->with('success', 'Amistad eliminada.');
         }
 
         // Eliminar si el otro usuario envió la solicitud
         if ($authUser->friendOf()->where('user_id', $user->id)->exists()) {
             $authUser->friendOf()->detach($user->id);
-            return back()->with('success', 'Amistad eliminada.');
+            return redirect('profile.show')->with('success', 'Amistad eliminada.');
         }
 
         return back()->with('error', 'No tienes una amistad con este usuario.');
@@ -137,7 +144,14 @@ class AuthController extends Controller
 
     public function showUser(User $user)
     {
-        return view('community.show', compact('user'));
+        // Carga explícitamente las relaciones
+        $user->load(['sentFriendRequests', 'receivedFriendRequests']);
+        $activities = Activity::where('user_id', $user->id)->get();
+
+        // Une y elimina duplicados
+        $contacts = $user->sentFriendRequests->merge($user->receivedFriendRequests)->unique('id');
+
+        return view('profile.show', ['user' => $user, 'activities' => $activities, 'contacts' => $contacts,]);
     }
 
 }

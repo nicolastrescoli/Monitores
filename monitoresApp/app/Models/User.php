@@ -71,10 +71,27 @@ class User extends Authenticatable
     /**
      * Solicitudes de amistad pendientes que ha enviado
      */
-    public function sentFriendRequests()
-    {
-        return $this->friends()->wherePivot('status', 'pending');
-    }
+    // public function sentFriendRequests()
+    // {
+    //     return $this->friends()->wherePivot('status', 'pending');
+    // }
+
+    // Amigos que el usuario ha enviado y han sido aceptados
+public function sentFriendRequests()
+{
+    return $this->belongsToMany(User::class, 'user_user', 'user_id', 'friend_id')
+        ->withPivot('status')
+        ->wherePivot('status', 'accepted');
+}
+
+// Amigos que el usuario ha recibido y ha aceptado
+public function receivedFriendRequests()
+{
+    return $this->belongsToMany(User::class, 'user_user', 'friend_id', 'user_id')
+        ->withPivot('status')
+        ->wherePivot('status', 'accepted');
+}
+
 
     /**
      * Obtener el estado de amistad con otro usuario.

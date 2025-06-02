@@ -41,12 +41,22 @@
                                 Eliminar
                             </button>
                         </form>
-                    @elseif ($activity->visibility === 'public')
+                        @elseif (
+                            $activity->visibility === 'public' &&
+                            (!Auth::check() || !isset($user))
+                        )
                         {{-- Favoritos --}}
                         <form action="{{ route('activities.favorite', $activity) }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-sm {{ $isFavorite ? 'btn-warning' : 'btn-outline-secondary' }}">
                                 {{ $isFavorite ? '★ Favorito' : '☆ Añadir a favoritos' }}
+                            </button>
+                        </form>
+                    @endif
+                    @if ($isFavorite && $activity->visibility === 'public')
+                        <form action="{{ route('activities.clone', $activity) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm"> Modificar
                             </button>
                         </form>
                     @endif

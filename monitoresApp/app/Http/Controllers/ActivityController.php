@@ -48,8 +48,12 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    $mode = $request->input('mode', 'structured');
+
+    if ($mode === 'structured') {
+        // Validar y guardar datos del formulario estructurado
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'num_participants' => 'required|integer|min:1',
@@ -64,24 +68,24 @@ class ActivityController extends Controller
             'type_id' => 'required|exists:types,id',
 
             // Otros campos...
-            'materials' => 'required|array|min:1',
+            'materials' => 'array',
             'materials.*.id' => 'required|integer|exists:materials,id',
-            'materials.*.quantity' => 'nullable|integer|min:1',
+            'materials.*.quantity' => 'nullable|integer',
             'materials.*.notes' => 'nullable|string|max:255',
+            'risks' => 'nullable|array',
+            'risks.*' => 'integer|exists:risks,id', // Si tienes tabla risks
         ]);
 
         $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
 
         // Guardar materiales (pivote con quantity y notes)
-        // Recoger el array completo con id, quantity y notes
         $materials = $request->input('materials', []);
-
         $materialData = [];
 
         foreach ($materials as $material) {
             if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
                 $materialData[(int)$material['id']] = [
-                    'quantity' => $material['quantity'] ?? null,
+                    'quantity' => $material['quantity'] ?? 1,
                     'notes' => $material['notes'] ?? null,
                 ];
             }
@@ -89,13 +93,47 @@ class ActivityController extends Controller
 
         $activity->materials()->attach($materialData);
 
+        // Guardar riesgos
         $risks = array_filter($request->input('risks', []));
         $activity->risks()->sync($risks);
 
-        auth()->user()->favoriteActivities()->attach($activity->id);
-        
-        return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
+    } else {
+        // Validar todos los campos que envía el formulario libre
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'type_id' => 'required|exists:types,id',
+            'num_participants' => 'required|integer|min:1',
+            'min_age' => 'required|integer|min:0',
+            'max_age' => 'required|integer|min:0',
+            'duration' => 'required|integer|min:1',
+            'description' => 'required|string',
+            'visibility' => 'in:private,pending,public', // si está en el formulario
+        ]);
+
+        // Crear la actividad con user_id y los campos validados
+        $activity = new Activity();
+        $activity->user_id = auth()->id();
+        $activity->title = $validatedData['title'];
+        $activity->type_id = $validatedData['type_id'];
+        $activity->num_participants = $validatedData['num_participants'];
+        $activity->min_age = $validatedData['min_age'];
+        $activity->max_age = $validatedData['max_age'];
+        $activity->duration = $validatedData['duration'];
+        $activity->description = $validatedData['description'];
+
+        $activity->objectives = null;
+        $activity->introduction = null;
+        $activity->conclusion = null;
+
+        $activity->save();
     }
+
+    // Agregar la actividad a favoritos del usuario
+    auth()->user()->favoriteActivities()->attach($activity->id);
+
+    return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
+}
+
 
     /**
      * Display the specified resource.
@@ -143,38 +181,43 @@ class ActivityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Activity $activity)
-    {
+public function update(Request $request, Activity $activity)
+{
+    $mode = $request->input('mode', 'structured');
+
+    if ($mode === 'structured') {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'num_participants' => 'required|integer|min:1',
             'min_age' => 'required|integer|min:0',
             'max_age' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
-            'objectives' => 'required|string',
-            'introduction' => 'required|string',
+            'objectives' => 'nullable|string',
+            'introduction' => 'nullable|string',
             'description' => 'required|string',
-            'conclusion' => 'required|string',
+            'conclusion' => 'nullable|string',
             'visibility' => 'in:private,pending,public',
             'type_id' => 'required|exists:types,id',
 
             // Otros campos...
-            'materials' => 'required|array|min:1',
-            'materials.*.id' => 'required|integer|exists:materials,id',
-            'materials.*.quantity' => 'nullable|integer|min:1',
+            'materials' => 'nullable|array',
+            'materials.*.id' => 'nullable|integer|exists:materials,id',
+            'materials.*.quantity' => 'nullable|integer',
             'materials.*.notes' => 'nullable|string|max:255',
+            'risks' => 'nullable|array',
+            'risks.*' => 'nullable|integer|exists:risks,id', // Si tienes tabla risks
         ]);
 
         $activity->update($validatedData);
 
-        // Actualizar materiales: sincronizar tabla pivote con quantity y notes
+        // Actualizar materiales
         $materials = $request->input('materials', []);
         $materialData = [];
 
         foreach ($materials as $material) {
             if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
                 $materialData[(int)$material['id']] = [
-                    'quantity' => $material['quantity'] ?? null,
+                    'quantity' => $material['quantity'] ?? 1,
                     'notes' => $material['notes'] ?? null,
                 ];
             }
@@ -182,17 +225,49 @@ class ActivityController extends Controller
 
         $activity->materials()->sync($materialData);
 
-        // Sincronizar riesgos
+        // Actualizar riesgos
         $risks = array_filter($request->input('risks', []));
         $activity->risks()->sync($risks);
 
-        return redirect()->route('profile.show')->with('success', 'Actividad actualizada exitosamente.');
+    } else {
+        // Modo libre
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'type_id' => 'required|exists:types,id',
+            'num_participants' => 'required|integer|min:1',
+            'min_age' => 'required|integer|min:0',
+            'max_age' => 'required|integer|min:0',
+            'duration' => 'required|integer|min:1',
+            'description' => 'required|string',
+            'visibility' => 'in:private,pending,public',
+        ]);
+
+        $activity->update([
+            'title' => $validatedData['title'],
+            'type_id' => $validatedData['type_id'],
+            'num_participants' => $validatedData['num_participants'],
+            'min_age' => $validatedData['min_age'],
+            'max_age' => $validatedData['max_age'],
+            'duration' => $validatedData['duration'],
+            'description' => $validatedData['description'],
+            'objectives' => $activity->objectives ?? null,
+            'introduction' => $activity->introduction ?? null,
+            'conclusion' => $activity->conclusion ?? null,
+        ]);
+
+        // // Quitar materiales y riesgos si existían antes
+        // $activity->materials()->detach();
+        // $activity->risks()->detach();
     }
+
+    return redirect()->route('profile.show')->with('success', 'Actividad actualizada exitosamente.');
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(activity $activity)
+    public function destroy(Activity $activity)
     {
         $user = auth()->user();
 
@@ -205,6 +280,58 @@ class ActivityController extends Controller
         $activity->delete();
 
         return redirect()->route('profile.show')->with('success', 'Actividad eliminada exitosamente.');
+    }
+
+    public function clone(Activity $activity)
+    {
+        $user = auth()->user();
+        $types = Type::all();
+        $materials = Material::all();
+        $risks = Risk::all();
+
+        // Crear una nueva instancia de la actividad sin guardarla
+        $clonedActivity = Activity::make([
+            'title' => $activity->title,
+            'num_participants' => $activity->num_participants,
+            'min_age' => $activity->min_age,
+            'max_age' => $activity->max_age,
+            'duration' => $activity->duration,
+            'objectives' => $activity->objectives,
+            'introduction' => $activity->introduction,
+            'description' => $activity->description,
+            'conclusion' => $activity->conclusion,
+            'type_id' => $activity->type_id,
+            'visibility' => 'private',
+            'original_activity_id' => $activity->id,
+        ]);
+
+        // Preparar los materiales con sus datos pivot (quantity y notes)
+        $selectedMaterials = [];
+        foreach ($activity->materials as $material) {
+            $selectedMaterials[$material->id] = [
+                'quantity' => $material->pivot->quantity,
+                'notes' => $material->pivot->notes,
+            ];
+        }
+
+        // Preparar los riesgos seleccionados
+        $selectedRiskIds = $activity->risks->pluck('id')->toArray();
+
+        return view('activities.create', [
+            'activity' => $clonedActivity,
+            'user' => $user,
+            'types' => $types,
+            'materials' => $materials,
+            'risks' => $risks,
+        ])
+        ->withInput([
+            'materials' => $activity->materials->map(fn($material) => [
+                'id' => $material->id,
+                'quantity' => $material->pivot->quantity,
+                'notes' => $material->pivot->notes,
+            ])->toArray(),
+            'risks' => $activity->risks->pluck('id')->toArray(),
+        ]);
     }
 
     public function toggleFavorite(Activity $activity)
