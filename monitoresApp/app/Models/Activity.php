@@ -54,7 +54,9 @@ class Activity extends Model
 
     public function schedules()
     {
-        return $this->belongsToMany(Schedule::class);
+        return $this->belongsToMany(Schedule::class)
+            ->withPivot('start_time', 'end_time')
+            ->withTimestamps();
     }
 
     public function reviews()

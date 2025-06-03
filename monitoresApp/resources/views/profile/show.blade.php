@@ -77,9 +77,26 @@
 
 
                     <hr>
-
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-3">Mis programaciones</h5>
                     {{-- Aquí podrías mostrar programaciones si las tienes --}}
+                    @if (Auth::user() === $user)
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('calendar.show') }}" class="btn btn-success btn-sm">Nueva Programación</a>
+                        </div>
+                    @endif
+                    </div>
+                    @if ($schedules->isEmpty())
+                        <div class="alert alert-info">Aún no has creado ninguna programación.</div>
+                    @else
+                        <ul>
+                            @foreach ($schedules as $schedule)
+                                <li>
+                                    <p>{{ $schedule->name }}</p>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
             </div>
 

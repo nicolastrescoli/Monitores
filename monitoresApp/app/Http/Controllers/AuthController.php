@@ -61,6 +61,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $activities = Activity::where('user_id', $user->id)->get();
+        $schedules = $user->schedules()->with('activities')->get();
 
         // Carga explícitamente las relaciones
         $user->load(['sentFriendRequests', 'receivedFriendRequests']);
@@ -68,7 +69,7 @@ class AuthController extends Controller
         // Une y elimina duplicados
         $contacts = $user->sentFriendRequests->merge($user->receivedFriendRequests)->unique('id');
 
-        return view('profile.show', ['user' => $user, 'activities' => $activities, 'contacts' => $contacts,]);
+        return view('profile.show', ['user' => $user, 'activities' => $activities, 'schedules' => $schedules, 'contacts' => $contacts,]);
     }
 
     public function logout()

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ScheduleController;
 
 
 /*
@@ -94,3 +95,18 @@ Route::post('/contact', function () {
 */
 
 Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name('activity.pdf');
+
+/*
+|--------------------------------------------------------------------------
+| Programador de calendario
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/calendar', [ScheduleController::class, 'show'])->name('calendar.show');
+});
+
+Route::post('/calendar/assign', [ScheduleController::class, 'assign'])
+    ->name('calendar.assign');
+Route::delete('/calendar/unassign', [CalendarController::class, 'unassign'])->name('calendar.unassign');
+
