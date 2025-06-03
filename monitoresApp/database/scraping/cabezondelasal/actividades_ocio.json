@@ -1,0 +1,431 @@
+[
+  {
+    "type": "talleres",
+    "title": "Sillas Musicales",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Relacionar la competencia con el concepto de “ganar-perder” y la cooperación con el concepto \n“ganar-ganar”.",
+    "description": "Se colocan todas las sillas formando un círculo con los respaldos hacia dentro. Los/as jugado-\nres/as están de pie delante de ellas, excepto una persona que controlará la música. Se colocará siempre \nuna silla menos que personas estén jugando o dando vueltas. Cuando empiece a sonar la música, los/as ju-\ngadores/as deben andar alrededor de las sillas siguiendo el ritmo. En el momento que pare la música, cada \npersona intentará sentarse en una de las sillas. Quien se quede sin sentarse en una silla quedará eliminado.",
+    "materials": [
+      {
+        "name": "Sillas",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "reproductor de radio CD y CD con música",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos",
+    "title": "Director De Orquesta",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Desarrollar la atención, dominar el esquema corporal",
+    "description": "Un niño la queda y sale fuera. El resto elige a un /a director  /a de orquesta el/ la cual tiene que \nhacer un movimiento para que lo imiten los demás. El /la que se ha salido tiene que adivinar quien es el /la \ndirector /a de la orquesta. Mientras se va cantando una retahíla. Solo puede haber un/a director /a de orques-\nta y todos/as tienen que cantar la misma canción. \nLa retahíla: es “ aransansan aransansan, culi culi culi culi culi aransansan (bis), arabi, arabi culi culi culi culi \nculi aransansan.”!",
+    "materials": [
+      {
+        "name": "No se necesita",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos",
+    "title": "Guardias Y Ladrones",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Coordinar la motricidad, estimular la capacidad de rapidez, potenciar las habilidades sociales",
+    "description": "El equipo de los/as guardias trata de coger a los/as miembros del equipo de los/as ladrones/as y \nmeterlos en la cárcel. Los/as ladrones/as pueden ser salvados/as por sus compañeros/as si son tocados/as  \nen la cárcel. El juego termina cuando todos /as los/as ladrones/as están en la cárcel",
+    "materials": [
+      {
+        "name": "No se necesita",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos",
+    "title": "Gymkhana  Pirata",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Favorecer procesos de participación, y el fomentar conocimientos de forma divertida.",
+    "description": "Se diseñará por los/as monitores/as las diferentes pruebas ambientadas con decorados, así \ncomo los sobres con los mensajes. Los /as niños /as irán resolviendo cada pista hasta encontrar la pala, brú-\njula, sables , catalejo y las llaves para encontrar el tesoro.",
+    "materials": [
+      {
+        "name": "Pistas de la gymkhana",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "Puzzle pirata",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "Zanco pata de palo",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos",
+    "title": "Tomate, Tomate, Chocolate",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Desarrollar la capacidad de atención y de rápida reacción. Y adquirir habilidades para asumir re-\nglas y jugar en grupo.",
+    "description": "Todos/as los/as niños/as se sientan en corro dejando fuera de éste a un/a compañero/a. El/la  \ncompañero/a que queda fuera irá dando vueltas alrededor del corro tocando la cabeza a los/las compañeros/\nas, que permanecerán con los ojos cerrados, y diciendo tomate, tomate, tomate o chocolate. Cuando toquen \na un  niño y diciendo al mismo tiempo chocolate, este tendrá que correr detrás del compañero que estaba \nfuera del corro, si no lo alcanza, y le quitan el sitio, se la quedará él la siguiente vez.",
+    "materials": [
+      {
+        "name": "No se necesita.",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos con paracaidas",
+    "title": "El Cocodrilo",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Cooperar en el juego.",
+    "description": "Todos/as de pie colocamos el paracaídas a la altura de las rodillas. Uno/a hace de cocodrilo de-\nbajo del paracaídas e intentando cazar a algún/a  jugador/a. Los/as que están fuera pueden intentar no ser \ncogidos/as agachando el paracaídas y tapando los pies. Si el cocodrilo te coge el pie pasas al interior del pa-\nracaídas por debajo para ser cocodrilo mientras que quien hacía de cocodrilo sale fuera y deja de serlo.",
+    "materials": [
+      {
+        "name": "Paracaídas",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos con paracaidas",
+    "title": "",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Cooperar en el juego.",
+    "description": "Agarramos por los bordes y estiramos la tela al completo. Hacemos un corro muy grande. Pode-\nmos agitar la tela del paracaídas a ras de suelo cuando decimos TIERRA. Agitamos el paracaídas a la altura \nde la cintura cuando se dice la palabra AGUA. Removemos la tela a la altura de los hombros cada vez que \nse dice AIRE. Y lo repetimos varias veces.",
+    "materials": [
+      {
+        "name": "Paracaídas",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos con paracaidas",
+    "title": "Tratras",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Cooperar en el juego y propiciar la distensión.",
+    "description": "Algunos/as niños/as se sientan en el centro del paracaídas pasando por encima de la tela. Se \ndebe hacer solamente cuando hay césped debajo o una pista polideportiva suave. El resto de participantes se \nponen alrededor del paracaídas. Cuando alguien dice: Cu-cú, todos/as van hacia el centro levantando la tela \nsin pisarla. A la voz de: Tras-tras, se van a la posición de partida. Se debe procurar que nadie se enrede en la \ntela y que nadie del centro se asuste.",
+    "materials": [
+      {
+        "name": "Paracaídas",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "juegos con paracaidas",
+    "title": "El Túnel",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Cooperar en el juego",
+    "description": "Para este juego dos personas mayores levantarán el paracaídas sujetándolo por su diámetro a la \naltura de los hombros primero, a la altura de la cintura después, a la altura de la rodilla para que niñas y niños \npasen por debajo como si de un túnel se tratase. \nFinalmente se suelta la tela para que repten por debajo de ella como hormigas que se abren camino en el in-\nterior de la tierra.",
+    "materials": [
+      {
+        "name": "Paracaídas",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "dinámicas",
+    "title": "",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Crear un buen ambiente entre los/as miembros del grupo.",
+    "description": "Se colocan dos bancos paralelos separados en 1,20m (se pueden sustituir por dos hileras de \nsillas juntas unas frente a otras) . Los/as jugadores/as toman asiento en los dos bancos frente a frente lo más \njuntos posible. Un/a jugador/a de pie en el centro, es el revisor y avisa las paradas (elegir nombre de las para-\ndas de metro, autobús o tranvía de la propia localidad.",
+    "materials": []
+  },
+  {
+    "type": "dinámicas",
+    "title": "",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Ayudar a los/as niños/as a ganar confianza en sus movimientos aunque no vean nada.",
+    "description": "Todos/as los/as niños/as con los ojos vendados menos uno que es el/la  \"ruidoso\", al que inten-\ntan cazar los/las demás, el/la  primero/a que lo hace, pasa a hacer de \"ruidoso/a\". El/la  \"ruidoso/a\" se despla-\nza lentamente y haciendo distintos ruidos. Se marca una zona determinada de la que no se puede salir.",
+    "materials": [
+      {
+        "name": "Tantos pañuelos como chicos/as haya menos uno.",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "dinámicas",
+    "title": "",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la cooperación a través del contacto físico.",
+    "description": "Pediremos que se formen parejas en el grupo, cada una de ellas se pondrán espalda contra es-\npalda y con los brazos entrelazados.",
+    "materials": [
+      {
+        "name": "No se necesita",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "dinámicas",
+    "title": "",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Conocer la importancia de comunicarse y de cooperar entre ellos",
+    "description": "Explicamos a los/as participantes que son pingüinos, y viven sobre un islote de hielo y debido al \ncalentamiento global, el hielo está desapareciendo, y tienen cada vez menos espacio para convivir. \nLos/as monitores/as colocamos en el suelo hojas de periódico que representan una superficie de hielo en la \nque las/os participantes puedan caber sin mayores problemas.  \nLa persona responsable de la dinámica pide a las personas que participan que se coloquen en la superficie \nde hielo. Una vez que cada uno/a encuentra su sitio en la superficie, les dice que salgan para pescar, para \ndar un paseo,... Cuando todos/as están fuera de la superficie, se disminuye el tamaño de la superficie quitan-\ndo algunos periódicos. Se pide a las y los participantes regresar sobre la superficie en la que será cada vez \nmás difícil que todos y todas quepan. Es probable que, a medida que el nivel de dificultad aumente, las perso-\nnas empiecen a organizarse.",
+    "materials": [
+      {
+        "name": "Hojas de periódicos.",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "danzas",
+    "title": "Voy En Busca De Un León",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la participación de los/las niños/\nas .",
+    "description": "En círculo, el/la animador/a en medio, \ncanta la primera estrofa y los alumnos repiten, cuando \nhan repetido, el educador introduce la segunda estro-\nfa con el gesto, moviendo la parte del cuerpo citada. \nAñadiendo un movimiento nuevo cada vez y repitien-\ndo los anteriores.",
+    "materials": []
+  },
+  {
+    "type": "danzas",
+    "title": "Cuando Un Pirata Baila",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la participación  y propiciar la desinhibición de los/as niños/as .",
+    "description": "En círculo, el/la animador/a en medio, canta la primera estrofa y los/as alumnos/as repiten, \ncuando han repetido, el/la educador/ra introduce la segunda estrofa con el gesto, moviendo la parte del cuer-\npo citada. Añadiendo un movimiento nuevo cada vez y repitiendo los anteriores.",
+    "materials": []
+  },
+  {
+    "type": "danzas",
+    "title": "La Pelota  De Ping Pong",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la participación de los/as niños/as y animación en el grupo.",
+    "description": "En redondo, el/la educador/a, empieza a cantar la canción y a botar como una pelota, va tocando \nuno a uno al cantar la estrofa y al integrante que toca se convierte en pelota, empieza a botar y a cantar, co-\nmo ya es una pelota, le da derecho a tocar a otro/a compañero/a para que así sucesivamente todo el mundo \nse convierta en pelota, hasta que todos/as están botando.",
+    "materials": []
+  },
+  {
+    "type": "danzas",
+    "title": "Baila El Chipi Chipi",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la participación y la coordinación de los niños/ as.",
+    "description": "Uno/a se pone a andar dentro del círculo al ritmo de la canción, y cuando llega la parte de \n\"Baila el chipi chipi\", se para enfrente del que tenga más cerca y se ponen juntos a bailar. Después, salen los/\nas dos al círculo y se repite la misma operación hasta que salgan todos los del círculo a bailar.",
+    "materials": []
+  },
+  {
+    "type": "danzas",
+    "title": "Era Una Sandia Gorda, Gorda, Gorda",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar la participación de los/as niños/as y divertirlos.",
+    "description": "En círculo, el/la animado/a en medio, canta la primera estrofa y los/las niños/as repiten. Cuando \nhan repetido, el/la educador/a introduce la segunda estrofa con el gesto, moviendo la parte del cuerpo citada. \nAñadiendo un movimiento nuevo cada vez y repitiendo los anteriores.",
+    "materials": []
+  },
+  {
+    "type": "talleres",
+    "title": "Collares De  Pasta",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Ejercitar y potenciar habilidades manuales.",
+    "description": "Se  entrega a los/as niños/as macarrones, pinceles y pintura para \ncolorear los/as macarrones. Una vez secos, meten los macarrones por una \ncuerda para realizar el collar…",
+    "materials": [
+      {
+        "name": "Macarrones",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "temperas",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "pinceles",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "talleres",
+    "title": "Corocota De Barro",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Desarrollar su creatividad y fomentar el conocimiento de tradiciones cul-\nturales.",
+    "description": "Se reparte un trozo de barro a cada niño/a , se trata de un material tan natural y manipulable que \nles va a permitir ser capaces de disfrutar, expresarse y crear desarrollando capacidades y destrezas tanto \nafectivas como motrices e intelectuales. En este caso el modelo será un corocota, personje de la mitologia \ncantabroa, un guerrero cantabro.",
+    "materials": [
+      {
+        "name": "Barro",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "cola",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "palillos.",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "talleres",
+    "title": "Acuarío",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Fomentar sus habilidades manuales,creatividad y des-\ncubrir la importancia de reutilizar materiales.",
+    "description": "A una caja de cartón se le hace una abertura como si \nfuera el cristal del acuario, se pinta el interior como el fondo de un \nacuario, se colorean peces, se recortan y se les pone un hilo para colgarlos dentro de la caja como si estuvie-\nran en un acuario.",
+    "materials": [
+      {
+        "name": "Caja de cartón",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "dibujos de peces",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "pinturas de colores",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "tijeras",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "hilo.",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "talleres",
+    "title": "Disfraz De Pirata Con Loro Y Garfio",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Aprender a pintar, conocer los colores y  implicación en el disfraz de \npirata",
+    "description": "Pintaremos un loro con colores y luego con papel pinocho le hare-\nmos las alas para luego recortarlo y usarlo en el disfraz pirata.   \nHaremos un garfio  para completar el disfraz de pirata en un vaso de platico pe-\ngaran papel de pinocho hasta cubrirle con un cartón recortaremos la forma de \nun garfio y con papel albal lo forraremos luego haremos un corte en el fondo del \nvaso por donde introduciremos el garfio.",
+    "materials": [
+      {
+        "name": "Vasos de plástico",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "cartón",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "papel pinocho",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "pegamento",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "cutter",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "papel \nalbal",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "dibujo del loro",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "pinturas",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "tijeras",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  },
+  {
+    "type": "talleres",
+    "title": "Tren De Chocolate",
+    "min_age": 3,
+    "max_age": 12,
+    "objectives": "Descubrir la cocina y que experimenten con sus \npropias manos.",
+    "description": "Para hacer la máquina cortaremos un plum cake por la mitad, la uniremos al vagón mediante pa-\nlillos y nubes, las ruedas las haremos traspasando un micado por el bizcocho y colocando en las puntas los \nfilipinos. \nUna nube larga la utilizaremos de chimenea y las demás serán las ventanas del tren.Con las gominolas deco-\nraremos el tren, y el regaliz lo usaremos para las vías.",
+    "materials": [
+      {
+        "name": "Plum cake",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "micados de chocolate",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "filipinos",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "nu-\nbes",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "regalices",
+        "quantity": null,
+        "notes": null
+      },
+      {
+        "name": "gominotas",
+        "quantity": null,
+        "notes": null
+      }
+    ]
+  }
+]
