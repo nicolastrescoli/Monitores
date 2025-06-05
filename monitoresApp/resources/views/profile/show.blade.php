@@ -82,7 +82,7 @@
                     {{-- Aquí podrías mostrar programaciones si las tienes --}}
                     @if (Auth::user() === $user)
                         <div class="d-flex gap-2">
-                            <a href="{{ route('calendar.show') }}" class="btn btn-success btn-sm">Nueva Programación</a>
+                            <a href="{{ route('calendar.create') }}" class="btn btn-success btn-sm">Nueva Programación</a>
                         </div>
                     @endif
                     </div>

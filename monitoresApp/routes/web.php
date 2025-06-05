@@ -103,7 +103,7 @@ Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name(
 */
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/calendar', [ScheduleController::class, 'show'])->name('calendar.show');
+    Route::get('/calendar', [ScheduleController::class, 'create'])->name('calendar.create');
 });
 
 Route::post('/calendar/assign', [ScheduleController::class, 'assign'])

@@ -9,7 +9,6 @@ use App\Models\Activity;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-use Illuminate\Support\Facades\Log;
 class ScheduleController extends Controller
 {
     /**
@@ -23,9 +22,25 @@ class ScheduleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if (!isset($request)) {
+            $days = 7;
+        }
+        $days = (int) $request->input('days', 7);
+
+        $startDate = \Carbon\Carbon::today();
+        $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
+
+        $activities = Activity::all();
+
+        $user = Auth::user();
+        $schedule = Schedule::firstOrCreate(['name' => 'default', 'user_id' => $user->id]);
+
+        // Obtener todas las actividades programadas con fecha y hora
+        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
+
+        return view('schedule.index', compact('dates', 'activities', 'scheduled'));
     }
 
     /**
@@ -41,25 +56,13 @@ class ScheduleController extends Controller
      */
     public function show(Request $request)
     {
-        $days = (int) $request->input('days', 7);
-        $startDate = \Carbon\Carbon::today();
-        $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
-
-        $activities = Activity::all();
-
-        $user = Auth::user();
-        $schedule = Schedule::firstOrCreate(['user_id' => $user->id]);
-
-        // Obtener todas las actividades programadas con fecha y hora
-        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
-
-        return view('schedule.index', compact('dates', 'activities', 'scheduled'));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(schedule $schedule)
+    public function edit(Schedule $schedule)
     {
         //
     }
@@ -67,7 +70,7 @@ class ScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, schedule $schedule)
+    public function update(Request $request, Schedule $schedule)
     {
         //
     }
@@ -75,7 +78,7 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(schedule $schedule)
+    public function destroy(Schedule $schedule)
     {
         //
     }
@@ -100,7 +103,6 @@ class ScheduleController extends Controller
             $start = Carbon::parse($data['date'])->startOfDay()->addHours((int) $data['hour']);
             $end = (clone $start)->addHour();
 
-
             // Elimina la actividad anterior (si estaba repetida)
             $schedule->activities()->detach($data['activity_id']);
 
@@ -109,7 +111,6 @@ class ScheduleController extends Controller
                 'start_time' => $start,
                 'end_time' => $end,
             ]);
-            
 
             return redirect()->back()->with('success', 'Actividad asignada correctamente');
         } catch (\Exception $e) {
