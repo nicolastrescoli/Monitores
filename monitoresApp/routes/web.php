@@ -21,13 +21,17 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/profile', 'show')->name('profile.show');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Peticiones de amistad y comunidad
+|--------------------------------------------------------------------------
+*/
 Route::controller(AuthController::class)->group(function () {
     // Rutas de gestión de peticiones de amistad
     Route::post('/friends/request/{receiver}', 'sendRequest')->name('friends.request');
     Route::post('/friends/accept/{sender}', 'acceptRequest')->name('friends.accept');
     Route::delete('/friends/reject/{sender}', 'rejectRequest')->name('friends.reject');
     Route::delete('/friends/cancel/{receiver}', 'cancelRequest')->name('friends.cancel');
-
 
     // Rutas para ver la comunidad
     Route::get('/community', 'index')->name('community.index');
@@ -69,7 +73,6 @@ Route::middleware('auth')->controller(ActivityController::class)->group(function
 | Actividades sin autenticación
 |--------------------------------------------------------------------------
 */
-
 Route::controller(ActivityController::class)->group(function () {
     Route::get('/', 'index')->name('activities.index');
     Route::get('/activities/{activity}', 'show')->name('activities.show');
@@ -93,7 +96,6 @@ Route::post('/contact', function () {
 | Generador de PDF
 |--------------------------------------------------------------------------
 */
-
 Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name('activity.pdf');
 
 /*
@@ -101,12 +103,13 @@ Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name(
 | Programador de calendario
 |--------------------------------------------------------------------------
 */
+Route::post('/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
+Route::post('/schedule/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedule.edit');
+Route::post('/schedules/{schedule}/rename', [ScheduleController::class, 'rename'])->name('schedule.rename');
+Route::get('/schedule/{schedule}', [ScheduleController::class, 'show'])->name('schedule.show');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/calendar', [ScheduleController::class, 'create'])->name('calendar.create');
-});
 
 Route::post('/calendar/assign', [ScheduleController::class, 'assign'])
     ->name('calendar.assign');
-Route::delete('/calendar/unassign', [CalendarController::class, 'unassign'])->name('calendar.unassign');
+Route::delete('/calendar/unassign', [ScheduleController::class, 'unassign'])->name('calendar.unassign');
 

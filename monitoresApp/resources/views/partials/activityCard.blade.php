@@ -31,7 +31,7 @@
                     @if ($isOwner)
                         {{-- Editar y eliminar --}}
                         <a href="{{ route('activities.edit', $activity) }}" class="btn btn-sm btn-warning ms-1">
-                            Editar actividad
+                            Editar
                         </a>
 
                         <form action="{{ route('activities.destroy', $activity) }}" method="POST" class="d-inline ms-1">

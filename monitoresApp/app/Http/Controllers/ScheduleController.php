@@ -9,68 +9,94 @@ use App\Models\Activity;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Log;
+
 class ScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-        if (!isset($request)) {
-            $days = 7;
-        }
-        $days = (int) $request->input('days', 7);
-
-        $startDate = \Carbon\Carbon::today();
-        $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
-
-        $activities = Activity::all();
-
-        $user = Auth::user();
-        $schedule = Schedule::firstOrCreate(['name' => 'default', 'user_id' => $user->id]);
-
-        // Obtener todas las actividades programadas con fecha y hora
-        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
-
-        return view('schedule.index', compact('dates', 'activities', 'scheduled'));
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+
+        $schedule = Schedule::create([
+            'name' => 'Nueva programación',
+            'user_id' => $user->id,
+        ]);
+
+        return redirect()
+            ->route('profile.show', $user->id)
+            ->with('new_schedule_id', $schedule->id);
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(Schedule $schedule, Request $request)
     {
-        //
+        // Obtener todas las actividades programadas con fecha y hora
+        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
+
+        // Extraer todos los start_time y end_time de la pivot table
+        $startTimes = $scheduled->pluck('pivot.start_time')->filter();
+        $endTimes = $scheduled->pluck('pivot.end_time')->filter();
+
+        // Si no hay fechas, mostrar los próximos 7 días por defecto
+        if ($startTimes->isEmpty() || $endTimes->isEmpty()) {
+            $startDate = Carbon::today();
+            $dates = collect(range(0, 6))->map(fn($i) => $startDate->copy()->addDays($i));
+        } else {
+            $startDate = Carbon::parse($startTimes->min())->startOfDay();
+            $endDate = Carbon::parse($endTimes->max())->startOfDay();
+
+            $days = $startDate->diffInDays($endDate) + 1;
+
+            $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
+        }
+
+        return view('schedule.show', compact('dates', 'scheduled', 'schedule'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Schedule $schedule)
+    public function edit(Schedule $schedule, Request $request)
     {
-        //
+        if ($request) {
+            
+        }
+
+        // Obtener todas las actividades programadas con fecha y hora
+        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
+
+        // Extraer todos los start_time y end_time de la pivot table
+        $startTimes = $scheduled->pluck('pivot.start_time')->filter();
+        $endTimes = $scheduled->pluck('pivot.end_time')->filter();
+
+        // Si no hay fechas, mostrar los próximos 7 días por defecto
+        if ($startTimes->isEmpty() || $endTimes->isEmpty()) {
+            $startDate = Carbon::today();
+            $dates = collect(range(0, 6))->map(fn($i) => $startDate->copy()->addDays($i));
+        } else {
+            $startDate = Carbon::parse($startTimes->min())->startOfDay();
+            $endDate = Carbon::parse($endTimes->max())->startOfDay();
+
+            $days = (int) $request->input('days', 7);
+
+            $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
+        }
+
+        $activities = Activity::all();
+
+        return view('schedule.edit', compact('dates', 'activities', 'scheduled', 'schedule'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Schedule $schedule)
+    public function update(Request $request, schedule $schedule)
     {
         //
     }
@@ -78,12 +104,12 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Schedule $schedule)
+    public function destroy(schedule $schedule)
     {
         //
     }
 
-    public function assign(Request $request)
+    public function assign(Request $request, Schedule $schedule)
     {
         $data = $request->validate([
             'activity_id' => 'required|exists:activities,id',
@@ -94,14 +120,11 @@ class ScheduleController extends Controller
         try {
             $user = Auth::user();
 
-            $schedule = Schedule::firstOrCreate(
-                ['user_id' => $user->id],
-                ['name' => 'Calendario de ' . $user->name]
-            );
-
             // Asegura que la fecha venga en formato correcto
             $start = Carbon::parse($data['date'])->startOfDay()->addHours((int) $data['hour']);
             $end = (clone $start)->addHour();
+
+            dd($data, $schedule);
 
             // Elimina la actividad anterior (si estaba repetida)
             $schedule->activities()->detach($data['activity_id']);
@@ -146,6 +169,26 @@ class ScheduleController extends Controller
         }
 
         return redirect()->back()->with('success', 'Actividad eliminada correctamente.');
+    }
+
+
+    public function rename(Request $request, Schedule $schedule)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $schedule->name = $request->name;
+        $schedule->save();
+
+        // En una petición AJAX se podría devolver JSON, pero como lo haces sin JS fetch,
+        // haremos una redirección o simplemente nada (la vista lo manejará).
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        // Esto solo se usará si llegas a enviar de forma tradicional (fallback)
+        return back();
     }
 
 

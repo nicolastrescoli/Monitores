@@ -81,18 +81,26 @@
                     <h5 class="mb-3">Mis programaciones</h5>
                     {{-- Aquí podrías mostrar programaciones si las tienes --}}
                     @if (Auth::user() === $user)
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('calendar.create') }}" class="btn btn-success btn-sm">Nueva Programación</a>
-                        </div>
+                        {{-- <div class="d-flex gap-2">
+                            <a href="{{ route('schedule.create') }}" class="btn btn-success btn-sm">Nueva Programación</a>
+                        </div> --}}
+                        <form method="POST" action="{{ route('schedule.store') }}">
+                            @csrf
+                            <button type="submit">Nueva programación</button>
+                        </form>
                     @endif
                     </div>
                     @if ($schedules->isEmpty())
                         <div class="alert alert-info">Aún no has creado ninguna programación.</div>
                     @else
-                        <ul>
+                        <ul id="schedule-list">
                             @foreach ($schedules as $schedule)
-                                <li>
-                                    <p>{{ $schedule->name }}</p>
+                                <li id="schedule-{{ $schedule->id }}">
+                                    <input type="text" class="rename-input" data-id="{{ $schedule->id }}" value="{{ $schedule->name }}" autofocus>
+                                    <form method="POST" action="{{ route('schedule.rename', $schedule->id) }}" class="rename-form" data-id="{{ $schedule->id }}" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="name">
+                                    </form>
                                 </li>
                             @endforeach
                         </ul>
@@ -118,4 +126,55 @@
 </div>
 </div>
 </div>
+@if (session('new_schedule_id'))
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const newId = {{ session('new_schedule_id') }};
+        const input = document.getElementById('schedule-name-' + newId);
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    });
+</script>
+@endif
+<script>
+document.querySelectorAll('.rename-input').forEach(input => {
+    const id = input.dataset.id;
+
+    const save = () => {
+        const form = document.querySelector(`.rename-form[data-id="${id}"]`);
+        form.querySelector('input[name="name"]').value = input.value;
+
+        // Crear un iframe oculto para simular envío de formulario sin recargar
+        const iframe = document.createElement('iframe');
+        iframe.name = `dummy-iframe-${id}`;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        form.setAttribute('target', iframe.name);
+        form.submit();
+
+        // Reemplazar input por enlace después de un breve retardo
+        setTimeout(() => {
+            const container = document.getElementById(`schedule-${id}`);
+            container.innerHTML = `<a href="{{ route('schedule.show', $schedule)}}" class="schedule-link">${input.value}</a>`;
+            document.body.removeChild(iframe);
+        }, 300);
+    };
+
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            save();
+        }
+    });
+
+    input.addEventListener('blur', () => {
+        save();
+    });
+});
+</script>
+
+
 @endsection

@@ -13,11 +13,12 @@
 
 @section('content')
 
-    <h3>Calendario de Programacion</h3>
+    <h3>{{ $schedule->name }}</h3>
     <hr>
     <p>Arrastra las actividades a las horas correspondientes en el calendario.</p>
 
-    <form method="GET">
+    <form method="POST">
+        @csrf
         <label>Días a mostrar (1-15):</label>
         <input type="number" name="days" min="1" max="15" value="{{ request('days', 7) }}">
         <button type="submit">Actualizar</button>
@@ -38,12 +39,14 @@
         <div class="grid">
 
             @php
+                if(isset($scheduled)) {
                 $occupied = [];
                 foreach ($scheduled as $item) {
                     $start = \Carbon\Carbon::parse($item->pivot->start_time);
                     $key = $start->format('Y-m-d-') . str_pad($start->hour, 2, '0', STR_PAD_LEFT);
                     $occupied[$key] = $item->title;
                 }
+            }
             @endphp
 
             <table>
@@ -90,7 +93,7 @@
                 </tbody>
             </table>
         </div>
-        <form id="assign-form" method="POST" action="{{ route('calendar.assign') }}" style="display: none;">
+        <form id="assign-form" method="POST" action="{{ route('calendar.assign', $schedule) }}" style="display: none;">
             @csrf
             <input type="hidden" name="activity_id" id="form-activity-id">
             <input type="hidden" name="date" id="form-date">
