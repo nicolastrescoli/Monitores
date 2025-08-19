@@ -2,20 +2,28 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Activities from "./Activities.jsx";
 import Schedule from "./Schedule.jsx";
-// import useResize from "./useResize";
 import { useState } from "react";
 
 export default function ScheduleBuilder() {
+  const activities = [
+    { name: "Actividad 1", duration: 1, daysSpan: 1, id: 1 },
+    { name: "Actividad 2", duration: 2, daysSpan: 1, id: 2 },
+    { name: "Actividad 3", duration: 3, daysSpan: 1, id: 3 },
+    { name: "Actividad 4", duration: 4, daysSpan: 1, id: 4 },
+    { name: "Actividad 5", duration: 5, daysSpan: 1, id: 5 },
+    { name: "Actividad 6", duration: 6, daysSpan: 1, id: 6 },
+    { name: "Trampantojo", duration: 7, daysSpan: 1, id: 7 },
+  ];
+
+  // Estados para el rango de fechas
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const hourSlots = Array.from({ length: 24 }, (_, i) => ({ start: i, end: i + 1 }));
-  const [assignedActivities, setAssignedActivities] = useState([]);
-
-  // const { startDynamicResize, startHorizontalResize } = useResize(
-  //   assignedActivities,
-  //   setAssignedActivities
-  // );
+  const hourSlots = Array.from({ length: 24 }, (_, i) => ({
+    start: i,
+    end: i + 1,
+  }));
 
   const getDatesInRange = (start, end) => {
     const dates = [];
@@ -36,28 +44,78 @@ export default function ScheduleBuilder() {
           return d;
         });
 
+  // Mapa del estado de las celdas
+  const [cellMap, setCellMap] = useState({});
+
+  // Añadir o actualizar actividad en cellMap
   const handleDropActivity = (activityId, date, hour) => {
-  setAssignedActivities((prev) => [
-    ...prev,
-    {
-      // 👇 Generamos un identificador único para cada instancia
-      instanceId: `${activityId}-${date.toDateString()}-${hour}-${Date.now()}`,
-      id: activityId,
-      name: `Actividad ${activityId}`,
-      date: date.toDateString(),
-      hour,
-      duration: 1,
-      daysSpan: 1,
-    },
-  ]);
-};
+    const baseActivity = activities.find((a) => a.id === activityId);
+    if (!baseActivity) return;
 
-const handleRemoveActivity = (instanceId) => {
-  setAssignedActivities((prev) =>
-    prev.filter((a) => a.instanceId !== instanceId)
-  );
-};
+    const key = `${hour}-${days.findIndex(
+      (d) => d.toDateString() === date.toDateString()
+    )}`;
 
+    // cada instancia tiene un id único
+    const instanceId = Date.now() + "-" + Math.random();
+
+    setCellMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...baseActivity,
+        instanceId,
+      },
+    }));
+  };
+
+  // Eliminar actividad por instanceId
+  const handleRemoveActivity = (instanceId) => {
+    setCellMap((prev) => {
+      const newMap = { ...prev };
+      for (const key in newMap) {
+        if (newMap[key].instanceId === instanceId) {
+          delete newMap[key];
+        }
+      }
+      return newMap;
+    });
+  };
+
+  // mover una actividad ya colocada
+  const handleMoveActivity = (instanceId, date, hour) => {
+    setCellMap((prevMap) => {
+      // buscar la actividad por instanceId
+      let oldKey;
+      let activity;
+      for (const [key, value] of Object.entries(prevMap)) {
+        if (value.instanceId === instanceId) {
+          oldKey = key;
+          activity = value;
+          break;
+        }
+      }
+      if (!activity) return prevMap; // no encontrada
+
+      // eliminar de la posición anterior
+      const newMap = { ...prevMap };
+      delete newMap[oldKey];
+
+      // añadir en la nueva
+      const rowIndex = hourSlots.findIndex((h) => h.start === hour);
+      const colIndex = days.findIndex(
+        (d) => d.toDateString() === date.toDateString()
+      );
+      newMap[`${rowIndex}-${colIndex}`] = {
+        ...activity,
+        hour,
+        date: date.toDateString(),
+      };
+
+      return newMap;
+    });
+  };
+
+  console.log("Cell map updated:", cellMap); // Para depuración
 
   return (
     <>
@@ -122,19 +180,17 @@ const handleRemoveActivity = (instanceId) => {
         </div>
 
         <div className="calendar d-flex">
-          <Activities />
+          <Activities activities={activities} />
 
           <Schedule
             days={days}
             hourSlots={hourSlots}
-            assignedActivities={assignedActivities}
+            cellMap={cellMap}
             handleDropActivity={handleDropActivity}
+            handleMoveActivity={handleMoveActivity} // 👈 nuevo
             handleRemoveActivity={handleRemoveActivity}
-            // startDynamicResize={startDynamicResize}
-            // startHorizontalResize={startHorizontalResize}
           />
         </div>
-
       </main>
     </>
   );
