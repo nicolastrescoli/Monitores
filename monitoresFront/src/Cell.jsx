@@ -2,11 +2,11 @@ export default function Cell({
   hour,
   date,
   activity,
-  activities,
+  // activities,
   onDropActivity,
   onDeleteActivity,
-  onStartResize,
-  onStartHorizontalResize,
+  // onStartResize,
+  // onStartHorizontalResize,
 }) {
   const handleDrop = (e) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ export default function Cell({
             >
               ✖
             </button>
-            {/* Resizer horizontal */}
+            {/* Resizer horizontal
             <div
               className="col-1"
               style={{
@@ -58,7 +58,7 @@ export default function Cell({
             ></div>
           </div>
 
-          {/* Resizer vertical */}
+          Resizer vertical
           <div
             style={{
               position: "absolute",
@@ -72,7 +72,7 @@ export default function Cell({
             onMouseDown={(e) => onStartResize(e, activity.id, activities)}
           ></div>
 
-          {/* Resizer diagonal */}
+          Resizer diagonal
           <div
             style={{
               position: "absolute",
@@ -87,7 +87,8 @@ export default function Cell({
               onStartResize(e, activity.id, activities); // vertical
               onStartHorizontalResize(e, activity.id, activities); // horizontal
             }}
-          ></div>
+          > */}
+          </div>
         </div>
       </td>
     );
