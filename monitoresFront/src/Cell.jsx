@@ -17,46 +17,60 @@ export default function Cell({
   };
 
   const handleDragStart = (e) => {
-    e.dataTransfer.setData(
-      "application/json",
+    if (!activity) return;
+    e.dataTransfer.setData("application/json",
       JSON.stringify({ instanceId: activity.instanceId, activityId: activity.id })
     );
   };
 
   const handleDragOver = (e) => e.preventDefault();
 
+  if (!activity) {
+    return <td onDrop={handleDrop} onDragOver={handleDragOver} style={{ height: 60 }} />;
+  }
+
   return (
     <td
-      rowSpan={activity?.duration || 1}
-      colSpan={activity?.daysSpan || 1}
-      onDragOver={handleDragOver}
       onDrop={handleDrop}
-      style={{ position: "relative", height: `${(activity?.duration || 1) * 60}px` }}
+      onDragOver={handleDragOver}
+      style={{
+        borderTopLeftRadius: activity.isHead ? 8 : 0,
+        borderBottomLeftRadius: activity.isTail ? 8 : 0,
+        borderTopRightRadius: activity.isHead ? 8 : 0,
+        borderBottomRightRadius: activity.isTail ? 8 : 0,
+        padding: 0,
+        height: 60,
+      }}
     >
-      {activity ? (
-        <div
-          className="bg-success text-white p-1 rounded"
-          draggable
-          onDragStart={handleDragStart}
-          style={{ height: "100%", position: "relative" }}
-        >
-          {activity.name}
-          <button
-            className="btn btn-sm btn-danger"
-            onClick={() => onDeleteActivity?.(activity.instanceId)}
-            style={{
-              position: "absolute",
-              top: 2,
-              right: 2,
-              border: "none",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            ✖
-          </button>
-        </div>
-      ) : null}
+      <div
+        className="bg-success text-white p-1"
+        draggable
+        onDragStart={handleDragStart}
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {activity.isHead && (
+          <>
+            <span>{activity.name}</span>
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => onDeleteActivity?.(activity.instanceId)}
+              style={{
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              ✖
+            </button>
+          </>
+        )}
+      </div>
     </td>
   );
 }

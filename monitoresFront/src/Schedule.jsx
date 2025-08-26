@@ -9,11 +9,9 @@ export default function Schedule({
   handleRemoveActivity,
 }) {
   const renderTable = (datesSlice, hours) => {
-    const occupied = new Set();
-
     return (
       <div className="table-wrapper">
-        <table className="table table-bordered">
+        <table className="table table-bordered" style={{ tableLayout: "fixed", zIndex: -1 }}>
           <thead>
             <tr>
               <th style={{ width: 60 }}>Hora</th>
@@ -25,56 +23,22 @@ export default function Schedule({
           <tbody>
             {hours.map((slot, rowIndex) => (
               <tr key={rowIndex}>
-                <td style={{ borderLeft: "none", borderBottom: "none" }}>
-                  {slot.start}:00
-                </td>
-                {(() => {
-                  const cells = [];
-                  for (
-                    let colIndex = 0;
-                    colIndex < datesSlice.length;
-                    colIndex++
-                  ) {
-                    const key = `${rowIndex}-${colIndex}`;
-                    if (occupied.has(key)) continue;
-
-                    const activity = cellMap[key];
-                    const date = datesSlice[colIndex];
-
-                    if (activity) {
-                      cells.push(
-                        <Cell
-                          key={key}
-                          hour={slot.start}
-                          date={date}
-                          activity={activity}
-                          onDropActivity={handleDropActivity}
-                          onMoveActivity={handleMoveActivity}
-                          onDeleteActivity={handleRemoveActivity}
-                        />
-                      );
-
-                      // 👉 marcar celdas ocupadas
-                      for (let d = 0; d < activity.daysSpan; d++) {
-                        for (let h = 0; h < activity.duration; h++) {
-                          occupied.add(`${rowIndex + h}-${colIndex + d}`);
-                        }
-                      }
-                    } else {
-                      cells.push(
-                        <Cell
-                          key={key}
-                          hour={slot.start}
-                          date={date}
-                          onDropActivity={handleDropActivity}
-                          onMoveActivity={handleMoveActivity}
-                          onDeleteActivity={handleRemoveActivity}
-                        />
-                      );
-                    }
-                  }
-                  return cells;
-                })()}
+                <td>{slot.start}:00</td>
+                {datesSlice.map((date, colIndex) => {
+                  const key = `${rowIndex}-${colIndex}`;
+                  const activity = cellMap[key];
+                  return (
+                    <Cell
+                      key={key}
+                      hour={slot.start}
+                      date={date}
+                      activity={activity}
+                      onDropActivity={handleDropActivity}
+                      onMoveActivity={handleMoveActivity}
+                      onDeleteActivity={handleRemoveActivity}
+                    />
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -85,14 +49,14 @@ export default function Schedule({
 
   return (
     <div className="grid col-3 col-md-10">
-      {days.length <= 7 ? (
-        renderTable(days, hourSlots)
-      ) : (
-        <>
-          {renderTable(days.slice(0, 7), hourSlots)}
-          {renderTable(days.slice(7), hourSlots)}
-        </>
-      )}
+      {days.length <= 7
+        ? renderTable(days, hourSlots)
+        : (
+          <>
+            {renderTable(days.slice(0, 7), hourSlots)}
+            {renderTable(days.slice(7), hourSlots)}
+          </>
+        )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Activities from "./Activities.jsx";
 import Schedule from "./Schedule.jsx";
 import { useState } from "react";
+import { placeActivity, removeActivity, moveActivity } from "./scheduleAux";
 
 export default function ScheduleBuilder() {
   const activities = [
@@ -47,72 +48,25 @@ export default function ScheduleBuilder() {
   // Mapa del estado de las celdas
   const [cellMap, setCellMap] = useState({});
 
-  // Añadir o actualizar actividad en cellMap
+  // ---------- HANDLERS ----------
+
   const handleDropActivity = (activityId, date, hour) => {
     const baseActivity = activities.find((a) => a.id === activityId);
     if (!baseActivity) return;
 
-    const key = `${hour}-${days.findIndex(
-      (d) => d.toDateString() === date.toDateString()
-    )}`;
-
-    // cada instancia tiene un id único
-    const instanceId = Date.now() + "-" + Math.random();
-
-    setCellMap((prev) => ({
-      ...prev,
-      [key]: {
-        ...baseActivity,
-        instanceId,
-      },
-    }));
+    setCellMap((prev) =>
+      placeActivity(prev, baseActivity, date, hour, days, hourSlots)
+    );
   };
 
-  // Eliminar actividad por instanceId
   const handleRemoveActivity = (instanceId) => {
-    setCellMap((prev) => {
-      const newMap = { ...prev };
-      for (const key in newMap) {
-        if (newMap[key].instanceId === instanceId) {
-          delete newMap[key];
-        }
-      }
-      return newMap;
-    });
+    setCellMap((prev) => removeActivity(prev, instanceId));
   };
 
-  // mover una actividad ya colocada
   const handleMoveActivity = (instanceId, date, hour) => {
-    setCellMap((prevMap) => {
-      // buscar la actividad por instanceId
-      let oldKey;
-      let activity;
-      for (const [key, value] of Object.entries(prevMap)) {
-        if (value.instanceId === instanceId) {
-          oldKey = key;
-          activity = value;
-          break;
-        }
-      }
-      if (!activity) return prevMap; // no encontrada
-
-      // eliminar de la posición anterior
-      const newMap = { ...prevMap };
-      delete newMap[oldKey];
-
-      // añadir en la nueva
-      const rowIndex = hourSlots.findIndex((h) => h.start === hour);
-      const colIndex = days.findIndex(
-        (d) => d.toDateString() === date.toDateString()
-      );
-      newMap[`${rowIndex}-${colIndex}`] = {
-        ...activity,
-        hour,
-        date: date.toDateString(),
-      };
-
-      return newMap;
-    });
+    setCellMap((prev) =>
+      moveActivity(prev, instanceId, date, hour, days, hourSlots)
+    );
   };
 
   console.log("Cell map updated:", cellMap); // Para depuración
@@ -150,32 +104,40 @@ export default function ScheduleBuilder() {
 
       <main>
         <h3>Nueva programación</h3>
-        <div className="d-flex my-3">
-          <label>Rango de fechas:</label>
-          <div className="d-flex gap-2 col-md-2">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              placeholderText="Fecha de inicio"
-              className="form-control"
-              maxDate={endDate}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              maxDate={
-                startDate ? new Date(startDate.getTime() + 14 * 86400000) : null
-              }
-              placeholderText="Fecha de fin"
-              className="form-control"
-            />
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex col-10 my-3 align-items-center">
+            <label>Rango de fechas:</label>
+            <div className="d-flex gap-2 col-md-2 mx-2">
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                placeholderText="Fecha de inicio"
+                className="form-control"
+                maxDate={endDate}
+              />
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={
+                  startDate
+                    ? new Date(startDate.getTime() + 14 * 86400000)
+                    : null
+                }
+                placeholderText="Fecha de fin"
+                className="form-control"
+              />
+            </div>
+          </div>
+          <div className="d-flex col-2 gap-2">
+            <button className="btn btn-dark">Guardar</button>
+            <button className="btn btn-dark">Imprimir</button>
           </div>
         </div>
 
@@ -187,7 +149,7 @@ export default function ScheduleBuilder() {
             hourSlots={hourSlots}
             cellMap={cellMap}
             handleDropActivity={handleDropActivity}
-            handleMoveActivity={handleMoveActivity} // 👈 nuevo
+            handleMoveActivity={handleMoveActivity}
             handleRemoveActivity={handleRemoveActivity}
           />
         </div>
