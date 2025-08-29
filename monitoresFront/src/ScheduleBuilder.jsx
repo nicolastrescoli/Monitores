@@ -2,19 +2,20 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Activities from "./Activities.jsx";
 import Schedule from "./Schedule.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { placeActivity, removeActivity, moveActivity } from "./scheduleAux";
 
 export default function ScheduleBuilder() {
-  const activities = [
-    { name: "Actividad 1", duration: 1, daysSpan: 1, id: 1 },
-    { name: "Actividad 2", duration: 2, daysSpan: 1, id: 2 },
-    { name: "Actividad 3", duration: 3, daysSpan: 1, id: 3 },
-    { name: "Actividad 4", duration: 4, daysSpan: 1, id: 4 },
-    { name: "Actividad 5", duration: 5, daysSpan: 1, id: 5 },
-    { name: "Actividad 6", duration: 6, daysSpan: 1, id: 6 },
-    { name: "Trampantojo", duration: 7, daysSpan: 1, id: 7 },
-  ];
+  // fetch de actividades
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    // fetch("/activities.json") // Provisional para pruebas locales
+    fetch("/api/activities")
+      .then((res) => res.json())
+      .then((data) => setActivities(data))
+      .catch((err) => console.error("Error al cargar actividades:", err));
+  }, []);
 
   // Estados para el rango de fechas
   const [startDate, setStartDate] = useState(null);
@@ -45,15 +46,7 @@ export default function ScheduleBuilder() {
         });
 
   // Mapa del estado de las celdas
-  const [cellMap, setCellMap] = useState({
-    // "14-0": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-1": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-2": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-3": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-4": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-5": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-    //     "14-6": {name: 'Comida', duration: 1, daysSpan: 7, id: 1000, instanceId: 1000},
-  });
+  const [cellMap, setCellMap] = useState({});
 
   // ---------- HANDLERS ----------
 
@@ -81,7 +74,7 @@ export default function ScheduleBuilder() {
   return (
     <>
       <header className="py-3 text-center">
-        <h1 className="mb-0">🌿 Actividades y Juegos</h1>
+        <h1 className="mb-0">🌿 Ocio Educativo</h1>
       </header>
       <nav className="navbar navbar-expand-lg navbar-dark">
         <div className="container">
@@ -110,14 +103,14 @@ export default function ScheduleBuilder() {
       </nav>
 
       <main>
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <h3>Nueva programación</h3>
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex my-3 align-items-center">
-                <details open className="d-flex">
+        <div className="d-flex">
+          <div className="d-flex flex-column col-2">
+            <div>
+              <h3>Nueva programación</h3>
+              <div className="my-3 align-items-center">
+                <details open>
                   <summary>Rango de fechas</summary>
-                  <div className="d-flex gap-2 col-md-8 mx-2">
+                  <div className="d-flex gap-2 col-md-10 mx-2 my-2">
                     <DatePicker
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
@@ -147,27 +140,25 @@ export default function ScheduleBuilder() {
                 </details>
               </div>
             </div>
+            <Activities activities={activities} />
           </div>
-          <div className="d-flex gap-2">
-            <button className="btn btn-dark">Guardar</button>
-            <button className="btn btn-dark">Imprimir</button>
-            <button className="btn btn-dark">Salir</button>
+
+          <div className="calendar col-10">
+            <Schedule
+              days={days}
+              hourSlots={hourSlots}
+              cellMap={cellMap}
+              handleDropActivity={handleDropActivity}
+              handleMoveActivity={handleMoveActivity}
+              handleRemoveActivity={handleRemoveActivity}
+            />
           </div>
-        </div>
-
-        <div className="calendar d-flex">
-          <Activities activities={activities} />
-
-          <Schedule
-            days={days}
-            hourSlots={hourSlots}
-            cellMap={cellMap}
-            handleDropActivity={handleDropActivity}
-            handleMoveActivity={handleMoveActivity}
-            handleRemoveActivity={handleRemoveActivity}
-          />
         </div>
       </main>
+
+      <footer class="py-4 text-center mt-2">
+        <p class="mb-0">&copy; {new Date().getFullYear()} Actividades Verdes</p>
+      </footer>
     </>
   );
 }

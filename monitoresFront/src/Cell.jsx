@@ -56,7 +56,7 @@ export default function Cell({
       >
         {activity.isHead && (
           <>
-            <span>{activity.name}</span>
+            <span><strong>{activity.title}</strong></span>
             <button
               className="btn btn-sm btn-danger"
               onClick={() => onDeleteActivity?.(activity.instanceId)}

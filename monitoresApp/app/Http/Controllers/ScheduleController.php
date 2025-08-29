@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\Log;
 class ScheduleController extends Controller
 {
     /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        if (Auth::user()->schedules()->count() > 2) {
+            return redirect()->route('profile.show')->withErrors(['error' => 'No puedes crear más programaciones.']);
+        }
+
+        return redirect(asset('react/index.html'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -28,6 +40,17 @@ class ScheduleController extends Controller
         return redirect()
             ->route('profile.show', $user->id)
             ->with('new_schedule_id', $schedule->id);
+
+        // $data = $request->validate([
+        //     'cellMap' => 'required|array',
+        // ]);
+
+        // $schedule = Schedule::create([
+        //     'user_id' => auth()->id(), // opcional
+        //     'data' => json_encode($data['cellMap']),
+        // ]);
+
+        // return response()->json(['success' => true, 'schedule' => $schedule]);
     }
 
 

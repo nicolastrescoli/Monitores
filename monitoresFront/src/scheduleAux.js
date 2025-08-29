@@ -7,20 +7,20 @@ export function placeActivity(cellMap, activity, date, hour, days, hourSlots) {
   const newMap = { ...cellMap };
 
   // Verificar solapamientos ignorando celdas propias
-  for (let i = 0; i < activity.duration; i++) {
+  for (let i = 0; i < Math.ceil(activity.duration/60); i++) {
     const key = `${rowIndex + i}-${colIndex}`;
     if (newMap[key] && newMap[key].instanceId !== instanceId) {
       return null; // espacio ocupado por otra actividad
     }
   }
 
-  for (let i = 0; i < activity.duration; i++) {
+  for (let i = 0; i < Math.ceil(activity.duration/60); i++) {
     const key = `${rowIndex + i}-${colIndex}`;
     newMap[key] = {
       ...activity,
       instanceId,
       isHead: i === 0,
-      isTail: i === activity.duration - 1,
+      isTail: i === Math.ceil(activity.duration/60) - 1,
     };
   }
 

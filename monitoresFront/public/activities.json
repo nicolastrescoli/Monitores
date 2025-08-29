@@ -1,0 +1,10 @@
+[
+    { "name": "Actividad 1", "duration": 1, "daysSpan": 1, "id": 1 },
+    { "name": "Actividad 2", "duration": 2, "daysSpan": 1, "id": 2 },
+    { "name": "Actividad 3", "duration": 3, "daysSpan": 1, "id": 3 },
+    { "name": "Actividad 4", "duration": 4, "daysSpan": 1, "id": 4 },
+    { "name": "Actividad 5", "duration": 5, "daysSpan": 1, "id": 5 },
+    { "name": "Actividad 6", "duration": 6, "daysSpan": 1, "id": 6 },
+    { "name": "Trampantojo", "duration": 7, "daysSpan": 1, "id": 7 }
+]
+

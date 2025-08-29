@@ -81,28 +81,24 @@
                     <h5 class="mb-3">Mis programaciones</h5>
                     {{-- Aquí podrías mostrar programaciones si las tienes --}}
                     @if (Auth::user() === $user)
-                        {{-- <div class="d-flex gap-2">
+                        <div class="d-flex gap-2">
                             <a href="{{ route('schedule.create') }}" class="btn btn-success btn-sm">Nueva Programación</a>
-                        </div> --}}
-                        <form method="POST" action="{{ route('schedule.store') }}">
+                        </div>
+                        {{-- <form method="POST" action="{{ route('schedule.store') }}">
                             @csrf
-                            <button type="submit">Nueva programación</button>
-                        </form>
+                            <button type="submit" class="btn btn-success btn-sm">Nueva programación</button>
+                        </form> --}}
                     @endif
                     </div>
                     @if ($schedules->isEmpty())
                         <div class="alert alert-info">Aún no has creado ninguna programación.</div>
                     @else
                         <ul id="schedule-list">
-                            @foreach ($schedules as $schedule)
+                            {{-- @foreach ($schedules as $schedule)
                                 <li id="schedule-{{ $schedule->id }}">
-                                    <input type="text" class="rename-input" data-id="{{ $schedule->id }}" value="{{ $schedule->name }}" autofocus>
-                                    <form method="POST" action="{{ route('schedule.rename', $schedule->id) }}" class="rename-form" data-id="{{ $schedule->id }}" style="display: none;">
-                                        @csrf
-                                        <input type="hidden" name="name">
-                                    </form>
+                                    <a href="{{ route('schedule.show', $schedule)}}">{{ $schedule->name }}</a>
                                 </li>
-                            @endforeach
+                            @endforeach --}}
                         </ul>
                     @endif
                 </div>
@@ -126,7 +122,7 @@
 </div>
 </div>
 </div>
-@if (session('new_schedule_id'))
+{{-- @if (session('new_schedule_id'))
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         const newId = {{ session('new_schedule_id') }};
@@ -137,8 +133,8 @@
         }
     });
 </script>
-@endif
-<script>
+@endif --}}
+{{-- <script>
 document.querySelectorAll('.rename-input').forEach(input => {
     const id = input.dataset.id;
 
@@ -174,7 +170,7 @@ document.querySelectorAll('.rename-input').forEach(input => {
         save();
     });
 });
-</script>
+</script> --}}
 
 
 @endsection

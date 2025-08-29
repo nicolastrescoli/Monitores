@@ -10,6 +10,37 @@ export default function Schedule({
   handleMoveActivity,
   handleRemoveActivity,
 }) {
+
+  // Handlers de botones Guardar, Imprimir, Salir
+  const handleStoreSchedule = async () => {
+    try {
+      const response = await fetch("/api/schedules", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content"),
+        },
+        body: JSON.stringify({ cellMap }), // estado actual del calendario
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Calendario guardado correctamente ✅");
+      } else {
+        alert("Error al guardar el calendario ❌");
+      }
+    } catch (error) {
+      console.error("Error guardando calendario:", error);
+      alert("Error al guardar calendario ❌");
+    }
+  };
+
+  const handlePrint = () => {};
+  const handleExit = () => {};
+
   const [page, setPage] = useState(0);
 
   // Referencia para mostrar la tabla desde las 8:00
@@ -32,7 +63,7 @@ export default function Schedule({
       <div
         className="table-wrapper"
         ref={tableWrapperRef}
-        style={{ maxHeight: "500px", overflowY: "auto" }} // scrollable
+        style={{ maxHeight: "542px", overflowY: "auto" }} // scrollable
       >
         <table
           className="table table-bordered"
@@ -101,15 +132,31 @@ export default function Schedule({
   }
 
   return (
-    <div className="col-3 col-md-10">
-      <Paginador
-        days={days}
-        page={page}
-        endIndex={endIndex}
-        daysSlice={daysSlice}
-        setPage={setPage}
-      />
+    <>
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <div className="col-2"></div>
+        <div>
+          <Paginador
+            days={days}
+            page={page}
+            endIndex={endIndex}
+            daysSlice={daysSlice}
+            setPage={setPage}
+          />
+        </div>
+        <div className="d-flex gap-2 col-2">
+          <button className="btn btn-dark" onClick={handleStoreSchedule}>
+            Guardar
+          </button>
+          <button className="btn btn-dark" onClick={handlePrint}>
+            Imprimir
+          </button>
+          <button className="btn btn-dark" onClick={handleExit}>
+            Salir
+          </button>
+        </div>
+      </div>
       {renderTable(daysSlice, hourSlots)}
-    </div>
+    </>
   );
 }

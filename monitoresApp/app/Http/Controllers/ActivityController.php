@@ -25,6 +25,12 @@ class ActivityController extends Controller
         return view('activities.index', compact('activities'));
     }
 
+    public function apiIndex()
+    {
+        $activities = Activity::where('visibility', 'public')->get();
+        return response()->json($activities);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
