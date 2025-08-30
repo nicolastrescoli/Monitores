@@ -55,7 +55,7 @@ class Activity extends Model
     public function schedules()
     {
         return $this->belongsToMany(Schedule::class)
-            ->withPivot('start_time', 'end_time')
+            ->withPivot('day', 'hour', 'cell_uuid', 'instance_id')
             ->withTimestamps();
     }
 

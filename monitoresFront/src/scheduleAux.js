@@ -1,31 +1,36 @@
 export function placeActivity(cellMap, activity, date, hour, days, hourSlots) {
-  const rowIndex = hourSlots.findIndex(h => h.start === hour);
+  const rowIndex = hourSlots.findIndex(h => h === hour);
   const colIndex = days.findIndex(d => d.toDateString() === date.toDateString());
   if (rowIndex < 0 || colIndex < 0) return cellMap;
 
   const instanceId = activity.instanceId || Date.now() + "-" + Math.random();
   const newMap = { ...cellMap };
 
+  const durationRows = Math.ceil(activity.duration / 60); // asumir 60 min por celda, ajustar si tu interval es distinto
+
   // Verificar solapamientos ignorando celdas propias
-  for (let i = 0; i < Math.ceil(activity.duration/60); i++) {
+  for (let i = 0; i < durationRows; i++) {
     const key = `${rowIndex + i}-${colIndex}`;
     if (newMap[key] && newMap[key].instanceId !== instanceId) {
       return null; // espacio ocupado por otra actividad
     }
   }
 
-  for (let i = 0; i < Math.ceil(activity.duration/60); i++) {
+  for (let i = 0; i < durationRows; i++) {
     const key = `${rowIndex + i}-${colIndex}`;
     newMap[key] = {
       ...activity,
       instanceId,
       isHead: i === 0,
-      isTail: i === Math.ceil(activity.duration/60) - 1,
+      isTail: i === durationRows - 1,
+      hour,             // hora de la celda
+      day: date.toLocaleDateString(), // día de la celda en formato "dd/mm/yyyy"
     };
   }
 
   return newMap;
 }
+
 
 export function removeActivity(cellMap, instanceId) {
   const newMap = { ...cellMap };
@@ -56,6 +61,8 @@ export function moveActivity(cellMap, instanceId, date, hour, days, hourSlots) {
 
   // eliminar la actividad antigua
   const finalMap = removeActivity(newMap, instanceId);
-  // volver a colocarla en su nueva posición
+
+  // volver a colocarla en su nueva posición con hora y día actualizados
   return placeActivity(finalMap, activity, date, hour, days, hourSlots);
 }
+

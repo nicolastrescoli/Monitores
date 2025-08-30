@@ -13,11 +13,19 @@ class Schedule extends Model
         return $this->belongsTo(User::class);
     }
 
+    // public function activities()
+    // {
+    //     return $this->belongsToMany(Activity::class)
+    //         ->withPivot('start_time', 'end_time')
+    //         ->withTimestamps();
+    // }
+
     public function activities()
-    {
-        return $this->belongsToMany(Activity::class)
-            ->withPivot('start_time', 'end_time')
-            ->withTimestamps();
-    }
+{
+    return $this->belongsToMany(Activity::class, 'activity_schedule')
+        ->withPivot('day', 'hour', 'cell_uuid', 'instance_id')
+        ->withTimestamps();
+}
+
 }
 

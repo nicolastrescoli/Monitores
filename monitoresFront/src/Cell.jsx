@@ -6,27 +6,38 @@ export default function Cell({
   onMoveActivity,
   onDeleteActivity,
 }) {
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData("application/json"));
-    if (data.instanceId) {
-      onMoveActivity?.(data.instanceId, date, hour);
-    } else if (data.activityId) {
-      onDropActivity?.(data.activityId, date, hour);
-    }
-  };
+const handleDrop = (e) => {
+  e.preventDefault();
+  const data = JSON.parse(e.dataTransfer.getData("application/json"));
+  if (data.instanceId) {
+    onMoveActivity?.(data.instanceId, date, hour);
+  } else if (data.activityId) {
+    onDropActivity?.(data.activityId, date, hour);
+  }
+};
+
 
   const handleDragStart = (e) => {
     if (!activity) return;
-    e.dataTransfer.setData("application/json",
-      JSON.stringify({ instanceId: activity.instanceId, activityId: activity.id })
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        instanceId: activity.instanceId,
+        activityId: activity.id,
+      })
     );
   };
 
   const handleDragOver = (e) => e.preventDefault();
 
   if (!activity) {
-    return <td onDrop={handleDrop} onDragOver={handleDragOver} style={{ height: 60 }} />;
+    return (
+      <td
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        style={{ height: 15 }}
+      />
+    );
   }
 
   return (
@@ -34,10 +45,6 @@ export default function Cell({
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       style={{
-        borderTopLeftRadius: activity.isHead ? 8 : 0,
-        borderBottomLeftRadius: activity.isTail ? 8 : 0,
-        borderTopRightRadius: activity.isHead ? 8 : 0,
-        borderBottomRightRadius: activity.isTail ? 8 : 0,
         padding: 0,
         height: 60,
       }}
@@ -47,6 +54,10 @@ export default function Cell({
         draggable
         onDragStart={handleDragStart}
         style={{
+          borderTopLeftRadius: activity.isHead ? 8 : 0,
+          borderBottomLeftRadius: activity.isTail ? 8 : 0,
+          borderTopRightRadius: activity.isHead ? 8 : 0,
+          borderBottomRightRadius: activity.isTail ? 8 : 0,
           height: "100%",
           width: "100%",
           display: "flex",
@@ -56,7 +67,9 @@ export default function Cell({
       >
         {activity.isHead && (
           <>
-            <span><strong>{activity.title}</strong></span>
+            <span>
+              <strong>{activity.title}</strong>
+            </span>
             <button
               className="btn btn-sm btn-danger"
               onClick={() => onDeleteActivity?.(activity.instanceId)}

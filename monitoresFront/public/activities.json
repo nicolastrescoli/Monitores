@@ -1,10 +1,10 @@
 [
-    { "name": "Actividad 1", "duration": 1, "daysSpan": 1, "id": 1 },
-    { "name": "Actividad 2", "duration": 2, "daysSpan": 1, "id": 2 },
-    { "name": "Actividad 3", "duration": 3, "daysSpan": 1, "id": 3 },
-    { "name": "Actividad 4", "duration": 4, "daysSpan": 1, "id": 4 },
-    { "name": "Actividad 5", "duration": 5, "daysSpan": 1, "id": 5 },
-    { "name": "Actividad 6", "duration": 6, "daysSpan": 1, "id": 6 },
-    { "name": "Trampantojo", "duration": 7, "daysSpan": 1, "id": 7 }
+    { "title": "Actividad 1", "duration": 100, "daysSpan": 1, "id": 1 },
+    { "title": "Actividad 2", "duration": 200, "daysSpan": 1, "id": 2 },
+    { "title": "Actividad 3", "duration": 300, "daysSpan": 1, "id": 3 },
+    { "title": "Actividad 4", "duration": 400, "daysSpan": 1, "id": 4 },
+    { "title": "Actividad 5", "duration": 500, "daysSpan": 1, "id": 5 },
+    { "title": "Actividad 6", "duration": 600, "daysSpan": 1, "id": 6 },
+    { "title": "Trampantojo", "duration": 700, "daysSpan": 1, "id": 7 }
 ]
 

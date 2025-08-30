@@ -121,9 +121,8 @@ Route::get('/schedule/create', [ScheduleController::class, 'create'])
 
 // Rutas bajo el middleware 'api'
 Route::middleware('api')->group(function () {
-
-    Route::get('/api/activities', [ActivityController::class, 'apiIndex']); // Lista de actividades en JSON para ser pedida por React
-
-    // Route::post('/schedules', [ScheduleController::class, 'store']);
-
+    // Lista de actividades en JSON para ser pedida por React
+    Route::get('/api/activities', [ActivityController::class, 'apiIndex']);
+    // Guardar nuevo calendario desde React
+    Route::post('/schedules', [ScheduleController::class, 'store']);
 });
