@@ -1,6 +1,10 @@
+import axios from "./axios"; // el archivo que creaste antes
+
 export function placeActivity(cellMap, activity, date, hour, days, hourSlots) {
-  const rowIndex = hourSlots.findIndex(h => h === hour);
-  const colIndex = days.findIndex(d => d.toDateString() === date.toDateString());
+  const rowIndex = hourSlots.findIndex((h) => h === hour);
+  const colIndex = days.findIndex(
+    (d) => d.toDateString() === date.toDateString()
+  );
   if (rowIndex < 0 || colIndex < 0) return cellMap;
 
   const instanceId = activity.instanceId || Date.now() + "-" + Math.random();
@@ -23,14 +27,13 @@ export function placeActivity(cellMap, activity, date, hour, days, hourSlots) {
       instanceId,
       isHead: i === 0,
       isTail: i === durationRows - 1,
-      hour,             // hora de la celda
+      hour, // hora de la celda
       day: date.toLocaleDateString(), // día de la celda en formato "dd/mm/yyyy"
     };
   }
 
   return newMap;
 }
-
 
 export function removeActivity(cellMap, instanceId) {
   const newMap = { ...cellMap };
@@ -66,3 +69,30 @@ export function moveActivity(cellMap, instanceId, date, hour, days, hourSlots) {
   return placeActivity(finalMap, activity, date, hour, days, hourSlots);
 }
 
+export async function saveSchedule(cellMap) {
+  axios.defaults.withCredentials = true;
+  axios.defaults.baseURL = "http://localhost:8000";
+
+  try {
+
+    await axios.get("/sanctum/csrf-cookie");
+
+    const res = await axios.post("/api/schedules",
+      { cell_map: JSON.parse(cellMap) },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    console.log(res.data);
+  } catch (error) {
+    if (error.response) {
+      console.error("Código:", error.response.status);
+      console.error("Detalles:", error.response.data);
+    } else {
+      console.error("Error desconocido:", error);
+    }
+  }
+}

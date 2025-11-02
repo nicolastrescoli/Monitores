@@ -10,8 +10,8 @@ export default function ScheduleBuilder() {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch("/activities.json") // Para pruebas locales
-      // fetch("/api/activities")
+    // fetch("/activities.json") // Para pruebas locales
+      fetch("http://localhost:8000/api/activities")
       .then((res) => res.json())
       .then((data) => setActivities(data))
       .catch((err) => console.error("Error al cargar actividades:", err));

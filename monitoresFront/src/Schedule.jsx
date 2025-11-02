@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Paginador from "./Paginador.jsx";
 import Cell from "./Cell.jsx";
+import { saveSchedule } from "./scheduleAux.js";
 
 export default function Schedule({
   days,
@@ -10,9 +11,15 @@ export default function Schedule({
   handleMoveActivity,
   handleRemoveActivity,
 }) {
-  
   // Handlers de botones Guardar, Imprimir, Salir
-  const handleStoreSchedule = () => {};
+  function handleStoreSchedule(cellMap) {
+    try {
+      saveSchedule(JSON.stringify(cellMap));
+    } catch (error) {
+      console.log("Error al guardar", error);
+    }
+  }
+
   const handlePrint = () => {};
   const handleExit = () => {};
 
@@ -33,54 +40,67 @@ export default function Schedule({
     }
   }, [page, days]);
 
-const renderTable = (datesSlice, hourSlots) => {
-  return (
-    <div
-      className="table-wrapper"
-      ref={tableWrapperRef}
-      style={{ maxHeight: "542px", overflowY: "auto" }}
-    >
-      <table className="table table-bordered" style={{ tableLayout: "fixed" }}>
-        <thead>
-          <tr>
-            <th style={{ width: 60 }}>Hora</th>
-            {datesSlice.map((date, colIdx) => (
-              <th key={colIdx}>{date ? new Date(date).toLocaleDateString() : ""}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {hourSlots.map((slot, rowIdx) => (
-            <tr key={rowIdx}>
-              <td>{slot}</td>
-              {datesSlice.map((date, colIdx) => {
-                if (!date) {
-                  return <td key={`empty-${rowIdx}-${colIdx}`} style={{ border: "none", background: "#e8dbdb", padding: 0 }} />;
-                }
-
-                const key = `${rowIdx}-${startIndex + colIdx}`;
-                const activity = cellMap[key];
-
-                return (
-                  <Cell
-                    key={key}
-                    hour={slot}
-                    date={date}
-                    activity={activity}
-                    onDropActivity={handleDropActivity}
-                    onMoveActivity={handleMoveActivity}
-                    onDeleteActivity={handleRemoveActivity}
-                  />
-                );
-              })}
+  const renderTable = (datesSlice, hourSlots) => {
+    return (
+      <div
+        className="table-wrapper"
+        ref={tableWrapperRef}
+        style={{ maxHeight: "542px", overflowY: "auto" }}
+      >
+        <table
+          className="table table-bordered"
+          style={{ tableLayout: "fixed" }}
+        >
+          <thead>
+            <tr>
+              <th style={{ width: 60 }}>Hora</th>
+              {datesSlice.map((date, colIdx) => (
+                <th key={colIdx}>
+                  {date ? new Date(date).toLocaleDateString() : ""}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+          </thead>
+          <tbody>
+            {hourSlots.map((slot, rowIdx) => (
+              <tr key={rowIdx}>
+                <td>{slot}</td>
+                {datesSlice.map((date, colIdx) => {
+                  if (!date) {
+                    return (
+                      <td
+                        key={`empty-${rowIdx}-${colIdx}`}
+                        style={{
+                          border: "none",
+                          background: "#e8dbdb",
+                          padding: 0,
+                        }}
+                      />
+                    );
+                  }
 
+                  const key = `${rowIdx}-${startIndex + colIdx}`;
+                  const activity = cellMap[key];
+
+                  return (
+                    <Cell
+                      key={key}
+                      hour={slot}
+                      date={date}
+                      activity={activity}
+                      onDropActivity={handleDropActivity}
+                      onMoveActivity={handleMoveActivity}
+                      onDeleteActivity={handleRemoveActivity}
+                    />
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   // calcular los días de la página actual
   const startIndex = page * 7;
@@ -107,7 +127,10 @@ const renderTable = (datesSlice, hourSlots) => {
           />
         </div>
         <div className="d-flex gap-2 col-2">
-          <button className="btn btn-dark" onClick={handleStoreSchedule}>
+          <button
+            className="btn btn-dark"
+            onClick={() => handleStoreSchedule(cellMap)}
+          >
             Guardar
           </button>
           <button className="btn btn-dark" onClick={handlePrint}>

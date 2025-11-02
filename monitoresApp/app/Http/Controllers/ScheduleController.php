@@ -28,52 +28,29 @@ class ScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $user = Auth::user();
-
-    //     $schedule = Schedule::create([
-    //         'name' => 'Nueva programación',
-    //         'user_id' => $user->id,
-    //     ]);
-
-    //     return redirect()
-    //         ->route('profile.show', $user->id)
-    //         ->with('new_schedule_id', $schedule->id);        
-    // }
-
     public function store(Request $request)
     {
-        // Validación básica
-        $data = $request->validate([
-            'rows' => 'required|array',
-            'rows.*.schedule_id' => 'required|exists:schedules,id',
-            'rows.*.activity_id' => 'required|exists:activities,id',
-            'rows.*.day' => 'required|date',
-            'rows.*.hour' => 'required|date_format:H:i',
-            'rows.*.cell_uuid' => 'required|uuid',
-            'rows.*.instance_id' => 'required|uuid',
+        // Chapuza? Guardar directamente el JSON del CellMap para rápido envio y reconstrucción en React. No se van a hacer muchas consultas tampoco.
+        // dd('Hola');
+        // $user = Auth::user();
+
+        $validated = $request->validate([
+            'cell_map' => 'required|array',
         ]);
 
-        // Insertar o actualizar cada celda según cell_uuid
-        foreach ($data['rows'] as $row) {
-            DB::table('activity_schedule')->updateOrInsert(
-                ['cell_uuid' => $row['cell_uuid']], // si ya existe, actualiza
-                [
-                    'schedule_id' => $row['schedule_id'],
-                    'activity_id' => $row['activity_id'],
-                    'day'         => $row['day'],
-                    'hour'        => $row['hour'],
-                    'instance_id' => $row['instance_id'],
-                    'updated_at'  => now(),
-                    'created_at'  => now(), // si no existe, se crea
-                ]
-            );
-        }
+        $schedule = Schedule::create([
+            'name' => 'Nueva programación',
+            'description' => 'Prueba ambientación',
+            // 'user_id' => $user->id,
+            'user_id' => 1,
+            'cell_map' => $validated['cell_map'],
+        ]);
 
-        return response()->json(['message' => 'Calendario guardado correctamente']);
+        return response()->json([
+            'message' => 'Horario guardado correctamente',
+            'schedule' => $schedule,
+        ], 201);        
     }
-
 
     /**
      * Display the specified resource.

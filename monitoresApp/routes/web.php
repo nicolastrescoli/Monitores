@@ -5,7 +5,6 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ScheduleController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Autenticación
@@ -105,24 +104,24 @@ Route::get('/{activity}/pdf', [ActivityController::class, 'generatePdf'])->name(
 */
 
 // Uso de Blade (sin React) -- versión anterior
-Route::post('/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
-Route::post('/schedule/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedule.edit');
-Route::post('/schedules/{schedule}/rename', [ScheduleController::class, 'rename'])->name('schedule.rename');
+// Route::post('/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
+// Route::post('/schedule/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedule.edit');
+// Route::post('/schedules/{schedule}/rename', [ScheduleController::class, 'rename'])->name('schedule.rename');
 // Route::get('/schedule/{schedule}', [ScheduleController::class, 'show'])->name('schedule.show');
 
-Route::post('/calendar/assign', [ScheduleController::class, 'assign'])
-    ->name('calendar.assign');
-Route::delete('/calendar/unassign', [ScheduleController::class, 'unassign'])->name('calendar.unassign');
+// Route::post('/calendar/assign', [ScheduleController::class, 'assign'])
+//     ->name('calendar.assign');
+// Route::delete('/calendar/unassign', [ScheduleController::class, 'unassign'])->name('calendar.unassign');
 
 // Uso de React para el programador
 
 Route::get('/schedule/create', [ScheduleController::class, 'create'])
 ->name('schedule.create'); // Redirige a la aplicación React
 
-// Rutas bajo el middleware 'api'
-Route::middleware('api')->group(function () {
-    // Lista de actividades en JSON para ser pedida por React
-    Route::get('/api/activities', [ActivityController::class, 'apiIndex']);
-    // Guardar nuevo calendario desde React
-    Route::post('/schedules', [ScheduleController::class, 'store']);
-});
+// // Rutas bajo el middleware 'api'
+// Route::prefix('api')->middleware(['api','web'])->group(function () {
+//     // Lista de actividades en JSON para ser pedida por React
+//     Route::get('/activities', [ActivityController::class, 'apiIndex']);
+//     // Guardar nuevo calendario desde React
+//     Route::post('/schedules', [ScheduleController::class, 'store']);
+// });
