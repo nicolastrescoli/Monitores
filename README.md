@@ -81,3 +81,6 @@ sanctum.php
     'supports_credentials' => true,
 ],
 
+--------------------------------------
+
+npm install react-router-dom

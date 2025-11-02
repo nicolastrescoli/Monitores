@@ -76,8 +76,7 @@ export async function saveSchedule(cellMap) {
   try {
 
     await axios.get("/sanctum/csrf-cookie");
-
-    const res = await axios.post("/api/schedules",
+    await axios.post("/api/schedules",
       { cell_map: JSON.parse(cellMap) },
       {
         headers: {
@@ -86,7 +85,7 @@ export async function saveSchedule(cellMap) {
         },
       }
     );
-    console.log(res.data);
+    
   } catch (error) {
     if (error.response) {
       console.error("Código:", error.response.status);

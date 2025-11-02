@@ -31,6 +31,22 @@ class ActivityController extends Controller
         return response()->json($activities);
     }
 
+    public function apiActivityDetail(Activity $activity)
+    {
+        // Cargar las relaciones 'materials' y 'risks' con eager loading
+        $activity->load('materials', 'risks');
+
+        $creator = $activity->creator;
+
+        // Pasamos la actividad completa, con las relaciones ya cargadas
+        return response()->json([
+            'activity' => $activity,
+            'materials' => $activity->materials,  // colección de materiales con datos pivote
+            'risks' => $activity->risks,          // colección de riesgos
+            'creator' => $creator,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

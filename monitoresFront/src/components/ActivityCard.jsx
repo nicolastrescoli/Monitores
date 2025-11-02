@@ -1,0 +1,113 @@
+import { Link } from "react-router-dom";
+
+export default function ActivityCard({ activity, currentUserId, userFavorites = [] }) {
+  const isOwner = currentUserId && activity.user_id === currentUserId;
+  const isFavorite = userFavorites.includes(activity.id);
+  const isOwnerWithPublic = isOwner && activity.visibility === "public";
+
+  // Mapear type_id a nombre
+  const typeNames = {
+    1: "Juego",
+    2: "Actividad Física",
+    3: "Manualidad",
+  };
+  const typeName = typeNames[activity.type_id] || "Otro";
+
+  return (
+    <div
+      className="col-md-4 activity-item"
+      data-nombre={activity.title.toLowerCase()}
+      data-tipo={typeName}
+      data-edad={activity.min_age}
+      data-participantes={activity.num_participants}
+    >
+      <div
+        className={`card h-100 border-0 shadow-lg rounded-4 ${
+          isOwner ? "border-success bg-info" : "border-secondary bg-white"
+        }`}
+      >
+        <div className="card-body d-flex flex-column justify-content-between">
+          <div>
+            <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
+              <h5 className="card-title text-primary">{activity.title}</h5>
+              <p className="card-text text-dark">
+                <span className="badge bg-success mb-1">{typeName}</span>
+                <br />
+                <strong>Edad:</strong> {activity.min_age}+
+                <br />
+                <strong>Participantes:</strong> {activity.num_participants}
+              </p>
+            </Link>
+          </div>
+
+          {/* Acciones del usuario */}
+          {!isOwnerWithPublic && (
+            <div className="mt-3">
+              {isOwner ? (
+                <>
+                  {/* Editar y eliminar */}
+                  <a href={`/activities/${activity.id}/edit`} className="btn btn-sm btn-warning ms-1">
+                    Editar
+                  </a>
+                  <button
+                    className="btn btn-outline-danger btn-sm ms-1"
+                    onClick={() => {
+                      // Aquí llamas a tu función de eliminar actividad
+                      console.log("Eliminar actividad", activity.id);
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </>
+              ) : activity.visibility === "public" ? (
+                <>
+                  {/* Favoritos */}
+                  <button
+                    className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-secondary"}`}
+                    onClick={() => {
+                      console.log(isFavorite ? "Quitar favorito" : "Añadir favorito", activity.id);
+                    }}
+                  >
+                    {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
+                  </button>
+                </>
+              ) : null}
+
+              {/* Clonar si es favorito y público */}
+              {isFavorite && activity.visibility === "public" && (
+                <button
+                  className="btn btn-sm ms-1"
+                  onClick={() => console.log("Clonar actividad", activity.id)}
+                >
+                  Modificar
+                </button>
+              )}
+
+              {/* Publicación */}
+              {isOwner && (
+                <div className="mt-3">
+                  {activity.visibility === "private" && (
+                    <button
+                      className="btn btn-primary btn-sm ms-1"
+                      onClick={() => console.log("Solicitar publicación", activity.id)}
+                    >
+                      Solicitar publicación
+                    </button>
+                  )}
+                  {activity.visibility === "pending" && (
+                    <button
+                      className="btn btn-outline-warning btn-sm ms-1"
+                      onClick={() => console.log("Cancelar envío", activity.id)}
+                    >
+                      Cancelar envío
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

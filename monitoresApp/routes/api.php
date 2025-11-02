@@ -11,5 +11,7 @@ use App\Http\Controllers\ScheduleController;
 
 // Lista de actividades en JSON para ser pedida por React
 Route::get('/activities', [ActivityController::class, 'apiIndex']);
+// Detalle de actividad
+Route::get('/activities/{activity}', [ActivityController::class, 'apiActivityDetail']);
 // Guardar nuevo calendario desde React
 Route::post('/schedules', [ScheduleController::class, 'store']);
