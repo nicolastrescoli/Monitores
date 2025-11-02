@@ -7,9 +7,87 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Activity;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+
+    public function apiRegister(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        // Auth::login($user);
+
+        return response()->json(['message' => 'Usuario registrado', 'user' => $user]);
+    }
+
+    public function apiLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        }
+
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
+    }
+
+    public function apiLogout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Sesión cerrada correctamente']);
+    }
+
+    public function apiShow(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        $activities = Activity::where('user_id', $user->id)->get();
+        $schedules = $user->schedules()->with('activities')->get();
+        $user->load(['sentFriendRequests', 'receivedFriendRequests']);
+
+        $contacts = $user->sentFriendRequests
+            ->merge($user->receivedFriendRequests)
+            ->unique('id')
+            ->values();
+
+        return response()->json([
+            'user' => $user,
+            'activities' => $activities,
+            'schedules' => $schedules,
+            'contacts' => $contacts,
+        ]);
+    }
+
     public function showLoginForm()
     {
         return view('auth.login');

@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-green">
       <div className="container">
         <Link className="navbar-brand" to="/">
           Inicio
@@ -20,7 +20,7 @@ export default function Navbar() {
 
         {currentUser ? (
           <>
-            <Link className="navbar-brand" to={`/profile/${currentUser.id}`}>
+            <Link className="navbar-brand" to={`/profile`}>
               Perfil
             </Link>
             <Link className="navbar-brand" to="/community">
@@ -50,7 +50,7 @@ export default function Navbar() {
 
         {currentUser && (
           <button
-            className="btn btn-outline-light ms-auto"
+            className="btn btn-outline-light"
             onClick={handleLogout}
           >
             Logout

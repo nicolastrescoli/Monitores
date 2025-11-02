@@ -1,9 +1,10 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Register() {
-  const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext); // reutilizamos login() tras el registro
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -21,7 +22,7 @@ export default function Register() {
     setForm((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = [];
 
@@ -36,9 +37,29 @@ export default function Register() {
       return;
     }
 
-    // Simulación de registro: loguea al usuario directamente
-    login(form.name, form.role);
-    navigate("/");
+    try {
+      // 🔹 Llamada real al endpoint de Laravel
+      await axios.post("http://localhost:8000/api/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        password_confirmation: form.passwordConfirmation,
+        role: form.role,
+      });
+
+      // 🔹 Una vez registrado, lo logueamos automáticamente
+      await login(form.email, form.password);
+
+      navigate("/"); // Redirige a inicio
+    } catch (err) {
+      console.error(err);
+      if (err.response?.data?.errors) {
+        const backendErrors = Object.values(err.response.data.errors).flat();
+        setErrors(backendErrors);
+      } else {
+        setErrors(["Error al registrar. Inténtalo de nuevo."]);
+      }
+    }
   };
 
   return (

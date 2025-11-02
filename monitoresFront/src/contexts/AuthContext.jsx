@@ -1,25 +1,50 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
-// Creamos el contexto
 export const AuthContext = createContext();
 
-// Proveedor de contexto
 export function AuthProvider({ children }) {
-  // Estado del usuario: null = no logueado
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  // Función de login simulada
-  const login = (username, role = "user") => {
-    setUser({ name: username, role }); // role puede ser "user" o "admin"
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [token]);
+
+  const login = async (email, password) => {
+    const res = await axios.post("http://localhost:8000/api/login", {
+      email,
+      password,
+    });
+
+    const { access_token, user } = res.data;
+
+    setToken(access_token);
+    setUser(user);
+
+    localStorage.setItem("token", access_token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
   };
 
-  // Función de logout
   const logout = () => {
+    setToken(null);
     setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

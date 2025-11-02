@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
-import { useContext } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
+import axios from "axios";
 
 function Community() {
   return (
@@ -19,7 +20,7 @@ function Community() {
   );
 }
 
-// Componente para rutas privadas
+// 🔒 Componente para rutas privadas
 function PrivateRoute({ children, roles }) {
   const { user } = useContext(AuthContext);
 
@@ -28,32 +29,45 @@ function PrivateRoute({ children, roles }) {
   return children;
 }
 
-// Datos simulados
-const dummyUsers = [
-  { id: 1, name: "Alice", email: "alice@example.com", avatar: "", description: "Monitor", createdAt: "2023-01-01" },
-  { id: 2, name: "Bob", email: "bob@example.com", avatar: "", description: "Organización", createdAt: "2023-03-15" },
-];
-
-const dummyActivities = [
-  { id: 1, nombre: "Carrera de Sacos", tipo: "Actividad Física", edad: 8, participantes: 10, puntuacion: 5, creatorId: 1, visibility: "public" },
-  { id: 2, nombre: "Pintura con Acuarelas", tipo: "Manualidad", edad: 6, participantes: 5, puntuacion: 4, creatorId: 2, visibility: "public" },
-];
-
 export default function App() {
-  const { user: currentUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+
+  // ✅ Verifica si hay token y carga el usuario al iniciar la app
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      axios
+        .get("/api/user")
+        .then((res) => setUser(res.data))
+        .catch(() => {
+          localStorage.removeItem("token");
+          delete axios.defaults.headers.common["Authorization"];
+        });
+    }
+  }, [setUser]);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
+          {/* Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile/:id" element={<ProfileWrapper />} />
-          <Route path="/community" element={<Community />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          {/* Panel de administración */}
+          <Route path="/community" element={<Community />} />
+
+          {/* Privadas */}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/activities/pending"
             element={
@@ -65,6 +79,8 @@ export default function App() {
               </PrivateRoute>
             }
           />
+
+          {/* Actividades */}
           <Route path="/activities/:id" element={<ActivityDetailWrapper />} />
         </Route>
 
@@ -72,27 +88,5 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-  );
-}
-
-// Wrapper para pasar datos simulados a Profile usando useParams
-function ProfileWrapper() {
-  const { id } = useParams();
-  const userId = parseInt(id);
-  const user = dummyUsers.find((u) => u.id === userId) || dummyUsers[0];
-
-  const activities = dummyActivities.filter((a) => a.creatorId === user.id);
-  const favoriteActivities = dummyActivities;
-  const schedules = [];
-  const contacts = dummyUsers.filter((u) => u.id !== user.id);
-
-  return (
-    <Profile
-      user={user}
-      activities={activities}
-      favoriteActivities={favoriteActivities}
-      schedules={schedules}
-      contacts={contacts}
-    />
   );
 }

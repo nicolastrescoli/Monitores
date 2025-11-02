@@ -5,29 +5,19 @@ import { useNavigate, Link } from "react-router-dom";
 export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = [];
-
-    if (!email) validationErrors.push("El correo electrónico es obligatorio.");
-    if (!password) validationErrors.push("La contraseña es obligatoria.");
-
-    if (validationErrors.length > 0) {
-      setErrors(validationErrors);
-      return;
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError("Credenciales inválidas o error en el servidor.");
     }
-
-    // Simulación de login
-    const role = email === "admin@example.com" ? "admin" : "user";
-    login(email, role);
-
-    // Redirigir a la página principal
-    navigate("/");
   };
 
   return (
@@ -39,16 +29,7 @@ export default function Login() {
               <h4 className="mb-0">Iniciar sesión</h4>
             </div>
             <div className="card-body bg-light">
-              {errors.length > 0 && (
-                <div className="alert alert-danger">
-                  <ul className="mb-0">
-                    {errors.map((error, index) => (
-                      <li key={index}>{error}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
+              {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
@@ -63,7 +44,6 @@ export default function Login() {
                     required
                   />
                 </div>
-
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     Contraseña
@@ -77,14 +57,12 @@ export default function Login() {
                     required
                   />
                 </div>
-
-                <button type="submit" className="btn btn-success w-100">
+                <button type="submit" className="btn btn-primary w-100">
                   Entrar
                 </button>
               </form>
-
               <p className="mt-3 text-center">
-                ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+                ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
               </p>
             </div>
           </div>
