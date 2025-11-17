@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-export default function ActivityCard({ activity, currentUserId, userJoinedActivities = [] }) {
+export default function ActivityCard({
+  activity,
+  currentUserId,
+  userJoinedActivities = [],
+}) {
   const isOwner = currentUserId && activity.user_id === currentUserId;
   const isFavorite = userJoinedActivities.includes(activity.id);
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
@@ -15,10 +19,14 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
   const typeName = typeNames[activity.type_id] || "Otro";
 
   async function handleFavoriteToggle(activityId) {
-     try {
-      await axios.post(`http://localhost:8000/api/activities/${activityId}/favorite`, {},{
-        withCredentials: true,
-      });
+    try {
+      await axios.post(
+        `http://localhost:8000/api/activities/${activityId}/favorite`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
     } catch (err) {
       console.error(err);
       alert("Error al guardar");
@@ -26,16 +34,20 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
   }
 
   async function handleDeleteActivity(activityId) {
-     try {
-      await axios.delete(`http://localhost:8000/api/activities/delete/${activityId}`, {},{
-        withCredentials: true,
-      });
+    try {
+      await axios.delete(
+        `http://localhost:8000/api/activities/delete/${activityId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
     } catch (err) {
       console.error(err);
       alert("Error al eliminar");
     }
   }
-    
+
   return (
     <div
       className="col-md-4 activity-item"
@@ -46,12 +58,15 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
     >
       <div
         className={`card h-100 border-0 shadow-lg rounded-4 ${
-          isOwner ? "border-success bg-info" : "border-secondary bg-white"
+          isOwner ? "border-success bg-white" : "border-secondary bg-white"
         }`}
       >
         <div className="card-body d-flex flex-column justify-content-between">
           <div>
-            <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
+            <Link
+              to={`/activities/${activity.id}`}
+              className="text-decoration-none text-dark"
+            >
               <h5 className="card-title text-primary">{activity.title}</h5>
               <p className="card-text text-dark">
                 <span className="badge bg-success mb-1">{typeName}</span>
@@ -68,7 +83,8 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
             <div className="mt-3">
               {isOwner ? (
                 <>
-                  <Link to={`/activities/${activity.id}/edit`} className="btn btn-sm btn-warning ms-1">
+                  <Link to={`/activities/${activity.id}/edit`}
+                    className="btn btn-sm btn-warning ms-1">
                     Editar
                   </Link>
                   <button
@@ -80,7 +96,9 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
                 </>
               ) : activity.visibility === "public" ? (
                 <button
-                  className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-secondary"}`}
+                  className={`btn btn-sm ${
+                    isFavorite ? "btn-warning" : "btn-outline-secondary"
+                  }`}
                   onClick={() => handleFavoriteToggle(activity.id)}
                 >
                   {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
@@ -103,7 +121,9 @@ export default function ActivityCard({ activity, currentUserId, userJoinedActivi
                   {activity.visibility === "private" && (
                     <button
                       className="btn btn-primary btn-sm ms-1"
-                      onClick={() => console.log("Solicitar publicación", activity.id)}
+                      onClick={() =>
+                        console.log("Solicitar publicación", activity.id)
+                      }
                     >
                       Solicitar publicación
                     </button>

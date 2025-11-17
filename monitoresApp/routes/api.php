@@ -26,6 +26,7 @@ Route::get('/activities', [ActivityController::class, 'apiIndex']);
 Route::middleware('auth:sanctum')->get('/activities/formData', [ActivityController::class, 'formData']);
 Route::middleware('auth:sanctum')->post('/activities/store', [ActivityController::class, 'apiStore']);
 Route::get('/activities/{activity}', [ActivityController::class, 'apiActivityDetail']);
+Route::middleware('auth:sanctum')->put('/activities/{activity}', [ActivityController::class, 'apiUpdate']);
 Route::middleware('auth:sanctum')->delete('/activities/delete/{activity}', [ActivityController::class, 'apiDestroy']);
 Route::middleware('auth:sanctum')->post('/activities/{activity}/favorite', [ActivityController::class, 'apiToggleFavorite']);
 
@@ -34,7 +35,9 @@ Route::middleware('auth:sanctum')->post('/activities/{activity}/favorite', [Acti
 | CRUD Schedules
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth:sanctum')->post('/schedules', [ScheduleController::class, 'store']);
+// Route::get('/schedules', [ScheduleController::class, 'index']);
+Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController::class, 'store']);
+// Route::get('/schedules/{schedule}', [ScheduleController::class, 'scheduleDetail']);
 
 
 /*
@@ -45,6 +48,7 @@ Route::middleware('auth:sanctum')->post('/schedules', [ScheduleController::class
 
 
 // Recuperar calendario y mostrarlo
+// Listar calendarios usuario
 // Editar y actualizar calendario
 // Eliminar calendario
 // Generador de PDF actividad y calendario
@@ -58,7 +62,6 @@ Route::middleware('auth:sanctum')->post('/schedules', [ScheduleController::class
 // Mostrar perfil de un usuario
 // Eliminar amistad
 
-// Recuperar actividad para edición y actualización
 // Clonar actividad
 
 // Enviar para revisión
@@ -66,3 +69,6 @@ Route::middleware('auth:sanctum')->post('/schedules', [ScheduleController::class
 // Mostrar actividades a revisar
 // Aprobar actividad
 // Denegar actividad
+
+
+// Editar perfil usuario

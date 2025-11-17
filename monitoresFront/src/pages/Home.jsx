@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ActivityCard from "../components/ActivityCard";
+import ActivityCard from "./components/ActivityCard";
 
 export default function Home() {
   const [activities, setActivities] = useState([]);

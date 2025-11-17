@@ -2,15 +2,16 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/login-register/Login";
+import Register from "./pages/login-register/Register";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import axios from "axios";
-import CreateActivity from "./pages/CreateActivity";
+import ActivityForm from "./pages/create-edit-forms/ActivityForm";
+import ScheduleBuilder from "./pages/schedules/ScheduleBuilder";
 
 function Community() {
   return (
@@ -21,19 +22,20 @@ function Community() {
   );
 }
 
-// 🔒 Componente para rutas privadas
+// 🔒 Rutas privadas
 function PrivateRoute({ children, roles }) {
   const { user } = useContext(AuthContext);
 
-  if (!user) return <Navigate to="/login" replace />; // No logueado
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />; // Rol no permitido
+  if (!user) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
+
   return children;
 }
 
 export default function App() {
   const { user, setUser } = useContext(AuthContext);
 
-  // ✅ Verifica si hay token y carga el usuario al iniciar la app
+  // Cargar usuario desde token
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -52,7 +54,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          {/* Públicas */}
+          {/* Public pages */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -60,7 +62,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/community" element={<Community />} />
 
-          {/* Privadas */}
+          {/* Private pages */}
           <Route
             path="/profile"
             element={
@@ -69,6 +71,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/activities/pending"
             element={
@@ -81,14 +84,49 @@ export default function App() {
             }
           />
 
-          {/* Actividades */}
-          <Route path="/activities/create" element={<CreateActivity />} />
-          <Route path="/activities/:id" element={<ActivityDetailWrapper />} />
-          
+          <Route path="/activities/create" element={
+              <PrivateRoute>
+                <ActivityForm />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="/activities/:id/edit" element={
+              <PrivateRoute>
+                <ActivityForm />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Activity detail */}
+          <Route
+            path="/activities/:id"
+            element={<ActivityDetailWrapper />}
+          />
+
+          <Route path="/schedule/create" element={
+              <PrivateRoute>
+                <ScheduleBuilder />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="/schedule/:id/edit" element={
+              <PrivateRoute>
+                <ScheduleBuilder />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Activity detail */}
+          <Route
+            path="/activities/:id"
+            element={<ActivityDetailWrapper />}
+          />
+
         </Route>
 
-
-        {/* Redirección para rutas desconocidas */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

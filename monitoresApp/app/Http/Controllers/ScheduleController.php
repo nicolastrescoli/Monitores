@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Log;
 
 class ScheduleController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $schedules = $user->schedules()->get();
+
+        return response()->json([
+            'schedules' => $schedules,
+        ], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -50,6 +61,38 @@ class ScheduleController extends Controller
             'message' => 'Horario guardado correctamente',
             'schedule' => $schedule,
         ], 201);        
+    }
+
+        /**
+     * Display the specified resource.
+     */
+    public function scheduleDetail(Schedule $schedule, Request $request)
+    {
+        // Obtener todas las actividades programadas con fecha y hora
+        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
+
+        // Extraer todos los start_time y end_time de la pivot table
+        $startTimes = $scheduled->pluck('pivot.start_time')->filter();
+        $endTimes = $scheduled->pluck('pivot.end_time')->filter();
+
+        // Si no hay fechas, mostrar los próximos 7 días por defecto
+        if ($startTimes->isEmpty() || $endTimes->isEmpty()) {
+            $startDate = Carbon::today();
+            $dates = collect(range(0, 6))->map(fn($i) => $startDate->copy()->addDays($i));
+        } else {
+            $startDate = Carbon::parse($startTimes->min())->startOfDay();
+            $endDate = Carbon::parse($endTimes->max())->startOfDay();
+
+            $days = $startDate->diffInDays($endDate) + 1;
+
+            $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
+        }
+
+        return response()->json([
+            'dates' => $dates,
+            'scheduled' => $scheduled,
+            'schedule' => $schedule,
+        ], 201); 
     }
 
     /**

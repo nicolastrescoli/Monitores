@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
-import ActivityCard from "../components/ActivityCard";
+import ActivityCard from "./components/ActivityCard";
 import axios from "axios";
 
 export default function Profile() {
@@ -35,6 +35,8 @@ export default function Profile() {
   
   const created = favoriteActivities.filter(act => act.user_id === currentUser?.id);
   const joined = favoriteActivities.filter(act => act.user_id !== currentUser?.id);
+
+  console.log(schedules)
 
   const isOwner = currentUser?.id === user.id;
 

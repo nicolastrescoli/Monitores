@@ -2,7 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 // import { useContext } from "react";
 import "../app.css"; // Asegúrate de ajustar la ruta según tu estructura
 
-import Navbar from "../components/Navbar"; // Equivalente a tu include('partials.navbar')
+import Navbar from "../pages/components/Navbar"; // Equivalente a tu include('partials.navbar')
 // import { AuthContext } from "../contexts/AuthContext"; // Ejemplo de contexto para autenticación
 
 export default function Layout() {
@@ -12,7 +12,7 @@ export default function Layout() {
     <div className="d-flex flex-column min-vh-100">
       {/* Header */}
       <header className="py-3 text-center">
-        <h1 className="mb-0">🌿 Actividades y Juegos</h1>
+        <h1 className="mb-0">OcioEducativo.es</h1>
       </header>
 
       {/* Panel de administración */}
@@ -32,7 +32,7 @@ export default function Layout() {
 
       {/* Footer */}
       <footer className="py-4 text-center mt-5">
-        <p className="mb-0">&copy; {new Date().getFullYear()} Actividades Verdes</p>
+        <p className="mb-0">&copy; {new Date().getFullYear()} Nicolás Trescolí Blasco</p>
       </footer>
     </div>
   );

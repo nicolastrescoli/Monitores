@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Activity;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Schedule;
 
 class AuthController extends Controller
 {
@@ -71,9 +72,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        // $activities = Activity::where('user_id', $user->id)->get();
         $favoriteActivities = $user->favoriteActivities()->get();
-        $schedules = $user->schedules()->with('activities')->get();
+        // $schedules = $user->schedules()->with('activities')->get();
+        $schedules = Schedule::all();
         $user->load(['sentFriendRequests', 'receivedFriendRequests']);
 
         $contacts = $user->sentFriendRequests
@@ -83,7 +84,6 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            // 'activities' => $activities,
             'favoriteActivities' => $favoriteActivities,
             'schedules' => $schedules,
             'contacts' => $contacts,

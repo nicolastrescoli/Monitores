@@ -21,7 +21,9 @@ export default function Schedule({
   }
 
   const handlePrint = () => {};
-  const handleExit = () => {};
+  const handleExit = () => {
+    window.location.href = "/profile";
+  };
 
   const [page, setPage] = useState(0);
 

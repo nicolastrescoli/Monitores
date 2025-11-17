@@ -296,90 +296,176 @@ class ActivityController extends Controller
         ]);
     }
 
+
+    public function apiUpdate(Request $request, Activity $activity)
+    {
+        $mode = $request->input('mode', 'structured');
+
+        if ($mode === 'structured') {
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'objectives' => 'nullable|string',
+                'introduction' => 'nullable|string',
+                'description' => 'required|string',
+                'conclusion' => 'nullable|string',
+                'visibility' => 'in:private,pending,public',
+                'type_id' => 'required|exists:types,id',
+
+                // Otros campos...
+                'materials' => 'nullable|array',
+                'materials.*.id' => 'nullable|integer|exists:materials,id',
+                'materials.*.quantity' => 'nullable|integer',
+                'materials.*.notes' => 'nullable|string|max:255',
+                'risks' => 'nullable|array',
+                'risks.*' => 'nullable|integer|exists:risks,id', // Si tienes tabla risks
+            ]);
+
+            $activity->update($validatedData);
+
+            // Actualizar materiales
+            $materials = $request->input('materials', []);
+            $materialData = [];
+
+            foreach ($materials as $material) {
+                if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
+                    $materialData[(int)$material['id']] = [
+                        'quantity' => $material['quantity'] ?? 1,
+                        'notes' => $material['notes'] ?? null,
+                    ];
+                }
+            }
+
+            $activity->materials()->sync($materialData);
+
+            // Actualizar riesgos
+            $risks = array_filter($request->input('risks', []));
+            $activity->risks()->sync($risks);
+
+        } else {
+            // Modo libre
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'type_id' => 'required|exists:types,id',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'description' => 'required|string',
+                'visibility' => 'in:private,pending,public',
+            ]);
+
+            $activity->update([
+                'title' => $validatedData['title'],
+                'type_id' => $validatedData['type_id'],
+                'num_participants' => $validatedData['num_participants'],
+                'min_age' => $validatedData['min_age'],
+                'max_age' => $validatedData['max_age'],
+                'duration' => $validatedData['duration'],
+                'description' => $validatedData['description'],
+                'objectives' => $activity->objectives ?? null,
+                'introduction' => $activity->introduction ?? null,
+                'conclusion' => $activity->conclusion ?? null,
+            ]);
+
+            // // Quitar materiales y riesgos si existían antes
+            // $activity->materials()->detach();
+            // $activity->risks()->detach();
+        }
+
+        return response()->json([
+            'message' => 'Actividad creada exitosamente.',
+            'activity' => $activity
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, Activity $activity)
-{
-    $mode = $request->input('mode', 'structured');
+    public function update(Request $request, Activity $activity)
+    {
+        $mode = $request->input('mode', 'structured');
 
-    if ($mode === 'structured') {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'num_participants' => 'required|integer|min:1',
-            'min_age' => 'required|integer|min:0',
-            'max_age' => 'required|integer|min:0',
-            'duration' => 'required|integer|min:1',
-            'objectives' => 'nullable|string',
-            'introduction' => 'nullable|string',
-            'description' => 'required|string',
-            'conclusion' => 'nullable|string',
-            'visibility' => 'in:private,pending,public',
-            'type_id' => 'required|exists:types,id',
+        if ($mode === 'structured') {
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'objectives' => 'nullable|string',
+                'introduction' => 'nullable|string',
+                'description' => 'required|string',
+                'conclusion' => 'nullable|string',
+                'visibility' => 'in:private,pending,public',
+                'type_id' => 'required|exists:types,id',
 
-            // Otros campos...
-            'materials' => 'nullable|array',
-            'materials.*.id' => 'nullable|integer|exists:materials,id',
-            'materials.*.quantity' => 'nullable|integer',
-            'materials.*.notes' => 'nullable|string|max:255',
-            'risks' => 'nullable|array',
-            'risks.*' => 'nullable|integer|exists:risks,id', // Si tienes tabla risks
-        ]);
+                // Otros campos...
+                'materials' => 'nullable|array',
+                'materials.*.id' => 'nullable|integer|exists:materials,id',
+                'materials.*.quantity' => 'nullable|integer',
+                'materials.*.notes' => 'nullable|string|max:255',
+                'risks' => 'nullable|array',
+                'risks.*' => 'nullable|integer|exists:risks,id', // Si tienes tabla risks
+            ]);
 
-        $activity->update($validatedData);
+            $activity->update($validatedData);
 
-        // Actualizar materiales
-        $materials = $request->input('materials', []);
-        $materialData = [];
+            // Actualizar materiales
+            $materials = $request->input('materials', []);
+            $materialData = [];
 
-        foreach ($materials as $material) {
-            if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
-                $materialData[(int)$material['id']] = [
-                    'quantity' => $material['quantity'] ?? 1,
-                    'notes' => $material['notes'] ?? null,
-                ];
+            foreach ($materials as $material) {
+                if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
+                    $materialData[(int)$material['id']] = [
+                        'quantity' => $material['quantity'] ?? 1,
+                        'notes' => $material['notes'] ?? null,
+                    ];
+                }
             }
+
+            $activity->materials()->sync($materialData);
+
+            // Actualizar riesgos
+            $risks = array_filter($request->input('risks', []));
+            $activity->risks()->sync($risks);
+
+        } else {
+            // Modo libre
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'type_id' => 'required|exists:types,id',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'description' => 'required|string',
+                'visibility' => 'in:private,pending,public',
+            ]);
+
+            $activity->update([
+                'title' => $validatedData['title'],
+                'type_id' => $validatedData['type_id'],
+                'num_participants' => $validatedData['num_participants'],
+                'min_age' => $validatedData['min_age'],
+                'max_age' => $validatedData['max_age'],
+                'duration' => $validatedData['duration'],
+                'description' => $validatedData['description'],
+                'objectives' => $activity->objectives ?? null,
+                'introduction' => $activity->introduction ?? null,
+                'conclusion' => $activity->conclusion ?? null,
+            ]);
+
+            // // Quitar materiales y riesgos si existían antes
+            // $activity->materials()->detach();
+            // $activity->risks()->detach();
         }
 
-        $activity->materials()->sync($materialData);
-
-        // Actualizar riesgos
-        $risks = array_filter($request->input('risks', []));
-        $activity->risks()->sync($risks);
-
-    } else {
-        // Modo libre
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'type_id' => 'required|exists:types,id',
-            'num_participants' => 'required|integer|min:1',
-            'min_age' => 'required|integer|min:0',
-            'max_age' => 'required|integer|min:0',
-            'duration' => 'required|integer|min:1',
-            'description' => 'required|string',
-            'visibility' => 'in:private,pending,public',
-        ]);
-
-        $activity->update([
-            'title' => $validatedData['title'],
-            'type_id' => $validatedData['type_id'],
-            'num_participants' => $validatedData['num_participants'],
-            'min_age' => $validatedData['min_age'],
-            'max_age' => $validatedData['max_age'],
-            'duration' => $validatedData['duration'],
-            'description' => $validatedData['description'],
-            'objectives' => $activity->objectives ?? null,
-            'introduction' => $activity->introduction ?? null,
-            'conclusion' => $activity->conclusion ?? null,
-        ]);
-
-        // // Quitar materiales y riesgos si existían antes
-        // $activity->materials()->detach();
-        // $activity->risks()->detach();
+        return redirect()->route('profile.show')->with('success', 'Actividad actualizada exitosamente.');
     }
-
-    return redirect()->route('profile.show')->with('success', 'Actividad actualizada exitosamente.');
-}
 
 
     /**

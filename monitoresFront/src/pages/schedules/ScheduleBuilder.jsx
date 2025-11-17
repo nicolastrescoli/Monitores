@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Activities from "./Activities.jsx";
 import Schedule from "./Schedule.jsx";
 import { useState, useEffect } from "react";
-import { placeActivity, removeActivity, moveActivity } from "./scheduleAux";
+import { placeActivity, removeActivity, moveActivity } from "./scheduleAux.js";
 
 export default function ScheduleBuilder() {
   // fetch de actividades
@@ -76,11 +76,7 @@ export default function ScheduleBuilder() {
 
   return (
     <>
-      <header className="py-3 text-center">
-        <h1 className="mb-0">🌿 Ocio Educativo</h1>
-      </header>
-
-      <main className="d-flex">
+      <div className="d-flex">
         <div className="d-flex flex-column col-2">
           <div>
             <h3>Nueva programación</h3>
@@ -130,7 +126,7 @@ export default function ScheduleBuilder() {
             handleRemoveActivity={handleRemoveActivity}
           />
         </div>
-      </main>
+      </div>
     </>
   );
 }

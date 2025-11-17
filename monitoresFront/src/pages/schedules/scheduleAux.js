@@ -1,4 +1,4 @@
-import axios from "./axios"; // el archivo que creaste antes
+import axios from "../../axios"; // el archivo que creaste antes
 
 export function placeActivity(cellMap, activity, date, hour, days, hourSlots) {
   const rowIndex = hourSlots.findIndex((h) => h === hour);
@@ -74,9 +74,8 @@ export async function saveSchedule(cellMap) {
   axios.defaults.baseURL = "http://localhost:8000";
 
   try {
-
     await axios.get("/sanctum/csrf-cookie");
-    await axios.post("/api/schedules",
+    await axios.post("/api/schedules/store",
       { cell_map: JSON.parse(cellMap) },
       {
         headers: {
