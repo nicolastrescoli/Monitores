@@ -31,12 +31,12 @@ export default function Profile() {
   if (loading) return <div className="text-center py-5">Cargando perfil...</div>;
   if (!profileData) return <div className="alert alert-danger">No se pudo cargar el perfil.</div>;
 
-  const { user, activities, schedules, contacts } = profileData;
+  const { user, favoriteActivities, schedules, contacts } = profileData;
+  
+  const created = favoriteActivities.filter(act => act.user_id === currentUser?.id);
+  const joined = favoriteActivities.filter(act => act.user_id !== currentUser?.id);
 
   const isOwner = currentUser?.id === user.id;
-
-  // En caso de que quieras mostrar "favoritas" aunque aún no las obtengas
-  const favoriteActivities = []; 
 
   return (
     <div className="container py-5 d-flex flex-wrap flex-lg-nowrap gap-4">
@@ -90,26 +90,30 @@ export default function Profile() {
               )}
             </div>
 
-            {activities.length === 0 ? (
+            {created.length === 0 ? (
               <div className="alert alert-info">Aún no has creado ninguna actividad.</div>
             ) : (
               <div className="row gy-4 mb-5">
-                {activities.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} />
+                {created.map((activity) => (
+                  <ActivityCard key={activity.id} activity={activity} 
+                  currentUserId={currentUser?.id} 
+                  />
                 ))}
               </div>
             )}
 
             <hr />
 
-            {/* FAVORITOS (placeholder por ahora) */}
+            {/* FAVORITOS */}
             <h5 className="mb-3">Mis actividades guardadas (favoritos)</h5>
-            {favoriteActivities.length === 0 ? (
+            {joined.length === 0 ? (
               <div className="alert alert-info">Aún no has añadido ninguna actividad a favoritos.</div>
             ) : (
               <div className="row gy-4 mb-5">
-                {favoriteActivities.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} />
+                {joined.map((activity) => (
+                  <ActivityCard key={activity.id} activity={activity} 
+                  currentUserId={currentUser?.id} userJoinedActivities={joined.map(fav => fav.id)}
+                  />
                 ))}
               </div>
             )}

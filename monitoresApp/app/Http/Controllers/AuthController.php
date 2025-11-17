@@ -71,7 +71,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        $activities = Activity::where('user_id', $user->id)->get();
+        // $activities = Activity::where('user_id', $user->id)->get();
+        $favoriteActivities = $user->favoriteActivities()->get();
         $schedules = $user->schedules()->with('activities')->get();
         $user->load(['sentFriendRequests', 'receivedFriendRequests']);
 
@@ -82,7 +83,8 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'activities' => $activities,
+            // 'activities' => $activities,
+            'favoriteActivities' => $favoriteActivities,
             'schedules' => $schedules,
             'contacts' => $contacts,
         ]);
@@ -139,6 +141,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $activities = Activity::where('user_id', $user->id)->get();
+        $favorites = $user->favoredActivities()->with('creator')->get();
         $schedules = $user->schedules()->with('activities')->get();
 
         // Carga explícitamente las relaciones
@@ -147,7 +150,7 @@ class AuthController extends Controller
         // Une y elimina duplicados
         $contacts = $user->sentFriendRequests->merge($user->receivedFriendRequests)->unique('id');
 
-        return view('profile.show', ['user' => $user, 'activities' => $activities, 'schedules' => $schedules, 'contacts' => $contacts,]);
+        return view('profile.show', ['user' => $user, 'activities' => $activities, 'favorites' => $favorites, 'schedules' => $schedules, 'contacts' => $contacts,]);
     }
 
     public function logout()

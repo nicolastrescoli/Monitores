@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-export default function ActivityCard({ activity, currentUserId, userFavorites = [] }) {
+export default function ActivityCard({ activity, currentUserId, userJoinedActivities = [] }) {
   const isOwner = currentUserId && activity.user_id === currentUserId;
-  const isFavorite = userFavorites.includes(activity.id);
+  const isFavorite = userJoinedActivities.includes(activity.id);
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
 
   // Mapear type_id a nombre
@@ -13,6 +14,28 @@ export default function ActivityCard({ activity, currentUserId, userFavorites = 
   };
   const typeName = typeNames[activity.type_id] || "Otro";
 
+  async function handleFavoriteToggle(activityId) {
+     try {
+      await axios.post(`http://localhost:8000/api/activities/${activityId}/favorite`, {},{
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar");
+    }
+  }
+
+  async function handleDeleteActivity(activityId) {
+     try {
+      await axios.delete(`http://localhost:8000/api/activities/delete/${activityId}`, {},{
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar");
+    }
+  }
+    
   return (
     <div
       className="col-md-4 activity-item"
@@ -45,32 +68,23 @@ export default function ActivityCard({ activity, currentUserId, userFavorites = 
             <div className="mt-3">
               {isOwner ? (
                 <>
-                  {/* Editar y eliminar */}
-                  <a href={`/activities/${activity.id}/edit`} className="btn btn-sm btn-warning ms-1">
+                  <Link to={`/activities/${activity.id}/edit`} className="btn btn-sm btn-warning ms-1">
                     Editar
-                  </a>
+                  </Link>
                   <button
                     className="btn btn-outline-danger btn-sm ms-1"
-                    onClick={() => {
-                      // Aquí llamas a tu función de eliminar actividad
-                      console.log("Eliminar actividad", activity.id);
-                    }}
+                    onClick={() => handleDeleteActivity(activity.id)}
                   >
                     Eliminar
                   </button>
                 </>
               ) : activity.visibility === "public" ? (
-                <>
-                  {/* Favoritos */}
-                  <button
-                    className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-secondary"}`}
-                    onClick={() => {
-                      console.log(isFavorite ? "Quitar favorito" : "Añadir favorito", activity.id);
-                    }}
-                  >
-                    {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
-                  </button>
-                </>
+                <button
+                  className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-secondary"}`}
+                  onClick={() => handleFavoriteToggle(activity.id)}
+                >
+                  {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
+                </button>
               ) : null}
 
               {/* Clonar si es favorito y público */}
@@ -85,7 +99,7 @@ export default function ActivityCard({ activity, currentUserId, userFavorites = 
 
               {/* Publicación */}
               {isOwner && (
-                <div className="mt-3">
+                <div className="mt-2">
                   {activity.visibility === "private" && (
                     <button
                       className="btn btn-primary btn-sm ms-1"

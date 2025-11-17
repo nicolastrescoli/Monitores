@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import axios from "axios";
+import CreateActivity from "./pages/CreateActivity";
 
 function Community() {
   return (
@@ -81,8 +82,11 @@ export default function App() {
           />
 
           {/* Actividades */}
+          <Route path="/activities/create" element={<CreateActivity />} />
           <Route path="/activities/:id" element={<ActivityDetailWrapper />} />
+          
         </Route>
+
 
         {/* Redirección para rutas desconocidas */}
         <Route path="*" element={<Navigate to="/" replace />} />

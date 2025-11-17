@@ -57,7 +57,7 @@ export default function Login() {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary w-100">
+                <button type="submit" className="btn btn-success w-100">
                   Entrar
                 </button>
               </form>

@@ -67,94 +67,190 @@ class ActivityController extends Controller
         ]);
     }
 
+    public function formData()
+    {
+        // Limitar actividades favoritas
+        // if (auth()->user()->favoriteActivities()->count() >= 6) {
+        //     return response()->json([
+        //         'error' => 'No puedes crear más actividades, ya tienes 6 favoritas.'
+        //     ], 403);
+        // }
+
+        return response()->json([
+            'types' => Type::all(),
+            'materials' => Material::all(),
+            'risks' => Risk::all(),
+        ]);
+    }
+
+    public function apiStore(Request $request)
+    {
+        $mode = $request->input('mode', 'structured');
+
+        if ($mode === 'structured') {
+
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'objectives' => 'nullable|string',
+                'introduction' => 'nullable|string',
+                'description' => 'required|string',
+                'conclusion' => 'nullable|string',
+                'visibility' => 'in:private,pending,public',
+                'type_id' => 'required|exists:types,id',
+
+                // React envía arrays JSON correctos
+                'materials' => 'array',
+                'materials.*.id' => 'required|integer|exists:materials,id',
+                'materials.*.quantity' => 'nullable|integer|min:1',
+                'materials.*.notes' => 'nullable|string|max:255',
+
+                'risks' => 'nullable|array',
+                'risks.*' => 'integer|exists:risks,id'
+            ]);
+
+            $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
+
+            // === MATERIALS ===
+            $materials = $request->input('materials', []);
+            $materialPivotData = [];
+
+            foreach ($materials as $m) {
+                $materialPivotData[$m['id']] = [
+                    'quantity' => $m['quantity'] ?? 1,
+                    'notes' => $m['notes'] ?? null,
+                ];
+            }
+
+            $activity->materials()->attach($materialPivotData);
+
+            // === RISKS ===
+            $risks = $request->input('risks', []);
+            $activity->risks()->sync($risks);
+
+        } else {
+            // FREE MODE
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'type_id' => 'required|exists:types,id',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'description' => 'required|string',
+                'visibility' => 'in:private,pending,public',
+            ]);
+
+            $activity = Activity::create([
+                ...$validatedData,
+                'user_id' => auth()->id(),
+                'objectives' => null,
+                'introduction' => null,
+                'conclusion' => null,
+            ]);
+        }
+
+        // === FAVORITOS ===
+        auth()->user()->favoriteActivities()->attach($activity->id);
+
+        return response()->json([
+            'message' => 'Actividad creada exitosamente.',
+            'activity' => $activity
+        ]);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    $mode = $request->input('mode', 'structured');
+    public function store(Request $request)
+    {
+        $mode = $request->input('mode', 'structured');
 
-    if ($mode === 'structured') {
-        // Validar y guardar datos del formulario estructurado
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'num_participants' => 'required|integer|min:1',
-            'min_age' => 'required|integer|min:0',
-            'max_age' => 'required|integer|min:0',
-            'duration' => 'required|integer|min:1',
-            'objectives' => 'required|string',
-            'introduction' => 'required|string',
-            'description' => 'required|string',
-            'conclusion' => 'required|string',
-            'visibility' => 'in:private,pending,public',
-            'type_id' => 'required|exists:types,id',
+        if ($mode === 'structured') {
+            // Validar y guardar datos del formulario estructurado
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'objectives' => 'required|string',
+                'introduction' => 'required|string',
+                'description' => 'required|string',
+                'conclusion' => 'required|string',
+                'visibility' => 'in:private,pending,public',
+                'type_id' => 'required|exists:types,id',
 
-            // Otros campos...
-            'materials' => 'array',
-            'materials.*.id' => 'required|integer|exists:materials,id',
-            'materials.*.quantity' => 'nullable|integer',
-            'materials.*.notes' => 'nullable|string|max:255',
-            'risks' => 'nullable|array',
-            'risks.*' => 'integer|exists:risks,id', // Si tienes tabla risks
-        ]);
+                // Otros campos...
+                'materials' => 'array',
+                'materials.*.id' => 'required|integer|exists:materials,id',
+                'materials.*.quantity' => 'nullable|integer',
+                'materials.*.notes' => 'nullable|string|max:255',
+                'risks' => 'nullable|array',
+                'risks.*' => 'integer|exists:risks,id', // Si tienes tabla risks
+            ]);
 
-        $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
+            $activity = Activity::create($validatedData + ['user_id' => auth()->id()]);
 
-        // Guardar materiales (pivote con quantity y notes)
-        $materials = $request->input('materials', []);
-        $materialData = [];
+            // Guardar materiales (pivote con quantity y notes)
+            $materials = $request->input('materials', []);
+            $materialData = [];
 
-        foreach ($materials as $material) {
-            if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
-                $materialData[(int)$material['id']] = [
-                    'quantity' => $material['quantity'] ?? 1,
-                    'notes' => $material['notes'] ?? null,
-                ];
+            foreach ($materials as $material) {
+                if (isset($material['id']) && is_numeric($material['id']) && $material['id'] > 0) {
+                    $materialData[(int)$material['id']] = [
+                        'quantity' => $material['quantity'] ?? 1,
+                        'notes' => $material['notes'] ?? null,
+                    ];
+                }
             }
+
+            $activity->materials()->attach($materialData);
+
+            // Guardar riesgos
+            $risks = array_filter($request->input('risks', []));
+            $activity->risks()->sync($risks);
+
+        } else {
+            // Validar todos los campos que envía el formulario libre
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'type_id' => 'required|exists:types,id',
+                'num_participants' => 'required|integer|min:1',
+                'min_age' => 'required|integer|min:0',
+                'max_age' => 'required|integer|min:0',
+                'duration' => 'required|integer|min:1',
+                'description' => 'required|string',
+                'visibility' => 'in:private,pending,public', // si está en el formulario
+            ]);
+
+            // Crear la actividad con user_id y los campos validados
+            $activity = new Activity();
+            $activity->user_id = auth()->id();
+            $activity->title = $validatedData['title'];
+            $activity->type_id = $validatedData['type_id'];
+            $activity->num_participants = $validatedData['num_participants'];
+            $activity->min_age = $validatedData['min_age'];
+            $activity->max_age = $validatedData['max_age'];
+            $activity->duration = $validatedData['duration'];
+            $activity->description = $validatedData['description'];
+
+            $activity->objectives = null;
+            $activity->introduction = null;
+            $activity->conclusion = null;
+
+            $activity->save();
         }
 
-        $activity->materials()->attach($materialData);
+        // Agregar la actividad a favoritos del usuario
+        auth()->user()->favoriteActivities()->attach($activity->id);
 
-        // Guardar riesgos
-        $risks = array_filter($request->input('risks', []));
-        $activity->risks()->sync($risks);
-
-    } else {
-        // Validar todos los campos que envía el formulario libre
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'type_id' => 'required|exists:types,id',
-            'num_participants' => 'required|integer|min:1',
-            'min_age' => 'required|integer|min:0',
-            'max_age' => 'required|integer|min:0',
-            'duration' => 'required|integer|min:1',
-            'description' => 'required|string',
-            'visibility' => 'in:private,pending,public', // si está en el formulario
-        ]);
-
-        // Crear la actividad con user_id y los campos validados
-        $activity = new Activity();
-        $activity->user_id = auth()->id();
-        $activity->title = $validatedData['title'];
-        $activity->type_id = $validatedData['type_id'];
-        $activity->num_participants = $validatedData['num_participants'];
-        $activity->min_age = $validatedData['min_age'];
-        $activity->max_age = $validatedData['max_age'];
-        $activity->duration = $validatedData['duration'];
-        $activity->description = $validatedData['description'];
-
-        $activity->objectives = null;
-        $activity->introduction = null;
-        $activity->conclusion = null;
-
-        $activity->save();
+        return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
     }
-
-    // Agregar la actividad a favoritos del usuario
-    auth()->user()->favoriteActivities()->attach($activity->id);
-
-    return redirect()->route('profile.show')->with('success', 'Actividad creada exitosamente.');
-}
 
 
     /**
@@ -304,6 +400,28 @@ public function update(Request $request, Activity $activity)
         return redirect()->route('profile.show')->with('success', 'Actividad eliminada exitosamente.');
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function apiDestroy(Activity $activity)
+    {
+        $user = auth()->user();
+
+        // Verifica si el usuario es el creador de la actividad
+        if ($user->id !== $activity->user_id) {
+            return response()->json([
+                'message' => 'No tienes permiso para eliminar esta actividad.'
+            ], 403); // Forbidden
+        }
+
+        // Elimina la actividad
+        $activity->delete();
+
+        return response()->json([
+            'message' => 'Actividad eliminada exitosamente.'
+        ], 200);
+    }
+
     public function clone(Activity $activity)
     {
         $user = auth()->user();
@@ -368,6 +486,26 @@ public function update(Request $request, Activity $activity)
 
         return redirect()->back()->with('success', 'Favorito actualizado.');
     }
+
+    public function apiToggleFavorite(Activity $activity)
+    {
+        $user = auth()->user();
+        $added = false;
+
+        if ($user->favoriteActivities()->where('activity_id', $activity->id)->exists()) {
+            $user->favoriteActivities()->detach($activity->id);
+        } else {
+            $user->favoriteActivities()->attach($activity->id);
+            $added = true;
+        }
+
+        return response()->json([
+            'success' => true,
+            'added' => $added,
+            'activity_id' => $activity->id
+        ]);
+    }
+
 
     public function createFromExistent(Request $request)
     {
