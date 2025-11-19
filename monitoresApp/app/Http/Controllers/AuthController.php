@@ -291,6 +291,25 @@ class AuthController extends Controller
         return back()->with('error', 'No tienes una amistad con este usuario.');
     }
 
+    public function apiRemoveFriend(User $user)
+    {
+        $authUser = auth()->user();
+
+        // Eliminar si el usuario autenticado envió la solicitud
+        if ($authUser->friends()->where('friend_id', $user->id)->exists()) {
+            $authUser->friends()->detach($user->id);
+            return response()->json(['message' => 'Amistad eliminada.']);
+        }
+
+        // Eliminar si el otro usuario envió la solicitud
+        if ($authUser->friendOf()->where('user_id', $user->id)->exists()) {
+            $authUser->friendOf()->detach($user->id);
+            return response()->json(['message' => 'Amistad eliminada.']);
+        }
+
+        return response()->json(['error' => 'No tienes una amistad con este usuario.']);
+    }
+
     // Mostrar la comunidad y el perfil de los usuarios/comunidad
     public function index()
     {
@@ -301,7 +320,13 @@ class AuthController extends Controller
     // Mostrar la comunidad y el perfil de los usuarios/comunidad
     public function apiIndex()
     {
-        $users = User::where('id', '!=', auth()->id())->get();
+        $users = User::where('id', '!=', auth()->id())
+            ->get()
+            ->map(function ($user) {
+                $user->friend_status = auth()->user()->friendStatusWith($user);
+                return $user;
+            });
+
         return response()->json([
             'users' => $users
         ]);

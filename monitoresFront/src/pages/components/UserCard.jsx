@@ -1,16 +1,14 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { sendRequest, cancelRequest, acceptRequest, rejectRequest } from "../../services/api";
+import {  useState } from "react";
+import { sendRequest, cancelRequest, removeFriend } from "../../services/api";
 
 export default function UserCard({ otherUser }) {
-  const { user: currentUser, fetchProfile } = useContext(AuthContext);
 
   // Estado local de la relación de amistad
   const [status, setStatus] = useState(otherUser.friend_status || "none");
 
-  const handleSendRequest = async () => {
+  const handleSendRequest = async (otherUserId) => {
     try {
-      await sendRequest(otherUser.id);
+      await sendRequest(otherUserId);
       setStatus("pending_sent");
     } catch (err) {
       console.error(err);
@@ -18,9 +16,9 @@ export default function UserCard({ otherUser }) {
     }
   };
 
-  const handleCancelRequest = async () => {
+  const handleCancelRequest = async (otherUserId) => {
     try {
-      await cancelRequest(otherUser.id);
+      await cancelRequest(otherUserId);
       setStatus("none");
     } catch (err) {
       console.error(err);
@@ -28,35 +26,15 @@ export default function UserCard({ otherUser }) {
     }
   };
 
-  const handleAcceptRequest = async () => {
+  const handleRemoveFriend = async (otherUserId) => {
     try {
-      await acceptRequest(otherUser.id);
-      setStatus("friends");
-    } catch (err) {
-      console.error(err);
-      alert("Error al aceptar solicitud");
-    }
-  };
-
-  const handleRejectRequest = async () => {
-    try {
-      await rejectRequest(otherUser.id);
+      await removeFriend(otherUserId);
       setStatus("none");
     } catch (err) {
       console.error(err);
-      alert("Error al rechazar solicitud");
+      alert("Error al eliminar amistad");
     }
   };
-
-  // const handleRemoveFriend = async () => {
-  //   try {
-  //     await removeFriend(otherUser.id);
-  //     setStatus("none");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error al eliminar amistad");
-  //   }
-  // };
 
   return (
     <div className="col-md-12 mb-3">
@@ -68,7 +46,7 @@ export default function UserCard({ otherUser }) {
           {status === "friends" && (
             <>
               <span className="badge bg-success">Amigos</span>
-              <button className="btn btn-sm btn-danger ms-2" >
+              <button className="btn btn-sm btn-danger ms-2" onClick={() => handleRemoveFriend(otherUser.id)}>
                 Eliminar amistad
               </button>
             </>
@@ -77,25 +55,14 @@ export default function UserCard({ otherUser }) {
           {status === "pending_sent" && (
             <>
               <span className="badge bg-warning text-dark">Solicitud enviada</span>
-              <button className="btn btn-sm btn-secondary ms-2" onClick={() => handleCancelRequest()}>
+              <button className="btn btn-sm btn-secondary ms-2" onClick={() => handleCancelRequest(otherUser.id)}>
                 Cancelar solicitud
               </button>
             </>
           )}
 
-          {status === "pending_received" && (
-            <>
-              <button className="btn btn-sm btn-success me-2" onClick={() => handleAcceptRequest()}>
-                Aceptar
-              </button>
-              <button className="btn btn-sm btn-danger" onClick={() => handleRejectRequest()}>
-                Rechazar
-              </button>
-            </>
-          )}
-
           {status === "none" && (
-            <button className="btn btn-sm btn-primary" onClick={() => handleSendRequest()}>
+            <button className="btn btn-sm btn-primary" onClick={() => handleSendRequest(otherUser.id)}>
               Enviar solicitud
             </button>
           )}

@@ -54,6 +54,10 @@ const cancelRequest = async (id) => {
   await axios.delete(`${API_URL + "/friends/cancel"}/${id}`);
 };
 
+export const removeFriend = async (id) => {
+  await axios.delete(`${API_URL + "/friends/remove"}/${id}`);
+};
+
 
 // Routes for Activities
 const getActivities = async () => {
@@ -96,13 +100,12 @@ const rejectActivity = async (id) => {
   return response.data;
 };
 
-// export const updateComment = async (id, comment) => {
-//   const response = await axios.put(`${API_URL + "/comments"}/${id}`, comment);
-//   return response.data;
-// };
 
-// export const deleteComment = async (id) => {
-//   await axios.delete(`${API_URL + "/comments"}/${id}`);
-// };
+// Schedulres
 
-export { getActivities, deleteActivity, toggleFavorite, getUsers, getProfile, register, sendRequest, acceptRequest, rejectRequest, cancelRequest, submitPublic, cancelSubmission, getPending, approveActivity, rejectActivity };
+const deleteSchedule = async (id) => {
+  await axios.delete(`${API_URL + "/schedule"}/${id}`);
+};
+
+
+export { getActivities, deleteActivity, toggleFavorite, getUsers, getProfile, register, sendRequest, acceptRequest, rejectRequest, cancelRequest, submitPublic, cancelSubmission, getPending, approveActivity, rejectActivity, deleteSchedule };

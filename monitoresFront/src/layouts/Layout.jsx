@@ -35,5 +35,6 @@ export default function Layout() {
         <p className="mb-0">&copy; {new Date().getFullYear()} Nicolás Trescolí Blasco</p>
       </footer>
     </div>
+    
   );
 }

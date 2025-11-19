@@ -2,7 +2,11 @@ import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import ActivityCard from "./components/ActivityCard";
-import { deleteActivity, toggleFavorite } from "../services/api.js";
+import {
+  deleteActivity,
+  toggleFavorite,
+  deleteSchedule,
+} from "../services/api.js";
 
 export default function Profile() {
   const {
@@ -46,6 +50,16 @@ export default function Profile() {
     } catch (err) {
       console.error(err);
       alert("Error al guardar favorito");
+    }
+  }
+
+  async function handleDeleteSchedule(scheduleId) {
+    try {
+      await deleteSchedule(scheduleId);
+      await fetchProfile(); // 🔹 recarga profileData automáticamente
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar programación");
     }
   }
 
@@ -173,13 +187,37 @@ export default function Profile() {
                 Aún no has creado ninguna programación.
               </div>
             ) : (
-              <ul id="schedule-list">
+              <>
                 {schedules.map((schedule) => (
-                  <li key={schedule.id} id={`schedule-${schedule.id}`}>
-                    <Link to={`/schedule/${schedule.id}`}>{schedule.name}</Link>
-                  </li>
+                  <div key={schedule.id} className="col-md-12 mb-1">
+                    <div className="card">
+                      <div className="card-body d-flex justify-content-between align-items-center py-1">
+                        <Link to={`/schedule/${schedule.id}`}>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <strong className="card-title">
+                              {schedule.name}
+                            </strong>
+                          </div>
+                        </Link>
+                        <div>
+                          <button
+                            className="btn btn-sm btn-warning me-2"
+                            onClick={() => handleEditSchedule(schedule.id)}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleDeleteSchedule(schedule.id)}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </>
             )}
           </div>
         </div>

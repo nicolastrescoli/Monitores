@@ -42,8 +42,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         // Chapuza? Guardar directamente el JSON del CellMap para rápido envio y reconstrucción en React. No se van a hacer muchas consultas tampoco.
-        // dd('Hola');
-        // $user = Auth::user();
+        $user = Auth::user();
 
         $validated = $request->validate([
             'cell_map' => 'required|array',
@@ -52,8 +51,7 @@ class ScheduleController extends Controller
         $schedule = Schedule::create([
             'name' => 'Nueva programación',
             'description' => 'Prueba ambientación',
-            // 'user_id' => $user->id,
-            'user_id' => 1,
+            'user_id' => $user->id,
             'cell_map' => $validated['cell_map'],
         ]);
 
@@ -160,7 +158,7 @@ class ScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, schedule $schedule)
+    public function update(Request $request, Schedule $schedule)
     {
         //
     }
@@ -168,9 +166,23 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(schedule $schedule)
+    public function destroy(Schedule $schedule)
     {
-        //
+        $user = auth()->user();
+
+        // Verifica si el usuario es el creador del schedule
+        if ($user->id !== $schedule->user_id) {
+            return response()->json([
+                'message' => 'No tienes permiso para eliminar esta programación.'
+            ], 403); // Forbidden
+        }
+
+        // Elimina la actividad
+        $schedule->delete();
+
+        return response()->json([
+            'message' => 'Programación eliminada exitosamente.'
+        ], 200);
     }
 
     public function assign(Request $request, Schedule $schedule)

@@ -51,7 +51,8 @@ Route::middleware('auth:sanctum')->put('/activities/reject/{activity}', [Activit
 |--------------------------------------------------------------------------
 */
 // Route::get('/schedules', [ScheduleController::class, 'index']);
-Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController::class, 'store']);
+Route::middleware('auth:sanctum')->post('/schedule/store', [ScheduleController::class, 'store']);
+Route::middleware('auth:sanctum')->delete('/schedule/{schedule}', [ScheduleController::class, 'destroy']);
 // Route::get('/schedules/{schedule}', [ScheduleController::class, 'scheduleDetail']);
 
 /*
@@ -65,6 +66,7 @@ Route::middleware('auth:sanctum')->post('/friends/request/{receiver}', [AuthCont
 Route::middleware('auth:sanctum')->post('/friends/accept/{sender}', [AuthController::class, 'apiAcceptRequest']);
 Route::middleware('auth:sanctum')->delete('/friends/reject/{sender}', [AuthController::class, 'apiRejectRequest']);
 Route::middleware('auth:sanctum')->delete('/friends/cancel/{receiver}', [AuthController::class, 'apiCancelRequest']);
+Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthController::class, 'apiRemoveFriend']);
 
 /*
 |--------------------------------------------------------------------------
@@ -75,16 +77,20 @@ Route::middleware('auth:sanctum')->delete('/friends/cancel/{receiver}', [AuthCon
 // Recuperar calendario y mostrarlo
 // Listar calendarios usuario
 // Editar y actualizar calendario
-// Eliminar calendario
+// Clonar calendario
+
 // Generador de PDF actividad y calendario
 // Ruta para enviar formulario de contacto
 
+// ACTUALIZAR CON STATES
 // Enviar petión amistad
 // Cancelar envio de petición
 // Aceptar petición
 // Rechazar petición
-// Mostrar perfil de un usuario
 // Eliminar amistad
+
+
+// Mostrar perfil de un usuario
 
 // Clonar actividad
 

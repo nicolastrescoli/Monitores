@@ -97,7 +97,7 @@ class User extends Authenticatable
         $received = $this->friendOf()->where('user_id', $otherUser->id)->first();
         if ($received) return $received->pivot->status === 'accepted' ? 'friends' : 'pending_received';
 
-        return null;
+        return 'none';
     }
 
     /**
