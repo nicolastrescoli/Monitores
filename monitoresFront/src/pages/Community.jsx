@@ -39,7 +39,33 @@ export default function Community() {
   return (
     <div className="container py-5">
       <h1 className="mb-4">Comunidad</h1>
-
+      <div className="row">
+        <h3>Solicitudes pendientes</h3>
+        {usersList.length === 0 ? (
+          <p>No hay solicitudes pendientes.</p>
+        ) : (
+          usersList.map((otherUser) => (
+            <div key={otherUser.id} className="col-md-12 mb-1">
+              <div className="card">
+                <div className="card-body d-flex justify-content-between align-items-center py-1">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <strong className="card-title col-6">{otherUser.name}</strong>
+                    <small className="card-text">{otherUser.email}</small>
+                  </div>
+                  <div>
+                    <button className="btn btn-sm btn-success me-2" onClick={() => handleAcceptRequest()}>
+                      Aceptar
+                    </button>
+                    <button className="btn btn-sm btn-danger" onClick={() => handleRejectRequest()}>
+                      Rechazar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
       <div className="row">
         {/* Usuarios */}
         <div className="col-md-6">

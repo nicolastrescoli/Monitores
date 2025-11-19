@@ -236,6 +236,13 @@ class AuthController extends Controller
         return back()->with('success', 'Solicitud aceptada.');
     }
 
+    public function apiAcceptRequest(User $sender)
+    {
+        $receiver = auth()->user();
+        $receiver->friendOf()->updateExistingPivot($sender->id, ['status' => 'accepted']);
+        return response()->json(['message' => 'Solicitud aceptada']);
+    }
+
     public function rejectRequest(User $sender)
     {
         $receiver = auth()->user();
@@ -243,11 +250,25 @@ class AuthController extends Controller
         return back()->with('success', 'Solicitud rechazada.');
     }
 
+    public function apiRejectRequest(User $sender)
+    {
+        $receiver = auth()->user();
+        $receiver->friendOf()->detach($sender->id);
+        return response()->json(['message' => 'Solicitud rechazada']);
+    }
+
     public function cancelRequest(User $receiver)
     {
         $sender = auth()->user();
         $sender->friends()->detach($receiver->id);
         return back()->with('success', 'Solicitud de amistad cancelada.');
+    }
+
+    public function apiCancelRequest(User $receiver)
+    {
+        $sender = auth()->user();
+        $sender->friends()->detach($receiver->id);
+        return response()->json(['message' => 'Solicitud cancelada']);
     }
 
     // Eliminar amistad

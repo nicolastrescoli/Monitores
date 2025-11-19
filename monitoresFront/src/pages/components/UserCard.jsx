@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { sendRequest } from "../../services/api";
+import { sendRequest, cancelRequest, acceptRequest, rejectRequest } from "../../services/api";
 
 export default function UserCard({ otherUser }) {
   const { user: currentUser, fetchProfile } = useContext(AuthContext);
@@ -18,35 +18,35 @@ export default function UserCard({ otherUser }) {
     }
   };
 
-  // const handleCancelRequest = async () => {
-  //   try {
-  //     await cancelFriendRequest(otherUser.id);
-  //     setStatus("none");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error al cancelar solicitud");
-  //   }
-  // };
+  const handleCancelRequest = async () => {
+    try {
+      await cancelRequest(otherUser.id);
+      setStatus("none");
+    } catch (err) {
+      console.error(err);
+      alert("Error al cancelar solicitud");
+    }
+  };
 
-  // const handleAcceptRequest = async () => {
-  //   try {
-  //     await acceptFriendRequest(otherUser.id);
-  //     setStatus("friends");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error al aceptar solicitud");
-  //   }
-  // };
+  const handleAcceptRequest = async () => {
+    try {
+      await acceptRequest(otherUser.id);
+      setStatus("friends");
+    } catch (err) {
+      console.error(err);
+      alert("Error al aceptar solicitud");
+    }
+  };
 
-  // const handleRejectRequest = async () => {
-  //   try {
-  //     await rejectFriendRequest(otherUser.id);
-  //     setStatus("none");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error al rechazar solicitud");
-  //   }
-  // };
+  const handleRejectRequest = async () => {
+    try {
+      await rejectRequest(otherUser.id);
+      setStatus("none");
+    } catch (err) {
+      console.error(err);
+      alert("Error al rechazar solicitud");
+    }
+  };
 
   // const handleRemoveFriend = async () => {
   //   try {
@@ -77,7 +77,7 @@ export default function UserCard({ otherUser }) {
           {status === "pending_sent" && (
             <>
               <span className="badge bg-warning text-dark">Solicitud enviada</span>
-              <button className="btn btn-sm btn-secondary ms-2" >
+              <button className="btn btn-sm btn-secondary ms-2" onClick={() => handleCancelRequest()}>
                 Cancelar solicitud
               </button>
             </>
@@ -85,17 +85,17 @@ export default function UserCard({ otherUser }) {
 
           {status === "pending_received" && (
             <>
-              <button className="btn btn-sm btn-success me-2" >
+              <button className="btn btn-sm btn-success me-2" onClick={() => handleAcceptRequest()}>
                 Aceptar
               </button>
-              <button className="btn btn-sm btn-danger" >
+              <button className="btn btn-sm btn-danger" onClick={() => handleRejectRequest()}>
                 Rechazar
               </button>
             </>
           )}
 
           {status === "none" && (
-            <button className="btn btn-sm btn-primary" onClick={() => handleSendRequest}>
+            <button className="btn btn-sm btn-primary" onClick={() => handleSendRequest()}>
               Enviar solicitud
             </button>
           )}

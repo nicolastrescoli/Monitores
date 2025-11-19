@@ -31,6 +31,20 @@ Route::middleware('auth:sanctum')->put('/activities/{activity}', [ActivityContro
 Route::middleware('auth:sanctum')->delete('/activities/{activity}', [ActivityController::class, 'apiDestroy']);
 Route::middleware('auth:sanctum')->post('/activities/favorite/{activity}', [ActivityController::class, 'apiToggleFavorite']);
 
+// Revisión y publicación
+// Enviar para revisión
+Route::middleware('auth:sanctum')->put('/activities/submit/{activity}', [ActivityController::class,'apiSubmitPublic']);
+// Cancelar envio para revisión
+Route::middleware('auth:sanctum')->put('/activities/unsubmit/{activity}', [ActivityController::class,'apiCancelSubmission']);
+// Panel de revisión
+Route::middleware('auth:sanctum')->get('/admin/activities/pending', [ActivityController::class,'apiPending']);
+// Aprobar publicación
+Route::middleware('auth:sanctum')->put('/activities/approve/{activity}', [ActivityController::class,'apiSetPublic']);
+// Denegar publicación
+Route::middleware('auth:sanctum')->put('/activities/reject/{activity}', [ActivityController::class,'apiRejectPublic']);
+
+
+
 /*
 |--------------------------------------------------------------------------
 | CRUD Schedules
@@ -47,17 +61,16 @@ Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController:
 */
 Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'apiIndex']);
 // Rutas de gestión de peticiones de amistad
-Route::post('/friends/request/{receiver}', [AuthController::class, 'apiSendRequest']);
-Route::post('/friends/accept/{sender}', [AuthController::class, 'apiAcceptRequest']);
-Route::delete('/friends/reject/{sender}', [AuthController::class, 'apiRejectRequest']);
-Route::delete('/friends/cancel/{receiver}', [AuthController::class, 'apiCancelRequest']);
+Route::middleware('auth:sanctum')->post('/friends/request/{receiver}', [AuthController::class, 'apiSendRequest']);
+Route::middleware('auth:sanctum')->post('/friends/accept/{sender}', [AuthController::class, 'apiAcceptRequest']);
+Route::middleware('auth:sanctum')->delete('/friends/reject/{sender}', [AuthController::class, 'apiRejectRequest']);
+Route::middleware('auth:sanctum')->delete('/friends/cancel/{receiver}', [AuthController::class, 'apiCancelRequest']);
 
 /*
 |--------------------------------------------------------------------------
 | Faltan
 |--------------------------------------------------------------------------
 */
-
 
 // Recuperar calendario y mostrarlo
 // Listar calendarios usuario
@@ -74,13 +87,6 @@ Route::delete('/friends/cancel/{receiver}', [AuthController::class, 'apiCancelRe
 // Eliminar amistad
 
 // Clonar actividad
-
-// Enviar para revisión
-// Cancelar envio de revisión
-// Mostrar actividades a revisar
-// Aprobar actividad
-// Denegar actividad
-
 
 // Editar perfil usuario
 // Eliminar cuenta de usuario

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { cancelSubmission, submitPublic } from "../../services/api";
+import { useState } from "react";
 
 export default function ActivityCard({
   activity,
@@ -11,6 +13,8 @@ export default function ActivityCard({
   const isFavorite = userJoinedActivities.includes(activity.id);
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
 
+  const [visibility, setVisibility] = useState(activity.visibility);
+
   // Mapear type_id a nombre
   const typeNames = {
     1: "Juego",
@@ -18,6 +22,26 @@ export default function ActivityCard({
     3: "Manualidad",
   };
   const typeName = typeNames[activity.type_id] || "Otro";
+
+async function handleSubmitPublic(activityId) {
+  try {
+    await submitPublic(activityId);
+    setVisibility('pending');
+  } catch (err) {
+    console.error("Error al enviar actividad:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Error al solicitar publicación");
+  }
+}
+
+async function handleCancelSubmission(activityId) {
+  try {
+    await cancelSubmission(activityId);
+    setVisibility('private');
+  } catch (err) {
+    console.error("Error al cancelar:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Error al cancelar solicitud");
+  }
+}
 
   return (
     <div
@@ -62,7 +86,7 @@ export default function ActivityCard({
                     Eliminar
                   </button>
                 </>
-              ) : activity.visibility === "public" ? (
+              ) : visibility === "public" ? (
                 <button
                   className={`btn btn-sm ${
                     isFavorite ? "btn-warning" : "btn-outline-secondary"
@@ -74,7 +98,7 @@ export default function ActivityCard({
               ) : null}
 
               {/* Clonar si es favorito y público */}
-              {isFavorite && activity.visibility === "public" && (
+              {isFavorite && visibility === "public" && (
                 <button
                   className="btn btn-sm ms-1"
                   onClick={() => console.log("Clonar actividad", activity.id)}
@@ -86,21 +110,13 @@ export default function ActivityCard({
               {/* Publicación */}
               {isOwner && (
                 <div className="mt-2">
-                  {activity.visibility === "private" && (
-                    <button
-                      className="btn btn-primary btn-sm ms-1"
-                      onClick={() =>
-                        console.log("Solicitar publicación", activity.id)
-                      }
-                    >
+                  {visibility === "private" && (
+                    <button className="btn btn-primary btn-sm ms-1" onClick={() => handleSubmitPublic(activity.id)}>
                       Solicitar publicación
                     </button>
                   )}
-                  {activity.visibility === "pending" && (
-                    <button
-                      className="btn btn-outline-warning btn-sm ms-1"
-                      onClick={() => console.log("Cancelar envío", activity.id)}
-                    >
+                  {visibility === "pending" && (
+                    <button className="btn btn-outline-warning btn-sm ms-1" onClick={() => handleCancelSubmission(activity.id)}>
                       Cancelar envío
                     </button>
                   )}

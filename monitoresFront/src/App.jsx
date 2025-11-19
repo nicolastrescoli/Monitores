@@ -8,12 +8,12 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Community from "./pages/Community";
+import AdminPanel from "./pages/AdminPanel.jsx";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm";
 import ScheduleBuilder from "./pages/schedules/ScheduleBuilder";
 import { getActivities } from "./services/api.js";
-
 
 function PrivateRoute({ children, roles }) {
   const { user } = useContext(AuthContext);
@@ -45,8 +45,7 @@ export default function App() {
   // }, [setUser]);
 
   useEffect(() => {
-    fetchActivities()
-    .catch((err) => {
+    fetchActivities().catch((err) => {
       console.error("Error cargando actividades:", err);
       setLoading(false);
     });
@@ -58,8 +57,6 @@ export default function App() {
     setLoading(false);
   };
 
-
-
   if (loading)
     return <div className="container py-5">Cargando actividades...</div>;
 
@@ -68,7 +65,12 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           {/* Public pages */}
-          <Route path="/" element={<Home activities={activities} setActivities={setActivities} />} />
+          <Route
+            path="/"
+            element={
+              <Home activities={activities} setActivities={setActivities} />
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />
@@ -76,9 +78,11 @@ export default function App() {
           <Route path="/community" element={<Community />} />
 
           {/* Private pages */}
-          <Route path="/profile" element={
+          <Route
+            path="/profile"
+            element={
               <PrivateRoute>
-                <Profile/>
+                <Profile />
               </PrivateRoute>
             }
           />
@@ -90,24 +94,27 @@ export default function App() {
             }
           /> */}
 
-          <Route path="/activities/pending" element={
+          <Route
+            path="/activities/pending"
+            element={
               <PrivateRoute roles={["admin"]}>
-                <div className="container py-5">
-                  <h2>Panel de Administración</h2>
-                  <p>Aquí irían las actividades pendientes.</p>
-                </div>
+                <AdminPanel />
               </PrivateRoute>
             }
           />
 
-          <Route path="/activities/create" element={
+          <Route
+            path="/activities/create"
+            element={
               <PrivateRoute>
                 <ActivityForm />
               </PrivateRoute>
             }
           />
 
-          <Route path="/activities/:id/edit" element={
+          <Route
+            path="/activities/:id/edit"
+            element={
               <PrivateRoute>
                 <ActivityForm />
               </PrivateRoute>
@@ -117,14 +124,18 @@ export default function App() {
           {/* Activity detail */}
           <Route path="/activities/:id" element={<ActivityDetailWrapper />} />
 
-          <Route path="/schedule/create" element={
+          <Route
+            path="/schedule/create"
+            element={
               <PrivateRoute>
                 <ScheduleBuilder />
               </PrivateRoute>
             }
           />
 
-          <Route path="/schedule/:id/edit" element={
+          <Route
+            path="/schedule/:id/edit"
+            element={
               <PrivateRoute>
                 <ScheduleBuilder />
               </PrivateRoute>

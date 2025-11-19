@@ -5,10 +5,16 @@ import ActivityCard from "./components/ActivityCard";
 import { deleteActivity, toggleFavorite } from "../services/api.js";
 
 export default function Profile() {
-  const { user: currentUser, profileData, fetchProfile } = useContext(AuthContext);
+  const {
+    user: currentUser,
+    profileData,
+    fetchProfile,
+  } = useContext(AuthContext);
 
   if (!profileData)
-    return <div className="alert alert-danger">No se pudo cargar el perfil.</div>;
+    return (
+      <div className="alert alert-danger">No se pudo cargar el perfil.</div>
+    );
 
   const { user, favoriteActivities, schedules, contacts } = profileData;
 
@@ -42,7 +48,6 @@ export default function Profile() {
       alert("Error al guardar favorito");
     }
   }
-
 
   return (
     <div className="container py-5 d-flex flex-wrap flex-lg-nowrap gap-4">
@@ -204,6 +209,10 @@ export default function Profile() {
                         </Link>
                       </div>
                     </div>
+                    <button className="btn btn-sm btn-success me-2">
+                      Aceptar
+                    </button>
+                    <button className="btn btn-sm btn-danger">Rechazar</button>
                   </div>
                 ))}
               </div>
