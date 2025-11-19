@@ -14,7 +14,8 @@ use App\Http\Controllers\AuthController;
 Route::post('/login', [AuthController::class, 'apiLogin']);
 Route::post('/logout', [AuthController::class, 'apiLogout']);
 Route::post('/register', [AuthController::class, 'apiRegister']);
-Route::middleware('auth:sanctum')->get('/profile', [AuthController::class, 'apiShow']);
+Route::middleware('auth:sanctum')->get('/profile', [AuthController::class, 'apiShow']); // Ver perfil propio
+Route::middleware('auth:sanctum')->get('/profile/{user}', [AuthController::class, 'apiShow']); // Ver perfil de otro usuario
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,17 @@ Route::middleware('auth:sanctum')->post('/activities/favorite/{activity}', [Acti
 Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController::class, 'store']);
 // Route::get('/schedules/{schedule}', [ScheduleController::class, 'scheduleDetail']);
 
+/*
+|--------------------------------------------------------------------------
+| Usuaruios y Social
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'apiIndex']);
+// Rutas de gestión de peticiones de amistad
+Route::post('/friends/request/{receiver}', [AuthController::class, 'apiSendRequest']);
+Route::post('/friends/accept/{sender}', [AuthController::class, 'apiAcceptRequest']);
+Route::delete('/friends/reject/{sender}', [AuthController::class, 'apiRejectRequest']);
+Route::delete('/friends/cancel/{receiver}', [AuthController::class, 'apiCancelRequest']);
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +70,6 @@ Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController:
 // Cancelar envio de petición
 // Aceptar petición
 // Rechazar petición
-// Mostrar usuarios de la comunidad
 // Mostrar perfil de un usuario
 // Eliminar amistad
 
@@ -72,3 +83,4 @@ Route::middleware('auth:sanctum')->post('/schedules/store', [ScheduleController:
 
 
 // Editar perfil usuario
+// Eliminar cuenta de usuario

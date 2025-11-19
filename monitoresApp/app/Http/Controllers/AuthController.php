@@ -29,8 +29,6 @@ class AuthController extends Controller
             'role' => $validated['role'],
         ]);
 
-        // Auth::login($user);
-
         return response()->json(['message' => 'Usuario registrado', 'user' => $user]);
     }
 
@@ -64,31 +62,73 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
 
-    public function apiShow(Request $request)
+    public function apiShow(Request $request, User $user = null)
     {
-        $user = Auth::user();
+        // Si no se pasa usuario, usamos el autenticado
+        $user = $user ?? Auth::user();
 
         if (!$user) {
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        $favoriteActivities = $user->favoriteActivities()->get();
-        // $schedules = $user->schedules()->with('activities')->get();
-        $schedules = Schedule::all();
+        // Cargar relaciones necesarias
         $user->load(['sentFriendRequests', 'receivedFriendRequests']);
 
+        // Actividades del usuario mostrado
+        $activities = Activity::where('user_id', $user->id)->get();
+
+        // Contactos
         $contacts = $user->sentFriendRequests
             ->merge($user->receivedFriendRequests)
             ->unique('id')
             ->values();
 
+        // Schedules (si están ligados al usuario cámbialo a $user->schedules)
+        $schedules = Schedule::all();
+
+        // Actividades favoritas solo si es mi perfil
+        $favoriteActivities = null;
+        if ($user->id === Auth::id()) {
+            $favoriteActivities = $user->favoriteActivities()->get();
+        }
+
         return response()->json([
             'user' => $user,
+            'activities' => $activities,
             'favoriteActivities' => $favoriteActivities,
             'schedules' => $schedules,
             'contacts' => $contacts,
         ]);
     }
+
+
+   
+
+    // public function apiShow(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     if (!$user) {
+    //         return response()->json(['error' => 'No autenticado'], 401);
+    //     }
+
+    //     $favoriteActivities = $user->favoriteActivities()->get();
+    //     // $schedules = $user->schedules()->with('activities')->get();
+    //     $schedules = Schedule::all();
+    //     $user->load(['sentFriendRequests', 'receivedFriendRequests']);
+
+    //     $contacts = $user->sentFriendRequests
+    //         ->merge($user->receivedFriendRequests)
+    //         ->unique('id')
+    //         ->values();
+
+    //     return response()->json([
+    //         'user' => $user,
+    //         'favoriteActivities' => $favoriteActivities,
+    //         'schedules' => $schedules,
+    //         'contacts' => $contacts,
+    //     ]);
+    // }
 
     public function showLoginForm()
     {
@@ -176,6 +216,19 @@ class AuthController extends Controller
         return back()->with('success', 'Solicitud enviada.');
     }
 
+    public function apiSendRequest(User $receiver)
+    {
+        $sender = auth()->user();
+
+        // if ($sender->id === $receiver->id) return back()->with('error', 'No puedes agregarte a ti mismo.');
+        // if ($sender->sentFriendRequests()->where('friend_id', $receiver->id)->exists()) {
+        //     return back()->with('error', 'Solicitud ya enviada.');
+        // }
+
+        $sender->friends()->attach($receiver->id, ['status' => 'pending']);
+        return response()->json(['message' => 'Solicitud enviada']);
+    }
+
     public function acceptRequest(User $sender)
     {
         $receiver = auth()->user();
@@ -222,6 +275,15 @@ class AuthController extends Controller
     {
         $users = User::where('id', '!=', auth()->id())->get();
         return view('community.index', compact('users'));
+    }
+
+    // Mostrar la comunidad y el perfil de los usuarios/comunidad
+    public function apiIndex()
+    {
+        $users = User::where('id', '!=', auth()->id())->get();
+        return response()->json([
+            'users' => $users
+        ]);
     }
 
     public function showUser(User $user)

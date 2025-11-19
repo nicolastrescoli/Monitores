@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
+import { register } from "../../services/api.js";
 
 export default function Register() {
   const { login } = useContext(AuthContext); // reutilizamos login() tras el registro
@@ -38,19 +39,9 @@ export default function Register() {
     }
 
     try {
-      // 🔹 Llamada real al endpoint de Laravel
-      await axios.post("http://localhost:8000/api/register", {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        password_confirmation: form.passwordConfirmation,
-        role: form.role,
-      });
-
-      // 🔹 Una vez registrado, lo logueamos automáticamente
+      await register(form);
       await login(form.email, form.password);
-
-      navigate("/"); // Redirige a inicio
+      navigate("/");
     } catch (err) {
       console.error(err);
       if (err.response?.data?.errors) {

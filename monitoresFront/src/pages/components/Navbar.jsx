@@ -33,9 +33,7 @@ export default function Navbar() {
         <Link className="navbar-brand" to="/contact">Contacto</Link>
 
         {currentUser && (
-          <button className="btn btn-outline-light" onClick={handleLogout}>
-            Logout
-          </button>
+          <Link className="navbar-brand" onClick={handleLogout}>Logout</Link>
         )}
       </div>
     </nav>

@@ -2,21 +2,31 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/api";
 
-// // Routes for Users
-// export const getUsers = async () => {
-//   const response = await axios.get(API_URL + "/users");
-//   return response.data;
-// };
-
-const getProfile = async () => {
-  const response = await axios.get(API_URL + "/profile");
+// Routes for Users
+const getUsers = async () => {
+  const response = await axios.get(API_URL + "/users");
   return response.data;
 };
 
-// export const createUser = async (user) => {
-//   const response = await axios.post(API_URL + "/users", user);
-//   return response.data;
-// };
+const getProfile = async (userId = null) => {
+  const url = userId
+    ? `${API_URL}/profile/${userId}`
+    : `${API_URL}/profile`;
+    
+  const response = await axios.get(url)
+  return response.data;
+};
+
+const register = async (user) => {
+  const response = await axios.post(API_URL + "/register", {
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    password_confirmation: user.passwordConfirmation,
+    role: user.role,
+  });
+  return response.data;
+};
 
 // export const updateUser = async (id, user) => {
 //   const response = await axios.put(`${API_URL + "/users"}/${id}`, user);
@@ -26,6 +36,24 @@ const getProfile = async () => {
 // export const deleteUser = async (id) => {
 //   await axios.delete(`${API_URL + "/users"}/${id}`);
 // };
+
+// Friend request
+const sendRequest = async (id) => {
+  await axios.post(`${API_URL + "/friends/request"}/${id}`);
+};
+
+const acceptRequest = async (id) => {
+  await axios.post(`${API_URL + "/friends/accept"}/${id}`);
+};
+
+const rejectRequest = async (id) => {
+  await axios.delete(`${API_URL + "/friends/reject"}/${id}`);
+};
+
+const cancelRequest = async (id) => {
+  await axios.delete(`${API_URL + "/friends/cancel"}/${id}`);
+};
+
 
 // Routes for Activities
 const getActivities = async () => {
@@ -47,8 +75,10 @@ const deleteActivity = async (id) => {
   await axios.delete(`${API_URL + "/activities"}/${id}`);
 };
 
-const toggleFavorite = async (id)  => {
-  const response = await axios.post(`${API_URL + "/activities/favorite"}/${id}`);
+const toggleFavorite = async (id) => {
+  const response = await axios.post(
+    `${API_URL + "/activities/favorite"}/${id}`
+  );
   return response.data;
 };
 
@@ -72,9 +102,4 @@ const toggleFavorite = async (id)  => {
 //   await axios.delete(`${API_URL + "/comments"}/${id}`);
 // };
 
-export { 
-  getActivities,
-  deleteActivity,
-  toggleFavorite,
-  getProfile
-}
+export { getActivities, deleteActivity, toggleFavorite, getUsers, getProfile, register, sendRequest, acceptRequest, rejectRequest, cancelRequest };

@@ -83,6 +83,13 @@ export default function App() {
             }
           />
 
+          {/* <Route path="/profile/:id" element={
+              <PrivateRoute>
+                <Profile/>
+              </PrivateRoute>
+            }
+          /> */}
+
           <Route path="/activities/pending" element={
               <PrivateRoute roles={["admin"]}>
                 <div className="container py-5">

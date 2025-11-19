@@ -1,51 +1,78 @@
-// import UserCard from "../components/UserCard";
-// import { useContext } from "react";
-// import { AuthContext } from "../contexts/AuthContext";
-
-// // Ejemplo de usuarios simulados
-// const dummyUsers = [
-//   { id: 1, name: "Alice", role: "user", description: "Monitor de actividades" },
-//   { id: 2, name: "Bob", role: "organization", description: "Organización educativa" },
-//   { id: 3, name: "Charlie", role: "user", description: "Monitor creativo" },
-// ];
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import UserCard from "./components/UserCard";
+import { getUsers } from "../services/api";
 
 export default function Community() {
-  // const { user: currentUser } = useContext(AuthContext);
+  const { user: currentUser } = useContext(AuthContext);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // const usersWithoutMe = dummyUsers.filter((u) => u.id !== currentUser?.id);
+  // Fetch de usuarios al montar el componente
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await getUsers();
+        setUsers(res.users || []);
+      } catch (err) {
+        console.error("Error cargando usuarios:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // const users = usersWithoutMe.filter((u) => u.role === "user");
-  // const organizations = usersWithoutMe.filter((u) => u.role === "organization");
+    fetchUsers();
+  }, []);
+
+  // Filtrar usuarios y organizaciones
+  const usersList = users.filter(
+    (u) => u.role === "user" && u.id !== currentUser?.id
+  );
+  const organizationsList = users.filter(
+    (u) => u.role === "organization" && u.id !== currentUser?.id
+  );
+
+  if (loading) {
+    return <div className="container py-5">Cargando usuarios...</div>;
+  }
 
   return (
-    // <div className="container py-5">
-    //   <h1 className="mb-4">Comunidad</h1>
+    <div className="container py-5">
+      <h1 className="mb-4">Comunidad</h1>
 
-    //   <div className="row">
-    //     {/* Usuarios */}
-    //     <div className="col-md-6">
-    //       <h3>Usuarios</h3>
-    //       <div className="row">
-    //         {users.map((u) => (
-    //           <UserCard key={u.id} user={u} />
-    //         ))}
-    //       </div>
-    //     </div>
+      <div className="row">
+        {/* Usuarios */}
+        <div className="col-md-6">
+          <h3>Usuarios</h3>
+          <div className="row">
+            {usersList.length === 0 ? (
+              <p>No hay usuarios disponibles.</p>
+            ) : (
+              usersList.map((otherUser) => (
+                <div key={otherUser.id} className="col-12 mb-3">
+                  <UserCard otherUser={otherUser} />
+                </div>
+              ))
+            )}
+          </div>
+        </div>
 
-    //     {/* Organizaciones */}
-    //     <div className="col-md-6">
-    //       <h3>Organizaciones</h3>
-    //       <div className="row">
-    //         {organizations.map((o) => (
-    //           <UserCard key={o.id} user={o} />
-    //         ))}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-        <div className="container py-5">
-      <h2>Comunidad</h2>
-      <p>Lista de usuarios y organizaciones.</p>
+        {/* Organizaciones */}
+        <div className="col-md-6">
+          <h3>Organizaciones</h3>
+          <div className="row">
+            {organizationsList.length === 0 ? (
+              <p>No hay organizaciones disponibles.</p>
+            ) : (
+              organizationsList.map((otherUser) => (
+                <div key={otherUser.id} className="col-12 mb-3">
+                  <UserCard otherUser={otherUser} />
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
