@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 export default function ActivityCard({
   activity,
   currentUserId,
   userJoinedActivities = [],
+  handleDeleteActivity,
+  handleToggleFavorite,
 }) {
   const isOwner = currentUserId && activity.user_id === currentUserId;
   const isFavorite = userJoinedActivities.includes(activity.id);
@@ -17,36 +18,6 @@ export default function ActivityCard({
     3: "Manualidad",
   };
   const typeName = typeNames[activity.type_id] || "Otro";
-
-  async function handleFavoriteToggle(activityId) {
-    try {
-      await axios.post(
-        `http://localhost:8000/api/activities/${activityId}/favorite`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar");
-    }
-  }
-
-  async function handleDeleteActivity(activityId) {
-    try {
-      await axios.delete(
-        `http://localhost:8000/api/activities/delete/${activityId}`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar");
-    }
-  }
 
   return (
     <div
@@ -63,10 +34,7 @@ export default function ActivityCard({
       >
         <div className="card-body d-flex flex-column justify-content-between">
           <div>
-            <Link
-              to={`/activities/${activity.id}`}
-              className="text-decoration-none text-dark"
-            >
+            <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
               <h5 className="card-title text-primary">{activity.title}</h5>
               <p className="card-text text-dark">
                 <span className="badge bg-success mb-1">{typeName}</span>
@@ -99,7 +67,7 @@ export default function ActivityCard({
                   className={`btn btn-sm ${
                     isFavorite ? "btn-warning" : "btn-outline-secondary"
                   }`}
-                  onClick={() => handleFavoriteToggle(activity.id)}
+                  onClick={() => handleToggleFavorite(activity.id)}
                 >
                   {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
                 </button>

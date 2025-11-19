@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import ActivityCard from "./components/ActivityCard";
 
-export default function Home() {
-  const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Home({activities, setActivities}) {
+
   const [filters, setFilters] = useState({
     title: "",
     type_id: "",
@@ -13,20 +11,6 @@ export default function Home() {
     participantes: "",
     ordenarPor: "",
   });
-
-  useEffect(() => {
-    // Cargar actividades desde tu API Laravel con axios
-    axios.defaults.baseURL = "http://localhost:8000";
-    axios.get("/api/activities")
-      .then((response) => {
-        setActivities(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error cargando actividades:", err);
-        setLoading(false);
-      });
-  }, []);
 
   const filtrarYOrdenar = () => {
     let filtrados = [...activities];
@@ -72,8 +56,6 @@ export default function Home() {
       setActivities([random]);
     }
   };
-
-  if (loading) return <div className="container py-5">Cargando actividades...</div>;
 
   const displayedActivities = filtrarYOrdenar();
 

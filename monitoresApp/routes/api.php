@@ -27,8 +27,8 @@ Route::middleware('auth:sanctum')->get('/activities/formData', [ActivityControll
 Route::middleware('auth:sanctum')->post('/activities/store', [ActivityController::class, 'apiStore']);
 Route::get('/activities/{activity}', [ActivityController::class, 'apiActivityDetail']);
 Route::middleware('auth:sanctum')->put('/activities/{activity}', [ActivityController::class, 'apiUpdate']);
-Route::middleware('auth:sanctum')->delete('/activities/delete/{activity}', [ActivityController::class, 'apiDestroy']);
-Route::middleware('auth:sanctum')->post('/activities/{activity}/favorite', [ActivityController::class, 'apiToggleFavorite']);
+Route::middleware('auth:sanctum')->delete('/activities/{activity}', [ActivityController::class, 'apiDestroy']);
+Route::middleware('auth:sanctum')->post('/activities/favorite/{activity}', [ActivityController::class, 'apiToggleFavorite']);
 
 /*
 |--------------------------------------------------------------------------

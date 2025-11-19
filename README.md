@@ -84,3 +84,7 @@ sanctum.php
 --------------------------------------
 
 npm install react-router-dom
+
+
+
+https://4geeks.com/es/lesson/contexto-de-autenticacion-con-react

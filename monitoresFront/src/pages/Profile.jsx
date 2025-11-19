@@ -1,44 +1,48 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import ActivityCard from "./components/ActivityCard";
-import axios from "axios";
+import { deleteActivity, toggleFavorite } from "../services/api.js";
 
 export default function Profile() {
-  const { user: currentUser, token } = useContext(AuthContext);
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user: currentUser, profileData, fetchProfile } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/api/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setProfileData(res.data);
-      } catch (err) {
-        console.error("Error cargando perfil:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [token]);
-
-  if (loading) return <div className="text-center py-5">Cargando perfil...</div>;
-  if (!profileData) return <div className="alert alert-danger">No se pudo cargar el perfil.</div>;
+  if (!profileData)
+    return <div className="alert alert-danger">No se pudo cargar el perfil.</div>;
 
   const { user, favoriteActivities, schedules, contacts } = profileData;
-  
-  const created = favoriteActivities.filter(act => act.user_id === currentUser?.id);
-  const joined = favoriteActivities.filter(act => act.user_id !== currentUser?.id);
 
-  console.log(schedules)
+  const created = favoriteActivities.filter(
+    (act) => act.user_id === currentUser?.id
+  );
+  const joined = favoriteActivities.filter(
+    (act) => act.user_id !== currentUser?.id
+  );
 
   const isOwner = currentUser?.id === user.id;
+
+  // --- ELIMINAR ACTIVIDAD ---
+  async function handleDeleteActivity(activityId) {
+    try {
+      await deleteActivity(activityId);
+      await fetchProfile(); // 🔹 recarga profileData automáticamente
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar actividad");
+    }
+  }
+
+  // --- FAVORITOS ---
+  async function handleToggleFavorite(activityId) {
+    try {
+      await toggleFavorite(activityId);
+      await fetchProfile(); // 🔹 recarga profileData automáticamente
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar favorito");
+    }
+  }
+
 
   return (
     <div className="container py-5 d-flex flex-wrap flex-lg-nowrap gap-4">
@@ -63,13 +67,26 @@ export default function Profile() {
                 />
               </div>
               <div className="col-md-8">
-                <p><strong>Nombre:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Descripción:</strong> {user.description || "Empieza a escribir tu descripción"}</p>
-                <p><strong>Registrado desde:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
+                <p>
+                  <strong>Nombre:</strong> {user.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user.email}
+                </p>
+                <p>
+                  <strong>Descripción:</strong>{" "}
+                  {user.description || "Empieza a escribir tu descripción"}
+                </p>
+                <p>
+                  <strong>Registrado desde:</strong>{" "}
+                  {new Date(user.created_at).toLocaleDateString()}
+                </p>
 
                 {isOwner ? (
-                  <Link to="/community" className="btn btn-outline-primary mt-2">
+                  <Link
+                    to="/community"
+                    className="btn btn-outline-primary mt-2"
+                  >
                     Encontrar Usuarios / Organizaciones
                   </Link>
                 ) : (
@@ -86,19 +103,27 @@ export default function Profile() {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h5 className="mb-0">Mis actividades</h5>
               {isOwner && (
-                <Link to="/activities/create" className="btn btn-success btn-sm">
+                <Link
+                  to="/activities/create"
+                  className="btn btn-success btn-sm"
+                >
                   Nueva actividad
                 </Link>
               )}
             </div>
 
             {created.length === 0 ? (
-              <div className="alert alert-info">Aún no has creado ninguna actividad.</div>
+              <div className="alert alert-info">
+                Aún no has creado ninguna actividad.
+              </div>
             ) : (
               <div className="row gy-4 mb-5">
                 {created.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} 
-                  currentUserId={currentUser?.id} 
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    currentUserId={currentUser?.id}
+                    handleDeleteActivity={handleDeleteActivity}
                   />
                 ))}
               </div>
@@ -109,12 +134,18 @@ export default function Profile() {
             {/* FAVORITOS */}
             <h5 className="mb-3">Mis actividades guardadas (favoritos)</h5>
             {joined.length === 0 ? (
-              <div className="alert alert-info">Aún no has añadido ninguna actividad a favoritos.</div>
+              <div className="alert alert-info">
+                Aún no has añadido ninguna actividad a favoritos.
+              </div>
             ) : (
               <div className="row gy-4 mb-5">
                 {joined.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} 
-                  currentUserId={currentUser?.id} userJoinedActivities={joined.map(fav => fav.id)}
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    currentUserId={currentUser?.id}
+                    userJoinedActivities={joined.map((fav) => fav.id)}
+                    handleToggleFavorite={handleToggleFavorite}
                   />
                 ))}
               </div>
@@ -133,7 +164,9 @@ export default function Profile() {
             </div>
 
             {schedules.length === 0 ? (
-              <div className="alert alert-info">Aún no has creado ninguna programación.</div>
+              <div className="alert alert-info">
+                Aún no has creado ninguna programación.
+              </div>
             ) : (
               <ul id="schedule-list">
                 {schedules.map((schedule) => (
@@ -163,7 +196,10 @@ export default function Profile() {
                     <div className="card border-light shadow-sm">
                       <div className="card-body text-center">
                         <h6 className="card-title mb-1">{contact.name}</h6>
-                        <Link to={`/community/${contact.id}`} className="btn btn-outline-dark btn-sm mt-2">
+                        <Link
+                          to={`/community/${contact.id}`}
+                          className="btn btn-outline-dark btn-sm mt-2"
+                        >
                           Ver perfil
                         </Link>
                       </div>
