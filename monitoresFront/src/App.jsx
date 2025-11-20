@@ -4,7 +4,7 @@ import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/login-register/Login";
 import Register from "./pages/login-register/Register";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile/Profile.jsx";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Community from "./pages/Community";
@@ -87,12 +87,12 @@ export default function App() {
             }
           />
 
-          {/* <Route path="/profile/:id" element={
+          <Route path="/profile/:id" element={
               <PrivateRoute>
                 <Profile/>
               </PrivateRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/activities/pending"

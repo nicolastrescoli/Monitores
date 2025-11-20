@@ -91,12 +91,12 @@ const getPending = async () => {
 };
 
 const approveActivity = async (id) => {
-  const response = await axios.put(API_URL + `/activities/approve/${id}`);
+  const response = await axios.put(API_URL + `/admin/approve/${id}`);
   return response.data;
 };
 
 const rejectActivity = async (id) => {
-  const response = await axios.put(API_URL + `/activities/reject/${id}`);
+  const response = await axios.put(API_URL + `/admin/reject/${id}`);
   return response.data;
 };
 

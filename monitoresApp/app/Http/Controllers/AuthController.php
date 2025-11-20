@@ -71,33 +71,25 @@ class AuthController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        // Cargar relaciones necesarias
-        $user->load(['sentFriendRequests', 'receivedFriendRequests']);
-
         // Actividades del usuario mostrado
         $activities = Activity::where('user_id', $user->id)->get();
-
-        // Contactos
-        $contacts = $user->sentFriendRequests
-            ->merge($user->receivedFriendRequests)
-            ->unique('id')
-            ->values();
 
         // Schedules (si están ligados al usuario cámbialo a $user->schedules)
         $schedules = Schedule::all();
 
-        // Actividades favoritas solo si es mi perfil
-        $favoriteActivities = null;
+        // Solo si es mi perfil
         if ($user->id === Auth::id()) {
-            $favoriteActivities = $user->favoriteActivities()->get();
+            $favoriteActivities = $user->favoriteActivities()->get(); // Actividades favoritas
+            $user->load(['sentFriendRequests', 'receivedFriendRequests']);// Cargar relaciones necesarias
+            $contacts = $user->allFriends(); // Contactos
         }
 
         return response()->json([
             'user' => $user,
             'activities' => $activities,
-            'favoriteActivities' => $favoriteActivities,
+            'favoriteActivities' => $favoriteActivities ?? $activities,
             'schedules' => $schedules,
-            'contacts' => $contacts,
+            'contacts' => $contacts ?? null,
         ]);
     }
 

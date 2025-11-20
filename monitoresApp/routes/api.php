@@ -31,19 +31,20 @@ Route::middleware('auth:sanctum')->put('/activities/{activity}', [ActivityContro
 Route::middleware('auth:sanctum')->delete('/activities/{activity}', [ActivityController::class, 'apiDestroy']);
 Route::middleware('auth:sanctum')->post('/activities/favorite/{activity}', [ActivityController::class, 'apiToggleFavorite']);
 
-// Revisión y publicación
 // Enviar para revisión
 Route::middleware('auth:sanctum')->put('/activities/submit/{activity}', [ActivityController::class,'apiSubmitPublic']);
 // Cancelar envio para revisión
 Route::middleware('auth:sanctum')->put('/activities/unsubmit/{activity}', [ActivityController::class,'apiCancelSubmission']);
+
+/*
+|--------------------------------------------------------------------------
+| Tareas admin
+|--------------------------------------------------------------------------
+*/
 // Panel de revisión
 Route::middleware('auth:sanctum')->get('/admin/activities/pending', [ActivityController::class,'apiPending']);
-// Aprobar publicación
-Route::middleware('auth:sanctum')->put('/activities/approve/{activity}', [ActivityController::class,'apiSetPublic']);
-// Denegar publicación
-Route::middleware('auth:sanctum')->put('/activities/reject/{activity}', [ActivityController::class,'apiRejectPublic']);
-
-
+Route::middleware('auth:sanctum')->put('/admin/approve/{activity}', [ActivityController::class,'apiSetPublic']);
+Route::middleware('auth:sanctum')->put('/admin/reject/{activity}', [ActivityController::class,'apiRejectPublic']);
 
 /*
 |--------------------------------------------------------------------------
@@ -57,11 +58,11 @@ Route::middleware('auth:sanctum')->delete('/schedule/{schedule}', [ScheduleContr
 
 /*
 |--------------------------------------------------------------------------
-| Usuaruios y Social
+| Usuarios y Social
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'apiIndex']);
-// Rutas de gestión de peticiones de amistad
+// Gestión de peticiones de amistad
 Route::middleware('auth:sanctum')->post('/friends/request/{receiver}', [AuthController::class, 'apiSendRequest']);
 Route::middleware('auth:sanctum')->post('/friends/accept/{sender}', [AuthController::class, 'apiAcceptRequest']);
 Route::middleware('auth:sanctum')->delete('/friends/reject/{sender}', [AuthController::class, 'apiRejectRequest']);
@@ -82,6 +83,17 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 // Generador de PDF actividad y calendario
 // Ruta para enviar formulario de contacto
 
+// Clonar actividad
+
+// Editar perfil usuario
+// Eliminar cuenta de usuario
+
+// Actividades más guardadas
+// Usuarios con más actividades publicadas
+
+// ------------------------
+
+
 // ACTUALIZAR CON STATES
 // Enviar petión amistad
 // Cancelar envio de petición
@@ -90,9 +102,5 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 // Eliminar amistad
 
 
-// Mostrar perfil de un usuario
-
-// Clonar actividad
-
-// Editar perfil usuario
-// Eliminar cuenta de usuario
+// STATES para los filtros y actividad alatoria
+// Novedades otros usuarios

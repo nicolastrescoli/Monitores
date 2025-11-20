@@ -1,40 +1,11 @@
-import {  useState } from "react";
-import { sendRequest, cancelRequest, removeFriend } from "../../services/api";
+import { useState } from "react";
+import { RemoveFriend } from "./buttons/removeFriend";
+import { SendRequest } from "./buttons/SendRequest";
+import { CancelRequest } from "./buttons/CancelRequest";
 
 export default function UserCard({ otherUser }) {
-
   // Estado local de la relación de amistad
   const [status, setStatus] = useState(otherUser.friend_status || "none");
-
-  const handleSendRequest = async (otherUserId) => {
-    try {
-      await sendRequest(otherUserId);
-      setStatus("pending_sent");
-    } catch (err) {
-      console.error(err);
-      alert("Error al enviar solicitud");
-    }
-  };
-
-  const handleCancelRequest = async (otherUserId) => {
-    try {
-      await cancelRequest(otherUserId);
-      setStatus("none");
-    } catch (err) {
-      console.error(err);
-      alert("Error al cancelar solicitud");
-    }
-  };
-
-  const handleRemoveFriend = async (otherUserId) => {
-    try {
-      await removeFriend(otherUserId);
-      setStatus("none");
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar amistad");
-    }
-  };
 
   return (
     <div className="col-md-12 mb-3">
@@ -45,26 +16,20 @@ export default function UserCard({ otherUser }) {
 
           {status === "friends" && (
             <>
-              <span className="badge bg-success">Amigos</span>
-              <button className="btn btn-sm btn-danger ms-2" onClick={() => handleRemoveFriend(otherUser.id)}>
-                Eliminar amistad
-              </button>
+              <span className="badge bg-success me-2">Amigos</span>
+              <RemoveFriend otherUserId={otherUser.id} setStatus={setStatus} />
             </>
           )}
 
           {status === "pending_sent" && (
             <>
-              <span className="badge bg-warning text-dark">Solicitud enviada</span>
-              <button className="btn btn-sm btn-secondary ms-2" onClick={() => handleCancelRequest(otherUser.id)}>
-                Cancelar solicitud
-              </button>
+              <span className="badge bg-warning text-dark me-2">Solicitud enviada</span>
+              <CancelRequest otherUserId={otherUser.id} setStatus={setStatus} />
             </>
           )}
 
           {status === "none" && (
-            <button className="btn btn-sm btn-primary" onClick={() => handleSendRequest(otherUser.id)}>
-              Enviar solicitud
-            </button>
+            <SendRequest otherUserId={otherUser.id} setStatus={setStatus} />
           )}
         </div>
       </div>
