@@ -1,35 +1,23 @@
 import { useState, useEffect, useRef } from "react";
-import Paginador from "./Paginador.jsx";
-import Cell from "./Cell.jsx";
-import { saveSchedule } from "./scheduleAux.js";
+import Paginador from "./components/Paginador.jsx";
+import Cell from "./components/Cell.jsx";
+import Buttons from "./components/Buttons.jsx";
 
-export default function Schedule({
+export default function Table({
   days,
   hourSlots,
   cellMap,
   handleDropActivity,
   handleMoveActivity,
   handleRemoveActivity,
+  // isEditing,
+  // setIsEditing,
 }) {
-  // Handlers de botones Guardar, Imprimir, Salir
-  function handleStoreSchedule(cellMap) {
-    try {
-      saveSchedule(JSON.stringify(cellMap));
-    } catch (error) {
-      console.log("Error al guardar", error);
-    }
-  }
-
-  const handlePrint = () => {};
-  const handleExit = () => {
-    window.location.href = "/profile";
-  };
 
   const [page, setPage] = useState(0);
 
   // Referencia para mostrar la tabla desde las 8:00
   const tableWrapperRef = useRef(null);
-
   useEffect(() => {
     // Buscar la fila que corresponde a las 8:00
     if (tableWrapperRef.current) {
@@ -41,6 +29,7 @@ export default function Schedule({
       }
     }
   }, [page, days]);
+  
 
   const renderTable = (datesSlice, hourSlots) => {
     return (
@@ -63,6 +52,7 @@ export default function Schedule({
               ))}
             </tr>
           </thead>
+          
           <tbody>
             {hourSlots.map((slot, rowIdx) => (
               <tr key={rowIdx}>
@@ -81,15 +71,23 @@ export default function Schedule({
                     );
                   }
 
-                  const key = `${rowIdx}-${startIndex + colIdx}`;
-                  const activity = cellMap[key];
+                  // const key = `${rowIdx}-${startIndex + colIdx}`;
+
+                  // // NUEVA CLAVE ============================================================
+                  // const dayKey = date.toISOString().split("T")[0]; // YYYY-MM-DD
+                  // const key = `${dayKey}:${slot}`;                 // p.ej: "2025-11-18:08:30"
+                  // // ======================================================================
+
+                  // const activity = cellMap[key];
+
+                  const dateKey = new Date(date).toISOString().split("T")[0];
+                  const activity = cellMap[dateKey]?.[slot] ?? null;
 
                   return (
                     <Cell
-                      key={key}
                       hour={slot}
                       date={date}
-                      activity={activity}
+                      activity={activity} // Pasarle una actividad si estamos trayendo desde la bbdd
                       onDropActivity={handleDropActivity}
                       onMoveActivity={handleMoveActivity}
                       onDeleteActivity={handleRemoveActivity}
@@ -128,20 +126,11 @@ export default function Schedule({
             setPage={setPage}
           />
         </div>
-        <div className="d-flex gap-2 col-2">
-          <button
-            className="btn btn-dark"
-            onClick={() => handleStoreSchedule(cellMap)}
-          >
-            Guardar
-          </button>
-          <button className="btn btn-dark" onClick={handlePrint}>
-            Imprimir
-          </button>
-          <button className="btn btn-dark" onClick={handleExit}>
-            Salir
-          </button>
-        </div>
+        {/* {isEditing ?  */}
+        <Buttons 
+        // isEditing={isEditing} setIsEditing={setIsEditing} 
+        cellMap={cellMap}/> 
+        {/* : ""// Modificar        } */}
       </div>
       {renderTable(daysSlice, hourSlots)}
     </>

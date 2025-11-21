@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { AuthProvider } from "./contexts/AuthContext";
 import App from './App.jsx'
 import './app.css'
+import ScheduleBuilder2 from './pages/schedules/ScheduleBuilder2.jsx';
 
 
 createRoot(document.getElementById('root')).render(

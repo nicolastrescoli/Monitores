@@ -6,16 +6,15 @@ export default function Cell({
   onMoveActivity,
   onDeleteActivity,
 }) {
-const handleDrop = (e) => {
-  e.preventDefault();
-  const data = JSON.parse(e.dataTransfer.getData("application/json"));
-  if (data.instanceId) {
-    onMoveActivity?.(data.instanceId, date, hour);
-  } else if (data.activityId) {
-    onDropActivity?.(data.activityId, date, hour);
-  }
-};
-
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const data = JSON.parse(e.dataTransfer.getData("application/json"));
+    if (data.instanceId) {
+      onMoveActivity?.(data.instanceId, date, hour);
+    } else if (data.activityId) {
+      onDropActivity?.(data.activityId, date, hour);
+    }
+  };
 
   const handleDragStart = (e) => {
     if (!activity) return;

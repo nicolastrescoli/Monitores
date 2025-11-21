@@ -1,0 +1,46 @@
+{
+  "2025-11-21": {
+    "08:15": {
+      "id": 3,
+      "created_at": "2025-06-05T15:31:52.000000Z",
+      "updated_at": "2025-06-05T15:31:52.000000Z",
+      "title": "Actividad 3",
+      "num_participants": 20,
+      "min_age": 8,
+      "max_age": 16,
+      "duration": 120,
+      "objectives": "Objetivos de la actividad 3",
+      "introduction": "Introducci\u00f3n a la actividad 3",
+      "description": "Descripci\u00f3n de la actividad 3",
+      "conclusion": "Conclusi\u00f3n de la actividad 3",
+      "visibility": "public",
+      "type_id": 3,
+      "user_id": null,
+      "original_activity_id": null,
+      "instanceId": "1763724402647-0.21841907067960142",
+      "isHead": true,
+      "isTail": false
+    },
+    "08:30": {
+      "id": 3,
+      "created_at": "2025-06-05T15:31:52.000000Z",
+      "updated_at": "2025-06-05T15:31:52.000000Z",
+      "title": "Actividad 3",
+      "num_participants": 20,
+      "min_age": 8,
+      "max_age": 16,
+      "duration": 120,
+      "objectives": "Objetivos de la actividad 3",
+      "introduction": "Introducci\u00f3n a la actividad 3",
+      "description": "Descripci\u00f3n de la actividad 3",
+      "conclusion": "Conclusi\u00f3n de la actividad 3",
+      "visibility": "public",
+      "type_id": 3,
+      "user_id": null,
+      "original_activity_id": null,
+      "instanceId": "1763724402647-0.21841907067960142",
+      "isHead": false,
+      "isTail": true
+    }
+  }
+}

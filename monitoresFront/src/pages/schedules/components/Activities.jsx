@@ -3,6 +3,8 @@ export default function Activities({activities}) {
   return (
     <div className="activities pe-3">
       <h3>Actividades</h3>
+      <div className="table-wrapper"
+        style={{ maxHeight: "400px", overflowY: "auto" }}>
       {activities.map((activity) => (
         <div
           className="activity bg-dark text-white p-2 mb-1 rounded"
@@ -14,7 +16,7 @@ export default function Activities({activities}) {
         >
           {activity.title} - {activity.duration} min
         </div>
-      ))}
+      ))}</div>
     </div>
   );
 }

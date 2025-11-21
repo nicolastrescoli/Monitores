@@ -51,10 +51,10 @@ Route::middleware('auth:sanctum')->put('/admin/reject/{activity}', [ActivityCont
 | CRUD Schedules
 |--------------------------------------------------------------------------
 */
-// Route::get('/schedules', [ScheduleController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/schedule/{schedule}', [ScheduleController::class, 'scheduleDetail']);
 Route::middleware('auth:sanctum')->post('/schedule/store', [ScheduleController::class, 'store']);
+Route::middleware('auth:sanctum')->put('/schedule/{schedule}', [ScheduleController::class, 'update']);
 Route::middleware('auth:sanctum')->delete('/schedule/{schedule}', [ScheduleController::class, 'destroy']);
-// Route::get('/schedules/{schedule}', [ScheduleController::class, 'scheduleDetail']);
 
 /*
 |--------------------------------------------------------------------------
@@ -75,14 +75,13 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 |--------------------------------------------------------------------------
 */
 
-// Recuperar calendario y mostrarlo
 // Listar calendarios usuario
-// Editar y actualizar calendario
 // Clonar calendario
 
 // Generador de PDF actividad y calendario
 // Ruta para enviar formulario de contacto
 
+// Guardar actividad como favorito
 // Clonar actividad
 
 // Editar perfil usuario

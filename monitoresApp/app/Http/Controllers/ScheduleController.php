@@ -45,12 +45,14 @@ class ScheduleController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
             'cell_map' => 'required|array',
         ]);
 
         $schedule = Schedule::create([
-            'name' => 'Nueva programación',
-            'description' => 'Prueba ambientación',
+            'name' => $validated['name'],
+            'description' => $validated['description'],
             'user_id' => $user->id,
             'cell_map' => $validated['cell_map'],
         ]);
@@ -61,36 +63,15 @@ class ScheduleController extends Controller
         ], 201);        
     }
 
-        /**
-     * Display the specified resource.
-     */
-    public function scheduleDetail(Schedule $schedule, Request $request)
+    public function scheduleDetail(Schedule $schedule)
     {
-        // Obtener todas las actividades programadas con fecha y hora
-        $scheduled = $schedule->activities()->withPivot(['start_time', 'end_time'])->get();
-
-        // Extraer todos los start_time y end_time de la pivot table
-        $startTimes = $scheduled->pluck('pivot.start_time')->filter();
-        $endTimes = $scheduled->pluck('pivot.end_time')->filter();
-
-        // Si no hay fechas, mostrar los próximos 7 días por defecto
-        if ($startTimes->isEmpty() || $endTimes->isEmpty()) {
-            $startDate = Carbon::today();
-            $dates = collect(range(0, 6))->map(fn($i) => $startDate->copy()->addDays($i));
-        } else {
-            $startDate = Carbon::parse($startTimes->min())->startOfDay();
-            $endDate = Carbon::parse($endTimes->max())->startOfDay();
-
-            $days = $startDate->diffInDays($endDate) + 1;
-
-            $dates = collect(range(0, $days - 1))->map(fn($i) => $startDate->copy()->addDays($i));
-        }
-
+        // Devolver directamente el cell_map del schedule
+        // Suponiendo que cell_map se guarda como JSON en la base de datos
         return response()->json([
-            'dates' => $dates,
-            'scheduled' => $scheduled,
-            'schedule' => $schedule,
-        ], 201); 
+            'name' => $schedule->name,
+            'description' => $schedule->description,
+            'cellMap' => $schedule->cell_map,
+        ], 200);
     }
 
     /**
@@ -160,8 +141,31 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, Schedule $schedule)
     {
-        //
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'cell_map' => 'required|array',
+        ]);
+
+        // Asegurarnos de que el usuario es el propietario
+        if ($schedule->user_id !== $user->id) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $schedule->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'cell_map' => $validated['cell_map'],
+        ]);
+
+        return response()->json([
+            'message' => 'Horario actualizado correctamente',
+            'schedule' => $schedule,
+        ], 200);
     }
+
 
     /**
      * Remove the specified resource from storage.

@@ -229,6 +229,7 @@ useEffect(() => {
                   <Link
                     to="/schedule/create"
                     className="btn btn-success btn-sm"
+                    state={{ favoriteActivities }}
                   >
                     Nueva Programación
                   </Link>
@@ -245,27 +246,26 @@ useEffect(() => {
                     <div key={schedule.id} className="col-md-12 mb-1">
                       <div className="card">
                         <div className="card-body d-flex justify-content-between align-items-center py-1">
-                          <Link to={`/schedule/${schedule.id}`}>
+                          <Link to={`/schedule/${schedule.id}`} state={{ favoriteActivities }}>
                             <div className="d-flex justify-content-between align-items-center">
                               <strong className="card-title">
                                 {schedule.name}
                               </strong>
                             </div>
                           </Link>
+                          {isOwner && (
+                          <>
                           <div>
-                            <button
-                              className="btn btn-sm btn-warning me-2"
-                              onClick={() => handleEditSchedule(schedule.id)}
-                            >
-                              Editar
+                            <button className="btn btn-sm btn-primary me-2"
+                              onClick={() => handleCloneSchedule(schedule.id)}
+                            >Hacer una copia
                             </button>
-                            <button
-                              className="btn btn-sm btn-danger"
+                            <button className="btn btn-sm btn-danger"
                               onClick={() => handleDeleteSchedule(schedule.id)}
-                            >
-                              Eliminar
+                            >Eliminar
                             </button>
                           </div>
+                          </>)}
                         </div>
                       </div>
                     </div>

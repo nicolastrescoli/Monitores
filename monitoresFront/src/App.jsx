@@ -12,7 +12,7 @@ import AdminPanel from "./pages/AdminPanel.jsx";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm";
-import ScheduleBuilder from "./pages/schedules/ScheduleBuilder";
+import ScheduleBuilder2 from "./pages/schedules/ScheduleBuilder2";
 import { getActivities } from "./services/api.js";
 
 function PrivateRoute({ children, roles }) {
@@ -113,7 +113,7 @@ export default function App() {
           />
 
           <Route
-            path="/activities/:id/edit"
+            path="/activities/edit/:id"
             element={
               <PrivateRoute>
                 <ActivityForm />
@@ -128,16 +128,16 @@ export default function App() {
             path="/schedule/create"
             element={
               <PrivateRoute>
-                <ScheduleBuilder />
+                <ScheduleBuilder2 />
               </PrivateRoute>
             }
           />
 
           <Route
-            path="/schedule/:id/edit"
+            path="/schedule/:id"
             element={
               <PrivateRoute>
-                <ScheduleBuilder />
+                <ScheduleBuilder2 />
               </PrivateRoute>
             }
           />

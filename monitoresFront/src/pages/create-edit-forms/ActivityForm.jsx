@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 
 import StructuredForm from "./components/StructuredForm";
 import FreeForm from "./components/FreeForm";
+
+import {
+  getFormData,
+  showActivity,
+  storeActivity,
+  updateActivity,
+} from "../../services/api";
 
 export default function ActivityForm() {
   const { id: activityId } = useParams(); // ← si existe, estamos editando
@@ -33,52 +40,45 @@ export default function ActivityForm() {
 
   // ---------- 1. Cargar datos base: types, materials, risks ----------
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/activities/formData", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setTypes(res.data.types);
-        setMaterials(res.data.materials);
-        setRisks(res.data.risks);
-      })
-      .catch(console.error);
+    async function fetchFormData() {
+      const res = await getFormData();
+      setTypes(res.types);
+      setMaterials(res.materials);
+      setRisks(res.risks);
+    }
+    fetchFormData();
   }, []);
 
   // ---------- 2. Si estamos editando → cargar actividad ----------
   useEffect(() => {
     if (!isEditing) return;
 
-    axios
-      .get(`http://localhost:8000/api/activities/${activityId}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        const activity = res.data.activity;
-
-        // Prefill structured form fields
-        setFormData((prev) => ({
-          ...prev,
-          title: activity.title ?? "",
-          type_id: activity.type_id ?? "",
-          num_participants: activity.num_participants ?? "",
-          min_age: activity.min_age ?? "",
-          max_age: activity.max_age ?? "",
-          duration: activity.duration ?? "",
-          objectives: activity.objectives ?? "",
-          introduction: activity.introduction ?? "",
-          description: activity.description ?? "",
-          conclusion: activity.conclusion ?? "",
-          materials: activity.materials?.map(m => ({
+    async function fetchActivity(activityId) {
+      const res = await showActivity(activityId);
+      setFormData((prev) => ({
+        ...prev,
+        title: res.activity.title ?? "",
+        type_id: res.activity.type_id ?? "",
+        num_participants: res.activity.num_participants ?? "",
+        min_age: res.activity.min_age ?? "",
+        max_age: res.activity.max_age ?? "",
+        duration: res.activity.duration ?? "",
+        objectives: res.activity.objectives ?? "",
+        introduction: res.activity.introduction ?? "",
+        description: res.activity.description ?? "",
+        conclusion: res.activity.conclusion ?? "",
+        materials:
+          res.activity.materials?.map((m) => ({
             id: String(m.id),
             quantity: m.pivot?.quantity || 1,
-            notes: m.pivot?.notes || ""
+            notes: m.pivot?.notes || "",
           })) || [],
+        risks: res.activity.risks?.map((r) => String(r.id)) || [],
+        
+      }));
+    }
+    fetchActivity(activityId);
 
-          risks: activity.risks?.map(r => String(r.id)) || [],
-        }));
-      })
-      .catch(console.error);
   }, [isEditing, activityId]);
 
   // ---------- 3. Enviar formulario (crear / editar) ----------
@@ -89,18 +89,10 @@ export default function ActivityForm() {
 
     try {
       if (isEditing) {
-        await axios.put(
-          `http://localhost:8000/api/activities/${activityId}`,
-          payload,
-          { withCredentials: true }
-        );
+        await updateActivity(activityId, payload);
         alert("Actividad actualizada");
       } else {
-        await axios.post(
-          `http://localhost:8000/api/activities/store`,
-          payload,
-          { withCredentials: true }
-        );
+        await storeActivity(payload);
         alert("Actividad creada");
       }
 

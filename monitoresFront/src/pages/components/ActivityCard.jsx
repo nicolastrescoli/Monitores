@@ -75,7 +75,7 @@ async function handleCancelSubmission(activityId) {
             <div className="mt-3">
               {isOwner ? (
                 <>
-                  <Link to={`/activities/${activity.id}/edit`}
+                  <Link to={`/activities/edit/${activity.id}`}
                     className="btn btn-sm btn-warning ms-1">
                     Editar
                   </Link>

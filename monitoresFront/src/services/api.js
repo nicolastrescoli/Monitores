@@ -3,12 +3,12 @@ import axios from "axios";
 const API_URL = "http://localhost:8000/api";
 
 // Routes for Users
-const getUsers = async () => {
+export const getUsers = async () => {
   const response = await axios.get(API_URL + "/users");
   return response.data;
 };
 
-const getProfile = async (userId = null) => {
+export const getProfile = async (userId = null) => {
   const url = userId
     ? `${API_URL}/profile/${userId}`
     : `${API_URL}/profile`;
@@ -17,7 +17,7 @@ const getProfile = async (userId = null) => {
   return response.data;
 };
 
-const register = async (user) => {
+export const register = async (user) => {
   const response = await axios.post(API_URL + "/register", {
     name: user.name,
     email: user.email,
@@ -38,19 +38,19 @@ const register = async (user) => {
 // };
 
 // Friend request
-const sendRequest = async (id) => {
+export const sendRequest = async (id) => {
   await axios.post(`${API_URL + "/friends/request"}/${id}`);
 };
 
-const acceptRequest = async (id) => {
+export const acceptRequest = async (id) => {
   await axios.post(`${API_URL + "/friends/accept"}/${id}`);
 };
 
-const rejectRequest = async (id) => {
+export const rejectRequest = async (id) => {
   await axios.delete(`${API_URL + "/friends/reject"}/${id}`);
 };
 
-const cancelRequest = async (id) => {
+export const cancelRequest = async (id) => {
   await axios.delete(`${API_URL + "/friends/cancel"}/${id}`);
 };
 
@@ -58,54 +58,88 @@ export const removeFriend = async (id) => {
   await axios.delete(`${API_URL + "/friends/remove"}/${id}`);
 };
 
+// Activity formData
+export const getFormData = async () => {
+  const response = await axios.get(API_URL + "/activities/formData");
+  return response.data;
+};
+
 
 // Routes for Activities
-const getActivities = async () => {
+export const getActivities = async () => {
   const response = await axios.get(API_URL + "/activities");
   return response.data;
 };
 
-const deleteActivity = async (id) => {
+export const showActivity = async (activityId) => {
+  const response = await axios.get(API_URL + `/activities/${activityId}`);
+  return response.data;
+};
+
+export const storeActivity = async (formData, mode) => {
+  const response = await axios.post(API_URL + "/activities/store", formData, mode);
+  return response.data;
+};
+
+export const updateActivity = async (activityId, formData, mode) => {
+  const response = await axios.put(API_URL + `/activities/${activityId}`, formData, mode);
+  return response.data;
+};
+
+export const deleteActivity = async (id) => {
   await axios.delete(`${API_URL + "/activities"}/${id}`);
 };
 
-const toggleFavorite = async (id) => {
+export const toggleFavorite = async (id) => {
   const response = await axios.post(`${API_URL + "/activities/favorite"}/${id}`);
   return response.data;
 };
 
 // Publicación de actividades
-const submitPublic = async (id)  => {
+export const submitPublic = async (id)  => {
   const response = await axios.put(API_URL + `/activities/submit/${id}`);
   return response.data;
 };
 
-const cancelSubmission = async (id)  => {
+export const cancelSubmission = async (id)  => {
   const response = await axios.put(API_URL + `/activities/unsubmit/${id}`);
   return response.data;
 };
 
-const getPending = async () => {
+export const getPending = async () => {
   const response = await axios.get(API_URL + "/admin/activities/pending");
   return response.data;
 };
 
-const approveActivity = async (id) => {
+export const approveActivity = async (id) => {
   const response = await axios.put(API_URL + `/admin/approve/${id}`);
   return response.data;
 };
 
-const rejectActivity = async (id) => {
+export const rejectActivity = async (id) => {
   const response = await axios.put(API_URL + `/admin/reject/${id}`);
   return response.data;
 };
 
 
-// Schedulres
-
-const deleteSchedule = async (id) => {
-  await axios.delete(`${API_URL + "/schedule"}/${id}`);
+// Schedules
+export const getSchedule = async (id) => {
+  const response = await axios.get(`${API_URL + "/schedule"}/${id}`);
+  return response.data;
 };
 
+export const storeSchedule = async (name, description, cellMap ) => {
+  const cell_map = JSON.parse(JSON.stringify(cellMap))
+  const response = await axios.post(API_URL + "/activities/store", {name, description, cell_map});
+  return response.data;
+};
 
-export { getActivities, deleteActivity, toggleFavorite, getUsers, getProfile, register, sendRequest, acceptRequest, rejectRequest, cancelRequest, submitPublic, cancelSubmission, getPending, approveActivity, rejectActivity, deleteSchedule };
+export const updateSchedule = async (id, name, description, cellMap) => {
+  const cell_map = JSON.parse(JSON.stringify(cellMap))
+  const response = await axios.put(`${API_URL}/schedule/${id}`, {name, description, cell_map});
+  return response.data;
+};
+
+export const deleteSchedule = async (id) => {
+  await axios.delete(`${API_URL + "/schedule"}/${id}`);
+};
