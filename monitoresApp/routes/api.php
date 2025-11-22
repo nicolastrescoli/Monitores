@@ -16,6 +16,8 @@ Route::post('/logout', [AuthController::class, 'apiLogout']);
 Route::post('/register', [AuthController::class, 'apiRegister']);
 Route::middleware('auth:sanctum')->get('/profile', [AuthController::class, 'apiShow']); // Ver perfil propio
 Route::middleware('auth:sanctum')->get('/profile/{user}', [AuthController::class, 'apiShow']); // Ver perfil de otro usuario
+Route::middleware('auth:sanctum')->put('/user/{user}', [AuthController::class, 'update']);
+Route::middleware('auth:sanctum')->delete('/user/{user}', [AuthController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
@@ -84,7 +86,6 @@ Route::get('/pdf/{activity}', [ActivityController::class, 'generatePdf']);
 
 
 // Guardar actividad como favorito STATE
-// Editar perfil usuario
 // Eliminar cuenta de usuario
 
 // Clonar calendario

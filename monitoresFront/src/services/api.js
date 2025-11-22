@@ -28,11 +28,17 @@ export const register = async (user) => {
   return response.data;
 };
 
-// export const updateUser = async (id, user) => {
-//   const response = await axios.put(`${API_URL + "/users"}/${id}`, user);
-//   return response.data;
-// };
+export const updateUser = async (id, name, description, email, password, password_confirmation, url_image) => {
+    const payload = { name, description, email, url_image };
 
+    if (password && password_confirmation) {
+        payload.password = password;
+        payload.password_confirmation = password_confirmation;
+    }
+
+    const response = await axios.put(`${API_URL}/user/${id}`, payload);
+    return response.data;
+};
 // export const deleteUser = async (id) => {
 //   await axios.delete(`${API_URL + "/users"}/${id}`);
 // };

@@ -5,13 +5,20 @@ import { Link } from "react-router-dom";
 import ActivityCard from "../components/ActivityCard.jsx";
 import { deleteSchedule } from "../../services/api.js";
 import { Contacts } from "./components/Contacts.jsx";
-import { getProfile } from "../../services/api.js";
+import { getProfile, updateUser } from "../../services/api.js";
 import { RemoveFriend } from "../components/buttons/removeFriend.jsx";
 
 export default function Profile() {
   const { id } = useParams(); // id pasada en la URL
   const [externalProfile, setExternalProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
+  const [url_image, setImage] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const {
     user: currentUser,
@@ -29,7 +36,7 @@ useEffect(() => {
       } else {
         setExternalProfile(null);
       }
-    } catch (err) {
+    } catch {
       setExternalProfile(null);
     } finally {
       setLoading(false);
@@ -60,6 +67,44 @@ useEffect(() => {
 
   const isOwner = !id; // si NO hay id → es tu perfil
 
+  function startEditing() {
+  setName(user.name || "");
+  setEmail(user.email || "");
+  setDescription(user.description || "");
+  setImage(user.url_image || "");
+  setPassword("");
+  setConfirmPassword("");
+  setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setIsEditing(false);
+    setName("");
+    setEmail("");
+    setDescription("");
+    setImage("");
+    setPassword("");
+    setConfirmPassword("");
+  }
+
+async function handleUpdateUser() {
+  await updateUser(
+    user.id,
+    name,
+    description,
+    email,
+    password,
+    confirmPassword,
+    url_image
+  );
+
+  // Recarga datos del perfil
+  await fetchProfile();
+
+  setIsEditing(false);
+}
+
+
   // --- ELIMINAR PROGRAMACIÓN ---
   async function handleDeleteSchedule(scheduleId) {
     try {
@@ -86,42 +131,72 @@ useEffect(() => {
             {/* Información básica */}
             <>
               <div className="row mb-3 align-items-center">
-                <div className="col-md-4 text-center">
+                <div className="col-md-3 text-center">
                   <img
                     src={user.url_image || "https://placehold.co/150"}
                     className="rounded-circle img-thumbnail mb-2"
                     alt="Avatar"
-                    style={{ width: 150, height: 150 }}
+                    style={{ width: 200, height: 200 }}
                   />
                 </div>
-                <div className="col-md-8">
+                <div className="col-md-6">
                   <p>
-                    <strong>Nombre:</strong> {user.name}
+                    <strong>Nombre:</strong> {!isEditing ? (user.name) : (<input type="text" value={name} onChange={(e) => setName(e.target.value)}/>)}
                   </p>
                   <p>
-                    <strong>Email:</strong> {user.email}
+                    <strong>Email:</strong> {!isEditing ? (user.email) : (<input type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>)}
                   </p>
                   <p>
-                    <strong>Descripción:</strong>{" "}
-                    {user.description || "Empieza a escribir tu descripción"}
+                    <strong>Descripción:</strong> {!isEditing ? (user.description) : (<input type="text" value={description} onChange={(e) => setDescription(e.target.value)}/>)}
                   </p>
-                  <p>
-                    <strong>Registrado desde:</strong>{" "}
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </p>
+                  {!isEditing ? (
+                    <>
+                    <p>
+                      <strong>Registrado desde:</strong> {new Date(user.created_at).toLocaleDateString()}
+                    </p>
+                    {isOwner ? (
+                      <Link
+                        to="/community"
+                        className="btn btn-outline-primary mt-2"
+                      >
+                        Encontrar Usuarios / Organizaciones
+                      </Link>
+                    ) : (
+                      <RemoveFriend
+                        otherUserId={user.id}
+                        text={"Eliminar contacto"}
+                      />
+                    )}
+                  </>
+                    ) : (
+                    <>
+                      <p>
+                        <strong>Nueva contraseña: </strong>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                      </p>
+                      <p>
+                        <strong>Repita nueva contraseña: </strong>
+                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                      </p>
+                        <p>
+                        <strong>URL imagen: </strong>
+                        <input type="text" value={url_image} onChange={(e) => setImage(e.target.value)}/>
+                      </p>
+                    </>
+                    )}
 
-                  {isOwner ? (
-                    <Link
-                      to="/community"
-                      className="btn btn-outline-primary mt-2"
-                    >
-                      Encontrar Usuarios / Organizaciones
-                    </Link>
+                </div>
+                <div className="col-md-3 d-flex">
+                  {!isEditing ? (
+                    <>
+                      <button className="btn btn-warning border-dark me-2" onClick={startEditing}>Editar Perfil</button>
+                      <button className="btn btn-danger border-dark">Eliminar Cuenta</button>
+                    </>
                   ) : (
-                    <RemoveFriend
-                      otherUserId={user.id}
-                      text={"Eliminar contacto"}
-                    />
+                    <>
+                      <button className="btn btn-success border-dark" onClick={handleUpdateUser}>Guardar cambios</button>
+                      <button className="btn btn-danger border-dark me-2" onClick={cancelEditing}>Cancelar Edicion</button>
+                    </>
                   )}
                 </div>
               </div>

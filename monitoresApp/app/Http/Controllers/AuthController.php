@@ -32,6 +32,66 @@ class AuthController extends Controller
         return response()->json(['message' => 'Usuario registrado', 'user' => $user]);
     }
 
+    public function update(Request $request, User $user)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'sometimes|string|min:8|confirmed', 
+            'url_image' => 'sometimes|string|nullable'
+        ]);
+
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
+
+        if (isset($validated['description'])) {
+            $user->description = $validated['description'];
+        }
+
+        if (isset($validated['email'])) {
+            $user->email = $validated['email'];
+        }
+
+        // Actualizar contraseña (si se envía)
+        if (isset($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        if (array_key_exists('url_image', $validated)) {
+            $user->url_image = $validated['url_image'];
+        }
+
+        // // Subir imagen si viene en el request Storage público configurado (php artisan storage:link)
+        // if ($request->hasFile('url_image')) {
+
+        //     // Eliminar la imagen anterior si existe
+        //     if ($user->url_image && Storage::disk('public')->exists($user->url_image)) {
+        //         Storage::disk('public')->delete($user->url_image);
+        //     }
+
+        //     // Guardar archivo nuevo
+        //     $path = $request->file('url_image')->store('users', 'public');
+
+        //     // Guardar ruta en DB
+        //     $user->url_image = $path; // ejemplo: users/3kd829d.png
+        // }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Perfil actualizado exitosamente.',
+            'user' => $user
+        ]);
+    }
+
     public function apiLogin(Request $request)
     {
         $credentials = $request->validate([
@@ -92,35 +152,6 @@ class AuthController extends Controller
             'contacts' => $contacts ?? null,
         ]);
     }
-
-
-   
-
-    // public function apiShow(Request $request)
-    // {
-    //     $user = Auth::user();
-
-    //     if (!$user) {
-    //         return response()->json(['error' => 'No autenticado'], 401);
-    //     }
-
-    //     $favoriteActivities = $user->favoriteActivities()->get();
-    //     // $schedules = $user->schedules()->with('activities')->get();
-    //     $schedules = Schedule::all();
-    //     $user->load(['sentFriendRequests', 'receivedFriendRequests']);
-
-    //     $contacts = $user->sentFriendRequests
-    //         ->merge($user->receivedFriendRequests)
-    //         ->unique('id')
-    //         ->values();
-
-    //     return response()->json([
-    //         'user' => $user,
-    //         'favoriteActivities' => $favoriteActivities,
-    //         'schedules' => $schedules,
-    //         'contacts' => $contacts,
-    //     ]);
-    // }
 
     public function showLoginForm()
     {
