@@ -82,17 +82,17 @@ Route::get('/pdf/{activity}', [ActivityController::class, 'generatePdf']);
 |--------------------------------------------------------------------------
 */
 
-// Listar calendarios usuario
-// Clonar calendario
 
-// Generador de PDF actividad y calendario
-// Ruta para enviar formulario de contacto
-
-// Guardar actividad como favorito
-// Clonar actividad
-
+// Guardar actividad como favorito STATE
 // Editar perfil usuario
 // Eliminar cuenta de usuario
+
+// Clonar calendario
+ 
+// Generador de PDF calendario
+// Ruta para enviar formulario de contacto
+
+// Clonar actividad
 
 // Actividades más guardadas
 // Usuarios con más actividades publicadas

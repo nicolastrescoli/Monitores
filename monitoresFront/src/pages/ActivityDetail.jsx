@@ -1,4 +1,4 @@
-import { printActivity } from "../services/api";
+import { openActivityPdf } from "../services/api";
 
 export default function ActivityDetail({ activity, creator, materials = [], risks = [], onBack }) {
   const typeNames = {
@@ -21,7 +21,7 @@ export default function ActivityDetail({ activity, creator, materials = [], risk
                 className="btn btn-outline-primary mb-3"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => printActivity(activity.id)}
+                onClick={() => openActivityPdf(activity.id)}
               >
                 Imprimir en PDF
               </button>

@@ -147,6 +147,19 @@ export const deleteSchedule = async (id) => {
 
 // Imprimir en PDF
 export const printActivity = async (id) => {
-  const response = await axios.get(`${API_URL + "/pdf"}/${id}`);
-  return response.data;
+  const response = await axios.get(`${API_URL}/pdf/${id}`, {
+    responseType: "blob",
+  });
+  return response.data; // solo devuelve el PDF
 };
+
+export const openActivityPdf = async (id) => {
+  const pdfData = await printActivity(id); // aquí sí lo usamos
+  const url = window.URL.createObjectURL(
+    new Blob([pdfData], { type: "application/pdf" })
+  );
+  window.open(url);
+};
+
+
+

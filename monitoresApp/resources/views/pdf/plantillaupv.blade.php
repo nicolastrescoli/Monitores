@@ -73,7 +73,7 @@
     </table>
 
     <footer>
-        Camino de Vera, s/n · 46022 · Valencia · Tél.:963877799 · Fax:963877945 · escoladestiu@upv.es · www.upv.es/entidades/EE
+        Material obtenido de OcioEducativo.es - Un proyecto de Nicolás Trescolí Blasco
     </footer>
 
 </body>

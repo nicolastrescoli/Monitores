@@ -74,8 +74,8 @@ class AuthController extends Controller
         // Actividades del usuario mostrado
         $activities = Activity::where('user_id', $user->id)->get();
 
-        // Schedules (si están ligados al usuario cámbialo a $user->schedules)
-        $schedules = Schedule::all();
+        // Schedules del usuario mostrado
+        $schedules = Schedule::where('user_id', $user->id)->get();
 
         // Solo si es mi perfil
         if ($user->id === Auth::id()) {
