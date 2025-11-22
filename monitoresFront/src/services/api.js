@@ -143,3 +143,10 @@ export const updateSchedule = async (id, name, description, cellMap) => {
 export const deleteSchedule = async (id) => {
   await axios.delete(`${API_URL + "/schedule"}/${id}`);
 };
+
+
+// Imprimir en PDF
+export const printActivity = async (id) => {
+  const response = await axios.get(`${API_URL + "/pdf"}/${id}`);
+  return response.data;
+};

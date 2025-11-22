@@ -1,4 +1,4 @@
-import React from "react";
+import { printActivity } from "../services/api";
 
 export default function ActivityDetail({ activity, creator, materials = [], risks = [], onBack }) {
   const typeNames = {
@@ -17,14 +17,14 @@ export default function ActivityDetail({ activity, creator, materials = [], risk
         <div className="card-body bg-light text-dark">
           <div className="row mb-3">
             <div className="col-md-8">
-              <a
-                href={`/activities/${activity.id}/pdf`}
+              <button
                 className="btn btn-outline-primary mb-3"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => printActivity(activity.id)}
               >
                 Imprimir en PDF
-              </a>
+              </button>
               <p><strong>Tipo:</strong> {typeName}</p>
               <p><strong>Edad recomendada:</strong> {activity.min_age}+</p>
               <p><strong>Nº de participantes:</strong> {activity.num_participants}</p>

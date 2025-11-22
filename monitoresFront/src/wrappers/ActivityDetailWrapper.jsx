@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ActivityDetail from "../pages/ActivityDetail";
+import { showActivity } from "../services/api";
 
 export default function ActivityDetailWrapper() {
   const { id } = useParams();
@@ -12,14 +12,14 @@ export default function ActivityDetailWrapper() {
   const [risks, setRisks] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/activities/${id}`)
-      .then(res => {
-        setActivity(res.data.activity);
-        setCreator(res.data.creator);
-        setMaterials(res.data.materials);
-        setRisks(res.data.risks);
-      })
-      .catch(err => console.error(err));
+    async function fetchActivity() {
+      const res = await showActivity(id)
+        setActivity(res.activity);
+        setCreator(res.creator);
+        setMaterials(res.materials);
+        setRisks(res.risks);
+    }
+    fetchActivity();
   }, [id]);
 
   if (!activity) return <p>Cargando...</p>;

@@ -753,7 +753,8 @@ class ActivityController extends Controller
 
         $pdf = Pdf::loadView('pdf.plantillaupv', $data);
 
-        return $pdf->stream('archivo.pdf'); // O usa ->download('ejemplo.pdf') para forzar descarga
+        // return $pdf->stream('archivo.pdf');
+        return $pdf->download('ejemplo.pdf'); // para forzar descarga
     }
 
 }

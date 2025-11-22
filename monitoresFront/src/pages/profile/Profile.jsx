@@ -3,11 +3,7 @@ import { AuthContext } from "../../contexts/AuthContext.jsx";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ActivityCard from "../components/ActivityCard.jsx";
-import {
-  deleteActivity,
-  toggleFavorite,
-  deleteSchedule,
-} from "../../services/api.js";
+import { deleteSchedule } from "../../services/api.js";
 import { Contacts } from "./components/Contacts.jsx";
 import { getProfile } from "../../services/api.js";
 import { RemoveFriend } from "../components/buttons/removeFriend.jsx";
@@ -43,7 +39,6 @@ useEffect(() => {
   fetch();
 }, [id]);
 
-
   const dataToShow = id ? externalProfile : profileData;
 
   if (loading) {
@@ -64,28 +59,6 @@ useEffect(() => {
   const joined = favoriteActivities.filter((act) => act.user_id !== user.id);
 
   const isOwner = !id; // si NO hay id → es tu perfil
-
-  // --- ELIMINAR ACTIVIDAD ---
-  async function handleDeleteActivity(activityId) {
-    try {
-      await deleteActivity(activityId);
-      await fetchProfile(); // 🔹 recarga profileData automáticamente
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar actividad");
-    }
-  }
-
-  // --- FAVORITOS ---
-  async function handleToggleFavorite(activityId) {
-    try {
-      await toggleFavorite(activityId);
-      await fetchProfile(); // 🔹 recarga profileData automáticamente
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar favorito");
-    }
-  }
 
   // --- ELIMINAR PROGRAMACIÓN ---
   async function handleDeleteSchedule(scheduleId) {
@@ -182,8 +155,6 @@ useEffect(() => {
                     <ActivityCard
                       key={activity.id}
                       activity={activity}
-                      currentUserId={currentUser?.id}
-                      handleDeleteActivity={handleDeleteActivity}
                     />
                   ))}
                 </div>
@@ -207,7 +178,6 @@ useEffect(() => {
                         activity={activity}
                         currentUserId={currentUser?.id}
                         userJoinedActivities={joined.map((fav) => fav.id)}
-                        handleToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>

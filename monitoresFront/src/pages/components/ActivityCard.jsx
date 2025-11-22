@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
-import { cancelSubmission, submitPublic } from "../../services/api";
-import { useState } from "react";
+import {
+  cancelSubmission,
+  deleteActivity,
+  submitPublic,
+  toggleFavorite,
+} from "../../services/api";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function ActivityCard({
   activity,
-  currentUserId,
   userJoinedActivities = [],
-  handleDeleteActivity,
-  handleToggleFavorite,
 }) {
-  const isOwner = currentUserId && activity.user_id === currentUserId;
+  const { user: currentUser, fetchProfile } = useContext(AuthContext);
+
+  const isOwner = currentUser.id && activity.user_id === currentUser.id;
   const isFavorite = userJoinedActivities.includes(activity.id);
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
 
@@ -23,25 +28,49 @@ export default function ActivityCard({
   };
   const typeName = typeNames[activity.type_id] || "Otro";
 
-async function handleSubmitPublic(activityId) {
-  try {
-    await submitPublic(activityId);
-    setVisibility('pending');
-  } catch (err) {
-    console.error("Error al enviar actividad:", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Error al solicitar publicación");
+  async function handleSubmitPublic(activityId) {
+    try {
+      await submitPublic(activityId);
+      setVisibility("pending");
+    } catch (err) {
+      console.error(
+        "Error al enviar actividad:",
+        err.response?.data || err.message
+      );
+      alert(err.response?.data?.message || "Error al solicitar publicación");
+    }
   }
-}
 
-async function handleCancelSubmission(activityId) {
-  try {
-    await cancelSubmission(activityId);
-    setVisibility('private');
-  } catch (err) {
-    console.error("Error al cancelar:", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Error al cancelar solicitud");
+  async function handleCancelSubmission(activityId) {
+    try {
+      await cancelSubmission(activityId);
+      setVisibility("private");
+    } catch (err) {
+      console.error("Error al cancelar:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Error al cancelar solicitud");
+    }
   }
-}
+
+  async function handleToggleFavorite(activityId) {
+    try {
+      await toggleFavorite(activityId);
+      await fetchProfile(); // 🔹 recarga profileData automáticamente
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar favorito");
+    }
+  }
+
+    // --- ELIMINAR ACTIVIDAD ---
+  async function handleDeleteActivity(activityId) {
+    try {
+      await deleteActivity(activityId);
+      await fetchProfile(); // 🔹 recarga profileData automáticamente
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar actividad");
+    }
+  }
 
   return (
     <div
@@ -58,7 +87,10 @@ async function handleCancelSubmission(activityId) {
       >
         <div className="card-body d-flex flex-column justify-content-between">
           <div>
-            <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
+            <Link
+              to={`/activities/${activity.id}`}
+              className="text-decoration-none text-dark"
+            >
               <h5 className="card-title text-primary">{activity.title}</h5>
               <p className="card-text text-dark">
                 <span className="badge bg-success mb-1">{typeName}</span>
@@ -75,8 +107,10 @@ async function handleCancelSubmission(activityId) {
             <div className="mt-3">
               {isOwner ? (
                 <>
-                  <Link to={`/activities/edit/${activity.id}`}
-                    className="btn btn-sm btn-warning ms-1">
+                  <Link
+                    to={`/activities/edit/${activity.id}`}
+                    className="btn btn-sm btn-warning ms-1"
+                  >
                     Editar
                   </Link>
                   <button
@@ -111,12 +145,18 @@ async function handleCancelSubmission(activityId) {
               {isOwner && (
                 <div className="mt-2">
                   {visibility === "private" && (
-                    <button className="btn btn-primary btn-sm ms-1" onClick={() => handleSubmitPublic(activity.id)}>
+                    <button
+                      className="btn btn-primary btn-sm ms-1"
+                      onClick={() => handleSubmitPublic(activity.id)}
+                    >
                       Solicitar publicación
                     </button>
                   )}
                   {visibility === "pending" && (
-                    <button className="btn btn-outline-warning btn-sm ms-1" onClick={() => handleCancelSubmission(activity.id)}>
+                    <button
+                      className="btn btn-outline-warning btn-sm ms-1"
+                      onClick={() => handleCancelSubmission(activity.id)}
+                    >
                       Cancelar envío
                     </button>
                   )}
