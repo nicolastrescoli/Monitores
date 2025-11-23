@@ -97,6 +97,7 @@ export default function Register() {
                     type="text"
                     id="name"
                     className="form-control"
+                    autoComplete="name"
                     value={form.name}
                     onChange={handleChange}
                     required
@@ -111,6 +112,7 @@ export default function Register() {
                     type="email"
                     id="email"
                     className="form-control"
+                    autoComplete="email"
                     value={form.email}
                     onChange={handleChange}
                     required
@@ -125,6 +127,7 @@ export default function Register() {
                     type="password"
                     id="password"
                     className="form-control"
+                    autoComplete="new-password"
                     value={form.password}
                     onChange={handleChange}
                     required
@@ -139,6 +142,7 @@ export default function Register() {
                     type="password"
                     id="passwordConfirmation"
                     className="form-control"
+                    autoComplete="new-password"
                     value={form.passwordConfirmation}
                     onChange={handleChange}
                     required

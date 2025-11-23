@@ -40,6 +40,7 @@ export default function Login() {
                     id="email"
                     className="form-control"
                     value={email}
+                    autoComplete="name"
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
@@ -53,6 +54,7 @@ export default function Login() {
                     id="password"
                     className="form-control"
                     value={password}
+                    autoComplete="current-password"
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />

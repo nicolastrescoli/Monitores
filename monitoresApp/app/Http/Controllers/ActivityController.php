@@ -12,6 +12,7 @@ use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ActivityController extends Controller
@@ -756,5 +757,20 @@ class ActivityController extends Controller
         // return $pdf->stream('archivo.pdf');
         return $pdf->download('ejemplo.pdf'); // para forzar descarga
     }
+
+    public function topFavorites()
+    {
+        $topActivities = DB::table('activity_user')
+            ->select('activity_id', DB::raw('COUNT(*) as favorites_count'))
+            ->groupBy('activity_id')
+            ->orderByDesc('favorites_count')
+            ->take(5)
+            ->get();
+
+        return response()->json([
+            'top_favorites' => $topActivities
+        ]);
+    }
+
 
 }

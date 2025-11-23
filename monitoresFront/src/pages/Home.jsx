@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ActivityCard from "./components/ActivityCard";
 
-export default function Home({activities, setActivities}) {
+export default function Home({activities, setActivities, profileData}) {
 
   const [filters, setFilters] = useState({
     title: "",
@@ -11,6 +11,10 @@ export default function Home({activities, setActivities}) {
     participantes: "",
     ordenarPor: "",
   });
+
+  const { user, favoriteActivities, schedules, contacts } = profileData;
+  
+  const joined = favoriteActivities.filter((act) => act.user_id !== user.id);
 
   const filtrarYOrdenar = () => {
     let filtrados = [...activities];
@@ -143,7 +147,8 @@ export default function Home({activities, setActivities}) {
       {/* Lista de actividades */}
       <div className="row gy-4" id="listaactivities">
         {displayedActivities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} />
+          <ActivityCard key={activity.id} activity={activity} 
+                        userJoinedActivities={joined.map((fav) => fav.id)}/>
         ))}
         {displayedActivities.length === 0 && (
           <div className="alert alert-info">No hay actividades que coincidan con los filtros.</div>

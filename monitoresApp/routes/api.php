@@ -24,6 +24,9 @@ Route::middleware('auth:sanctum')->delete('/user/{user}', [AuthController::class
 | CRUD Actividades
 |--------------------------------------------------------------------------
 */
+
+// Top actividades favoritas
+Route::get('/activities/top-favorites', [ActivityController::class, 'topFavorites']);
 Route::get('/activities', [ActivityController::class, 'apiIndex']);
 // Envía lista de categorias, materiales y riesgos para el formulario
 Route::middleware('auth:sanctum')->get('/activities/formData', [ActivityController::class, 'formData']);
@@ -84,30 +87,10 @@ Route::get('/pdf/{activity}', [ActivityController::class, 'generatePdf']);
 |--------------------------------------------------------------------------
 */
 
-
-// Guardar actividad como favorito STATE
 // Eliminar cuenta de usuario
-
-// Clonar calendario
- 
 // Generador de PDF calendario
-// Ruta para enviar formulario de contacto
-
-// Clonar actividad
-
-// Actividades más guardadas
-// Usuarios con más actividades publicadas
-
-// ------------------------
-
-
-// ACTUALIZAR CON STATES
-// Enviar petión amistad
-// Cancelar envio de petición
-// Aceptar petición
-// Rechazar petición
-// Eliminar amistad
-
-
 // STATES para los filtros y actividad alatoria
+
 // Novedades otros usuarios
+// Clonar actividad
+// Clonar calendario

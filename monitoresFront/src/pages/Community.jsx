@@ -55,13 +55,13 @@ export default function Community() {
   };
 
   return (
-    <div className="container py-5">
+    <div className="container py-4">
       <h1 className="mb-4">Comunidad</h1>
-      <div className="row">
+      <div className="row justify-content-center">
         <h3>Solicitudes pendientes</h3>
-        {usersList.length === 0 ? (
-          <p>No hay solicitudes pendientes.</p>
-        ) : (
+        {usersList.filter((otherUser) => otherUser.friend_status === "pending_received").length === 0 
+        ? (<div className="alert alert-info">No hay solicitudes pendientes.</div>)
+        : (
           usersList
           .filter((otherUser) => otherUser.friend_status === "pending_received")
           .map((otherUser) => (

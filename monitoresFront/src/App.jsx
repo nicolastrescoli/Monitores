@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Community from "./pages/Community";
 import AdminPanel from "./pages/AdminPanel.jsx";
+import TopColaborators from "./pages/TopColaborators.jsx"
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm";
@@ -25,24 +26,14 @@ function PrivateRoute({ children, roles }) {
 }
 
 export default function App() {
-  // const { user, setUser } = useContext(AuthContext);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // // Cargar usuario desde token
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  //     axios
-  //       .get("/api/user")
-  //       .then((res) => setUser(res.data))
-  //       .catch(() => {
-  //         localStorage.removeItem("token");
-  //         delete axios.defaults.headers.common["Authorization"];
-  //       });
-  //   }
-  // }, [setUser]);
+  const {
+    // user: currentUser,
+    profileData,
+    // fetchProfile,
+  } = useContext(AuthContext);
 
   useEffect(() => {
     fetchActivities().catch((err) => {
@@ -68,7 +59,7 @@ export default function App() {
           <Route
             path="/"
             element={
-              <Home activities={activities} setActivities={setActivities} />
+              <Home activities={activities} setActivities={setActivities} profileData={profileData}/>
             }
           />
           <Route path="/login" element={<Login />} />
@@ -76,6 +67,11 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/topColaborators" element={
+              <PrivateRoute>
+                <TopColaborators activities={activities} setActivities={setActivities}/>
+              </PrivateRoute>} 
+          />
 
           {/* Private pages */}
           <Route

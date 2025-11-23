@@ -117,7 +117,7 @@ async function handleUpdateUser() {
   }
 
   return (
-    <div className="container py-5 d-flex flex-wrap flex-lg-nowrap gap-4">
+    <div className="container py-4 d-flex flex-wrap flex-lg-nowrap gap-4">
       {/* PERFIL PRINCIPAL */}
       <div className="flex-grow-1">
         <div className="card shadow border-0">

@@ -24,7 +24,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="container py-5">
+    <div className="container py-4">
       <div className="card border-0 shadow">
         <div className="card-header bg-dark text-white">
           <h2>Contacto</h2>

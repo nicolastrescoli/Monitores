@@ -28,9 +28,9 @@ export default function Navbar() {
           </>
         )}
 
-        <Link className="navbar-brand" to="#">Guías</Link>
-        <Link className="navbar-brand" to="/about">Sobre Nosotros</Link>
-        <Link className="navbar-brand" to="/contact">Contacto</Link>
+        <Link className="navbar-brand" to="/topColaborators">Top Actividades & Colaboradores</Link>
+        <Link className="navbar-brand" to="/about">Sobre el Proyecto</Link>
+        {/* <Link className="navbar-brand" to="/contact">Contacto</Link> */}
 
         {currentUser && (
           <Link className="navbar-brand" onClick={handleLogout}>Logout</Link>

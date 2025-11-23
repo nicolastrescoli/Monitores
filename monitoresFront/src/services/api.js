@@ -127,6 +127,11 @@ export const rejectActivity = async (id) => {
   return response.data;
 };
 
+export const getTopFavoriteActivities = async () => {
+  const response = await axios.get(`${API_URL}/activities/top-favorites`);
+  return response.data.top_favorites;
+};
+
 
 // Schedules
 export const getSchedule = async (id) => {
