@@ -74,7 +74,7 @@ export default function ActivityCard({ activity, userJoinedActivities = [] }) {
 
   return (
     <div
-      className="col-md-4 activity-item"
+      className="activity-item"
       data-nombre={activity.title.toLowerCase()}
       data-tipo={typeName}
       data-edad={activity.min_age}

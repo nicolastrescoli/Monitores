@@ -39,9 +39,10 @@ export const updateUser = async (id, name, description, email, password, passwor
     const response = await axios.put(`${API_URL}/user/${id}`, payload);
     return response.data;
 };
-// export const deleteUser = async (id) => {
-//   await axios.delete(`${API_URL + "/users"}/${id}`);
-// };
+
+export const deleteUser = async (id) => {
+  await axios.delete(`${API_URL + "/user"}/${id}`);
+};
 
 // Friend request
 export const sendRequest = async (id) => {
@@ -158,7 +159,7 @@ export const deleteSchedule = async (id) => {
 
 // Imprimir en PDF
 export const printActivity = async (id) => {
-  const response = await axios.get(`${API_URL}/pdf/${id}`, {
+  const response = await axios.get(`${API_URL}/pdf/activity/${id}`, {
     responseType: "blob",
   });
   return response.data; // solo devuelve el PDF
@@ -169,6 +170,15 @@ export const openActivityPdf = async (id) => {
   const url = window.URL.createObjectURL(
     new Blob([pdfData], { type: "application/pdf" })
   );
+  window.open(url);
+};
+
+// Imprimir en PDF
+export const openSchedulePdf = async () => {
+  const response = await axios.get(`${API_URL}/pdf/schedule`, {
+    responseType: "blob",
+  });
+  const url = window.URL.createObjectURL(response.data);
   window.open(url);
 };
 

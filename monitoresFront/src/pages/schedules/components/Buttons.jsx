@@ -1,4 +1,4 @@
-import { storeSchedule, updateSchedule } from "../../../services/api.js";
+import { storeSchedule, updateSchedule, openSchedulePdf } from "../../../services/api.js";
 
 export default function Buttons({ scheduleId, isEditing, setIsEditing, name, description, cellMap, onEditStart, onCancelEdit }) {
 
@@ -18,8 +18,6 @@ export default function Buttons({ scheduleId, isEditing, setIsEditing, name, des
       console.log("Error al guardar", error);
     }
   }
-
-  const handlePrint = () => {};
 
   const handleExit = () => {
     window.location.href = "/profile";
@@ -42,7 +40,7 @@ export default function Buttons({ scheduleId, isEditing, setIsEditing, name, des
           <button className="btn btn-dark" onClick={() => { onEditStart(); setIsEditing(true);}}>
             Editar
           </button>
-          <button className="btn btn-dark" onClick={handlePrint}>
+          <button className="btn btn-dark" onClick={() => openSchedulePdf()}>
             Imprimir
           </button>
           <button className="btn btn-dark" onClick={handleExit}>

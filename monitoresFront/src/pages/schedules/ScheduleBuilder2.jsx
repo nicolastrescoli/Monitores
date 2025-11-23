@@ -86,11 +86,14 @@ export default function ScheduleBuilder2() {
             <input
               type="text"
               value={name}
+              placeholder="Nueva Programación"
               onChange={(e) => setName(e.target.value)}
             />
           </h3>
-          <textarea value={description}
-              onChange={(e) => setDescription(e.target.value)}/>
+          <textarea 
+            value={description}
+            placeholder="descripción..."
+            onChange={(e) => setDescription(e.target.value)}/>
           </>
         ) : (
           <>

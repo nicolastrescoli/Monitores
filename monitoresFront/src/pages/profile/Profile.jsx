@@ -104,7 +104,6 @@ async function handleUpdateUser() {
   setIsEditing(false);
 }
 
-
   // --- ELIMINAR PROGRAMACIÓN ---
   async function handleDeleteSchedule(scheduleId) {
     try {
@@ -227,10 +226,12 @@ async function handleUpdateUser() {
               ) : (
                 <div className="row gy-4 mb-5">
                   {created.map((activity) => (
+                    <div className="col-md-4">
                     <ActivityCard
                       key={activity.id}
                       activity={activity}
                     />
+                    </div>
                   ))}
                 </div>
               )}
@@ -248,12 +249,14 @@ async function handleUpdateUser() {
                 ) : (
                   <div className="row gy-4 mb-5">
                     {joined.map((activity) => (
+                      <div className="col-md-4">
                       <ActivityCard
                         key={activity.id}
                         activity={activity}
                         currentUserId={currentUser?.id}
                         userJoinedActivities={joined.map((fav) => fav.id)}
                       />
+                      </div>
                     ))}
                   </div>
                 )}

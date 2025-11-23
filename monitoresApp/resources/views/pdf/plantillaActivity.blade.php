@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <table class="sin-borde">
+    <table class="">
         <tr>
             <td><strong>ACTIVIDAD:</strong> {{ $title }}</td>
             <td><strong>Nº PARTICIPANTES:</strong> {{ $num_participants }}</td>

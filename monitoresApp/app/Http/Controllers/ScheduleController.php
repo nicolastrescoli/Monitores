@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ScheduleController extends Controller
 {
@@ -271,5 +272,11 @@ class ScheduleController extends Controller
         return back();
     }
 
+    public function generatePdf()
+    {
+        $pdf = Pdf::loadView('pdf.plantillaSchedule');
+        return $pdf->stream('archivo.pdf');
+        // return $pdf->download('ejemplo.pdf'); // para forzar descarga
+    }
 
 }

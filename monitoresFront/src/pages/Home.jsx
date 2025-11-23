@@ -1,7 +1,8 @@
 import { useState } from "react";
 import ActivityCard from "./components/ActivityCard";
+import RandomActivity from "./schedules/components/RandomActivity";
 
-export default function Home({activities, setActivities, profileData}) {
+export default function Home({activities, profileData}) {
 
   const [filters, setFilters] = useState({
     title: "",
@@ -12,9 +13,8 @@ export default function Home({activities, setActivities, profileData}) {
     ordenarPor: "",
   });
 
-  const { user, favoriteActivities, schedules, contacts } = profileData;
-  
-  const joined = favoriteActivities.filter((act) => act.user_id !== user.id);
+  const { user = null, favoriteActivities = [] } = profileData || [];
+  const joined = favoriteActivities.filter((act) => user?.id && act.user_id !== user.id);
 
   const filtrarYOrdenar = () => {
     let filtrados = [...activities];
@@ -57,7 +57,7 @@ export default function Home({activities, setActivities, profileData}) {
     const items = filtrarYOrdenar();
     if (items.length > 0) {
       const random = items[Math.floor(Math.random() * items.length)];
-      setActivities([random]);
+      return random
     }
   };
 
@@ -139,16 +139,23 @@ export default function Home({activities, setActivities, profileData}) {
 
       {/* Botón aleatorio */}
       <div className="text-end mb-4">
-        <button className="btn btn-outline-primary btn-lg" onClick={handleRandom}>
+        {/* <button className="btn btn-outline-primary btn-lg" onClick={handleRandom}>
           🎲 Actividad Aleatoria
-        </button>
+        </button> */}
+        <RandomActivity buttonText={"🎲 Actividad Aleatoria"} handleRandom={handleRandom}/>
+        
       </div>
 
       {/* Lista de actividades */}
       <div className="row gy-4" id="listaactivities">
         {displayedActivities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} 
-                        userJoinedActivities={joined.map((fav) => fav.id)}/>
+          <div key={activity.id} className="col-md-4">
+            <ActivityCard 
+              key={activity.id}
+              activity={activity}
+              userJoinedActivities={joined.map((fav) => fav.id) || []}
+            />
+          </div>
         ))}
         {displayedActivities.length === 0 && (
           <div className="alert alert-info">No hay actividades que coincidan con los filtros.</div>

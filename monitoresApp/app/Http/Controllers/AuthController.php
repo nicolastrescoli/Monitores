@@ -367,4 +367,28 @@ class AuthController extends Controller
         return view('profile.show', ['user' => $user, 'activities' => $activities, 'contacts' => $contacts,]);
     }
 
+    public function destroy(User $user)
+    {
+        $currentUser = Auth::user();
+
+        // Solo el propio usuario o un admin puede eliminar
+        if ($currentUser->id !== $user->id && !$currentUser->is_admin) {
+            return response()->json([
+                'message' => 'No tienes permisos para eliminar este usuario.'
+            ], 403);
+        }
+
+        try {
+            $user->delete();
+            return response()->json([
+                'message' => 'Usuario eliminado correctamente.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el usuario.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

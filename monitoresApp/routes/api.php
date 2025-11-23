@@ -79,7 +79,8 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 | Generar PDFs
 |--------------------------------------------------------------------------
 */
-Route::get('/pdf/{activity}', [ActivityController::class, 'generatePdf']);
+Route::get('/pdf/activity/{activity}', [ActivityController::class, 'generatePdf']);
+Route::get('/pdf/schedule', [ScheduleController::class, 'generatePdf']); // NO IMPLEMENTADO
 
 /*
 |--------------------------------------------------------------------------
@@ -89,7 +90,13 @@ Route::get('/pdf/{activity}', [ActivityController::class, 'generatePdf']);
 
 // Eliminar cuenta de usuario
 // Generador de PDF calendario
-// STATES para los filtros y actividad alatoria
+// STATES para los filtros
+
+
+// Modal de eliminación
+// Optimizar fetches y duplicado de funciones
+// Eliminar vistas blade y sobrantes
+
 
 // Novedades otros usuarios
 // Clonar actividad
