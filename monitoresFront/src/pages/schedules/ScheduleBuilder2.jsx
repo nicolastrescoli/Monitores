@@ -6,6 +6,7 @@ import { getSchedule } from "../../services/api.js";
 import { useParams } from "react-router-dom";
 import { placeActivity, removeActivity } from "./scheduleAux2.js";
 import { useLocation } from "react-router-dom"; // para traer states pasados por <Link>
+import DatePicker from "react-datepicker";
 
 export default function ScheduleBuilder2() {
   const { id: scheduleId } = useParams();
@@ -77,23 +78,56 @@ export default function ScheduleBuilder2() {
     setCellMap((prev) => removeActivity(prev, instanceId));
   };
 
+  // Estados para el rango de fechas Datepicker
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   return (
     <div className="d-flex">
       <div className="d-flex flex-column col-2 me-4">
         {!scheduleId || isEditing ? (
           <>
-          <h3>
-            <input
-              type="text"
-              value={name}
-              placeholder="Nueva Programación"
-              onChange={(e) => setName(e.target.value)}
+            <h3>
+              <input
+                type="text"
+                value={name}
+                placeholder="Nueva Programación"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </h3>
+            <textarea
+              value={description}
+              placeholder="descripción..."
+              onChange={(e) => setDescription(e.target.value)}
             />
-          </h3>
-          <textarea 
-            value={description}
-            placeholder="descripción..."
-            onChange={(e) => setDescription(e.target.value)}/>
+            <div className="d-flex gap-2 col-md-11 my-2">
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                placeholderText="Fecha de inicio"
+                className="form-control"
+                maxDate={endDate}
+              />
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={
+                  startDate
+                    ? new Date(startDate.getTime() + 14 * 86400000)
+                    : null
+                }
+                placeholderText="Fecha de fin"
+                className="form-control"
+              />
+            </div>
+            <Activities activities={activities} />
           </>
         ) : (
           <>
@@ -101,7 +135,6 @@ export default function ScheduleBuilder2() {
             <p>{description ? description : "Ninguna descripción"}</p>
           </>
         )}
-        {(!scheduleId || isEditing) && (<><Activities activities={activities} /></>)}
       </div>
       <div className="calendar col">
         <div className="d-flex justify-content-between align-items-center mb-2">
@@ -146,6 +179,9 @@ export default function ScheduleBuilder2() {
           handleRemoveActivity={handleRemoveActivity}
           handleDropActivity={handleDropActivity}
           isEditing={isEditing}
+          scheduleId={scheduleId}
+          startDate={startDate}
+          endDate={endDate}
         />
       </div>
     </div>

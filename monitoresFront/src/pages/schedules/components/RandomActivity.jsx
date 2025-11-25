@@ -24,7 +24,7 @@ export default function RandomActivity( {buttonText, handleRandom}) {
           <div className="modal-dialog modal-dialog-centered" onClick={handleModalClick}>
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Demo Modal</h5>
+                <h5 className="modal-title">Actividad Aleatoria</h5>
                 <button type="button" className="btn-close" onClick={handleClose}></button>
               </div>
               <div className="modal-body">

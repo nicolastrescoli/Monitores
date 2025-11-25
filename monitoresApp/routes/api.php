@@ -88,7 +88,6 @@ Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf'
 */
 
 // Eliminar cuenta de usuario
-// Generador de PDF calendario
 // STATES para los filtros
 
 

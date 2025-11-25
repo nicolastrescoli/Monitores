@@ -1,12 +1,8 @@
-import { Outlet, Link } from "react-router-dom";
-import { useContext } from "react";
-import "../app.css"; // Asegúrate de ajustar la ruta según tu estructura
-
-import Navbar from "../pages/components/Navbar"; // Equivalente a tu include('partials.navbar')
-import { AuthContext } from "../contexts/AuthContext"; // Ejemplo de contexto para autenticación
+import { Outlet } from "react-router-dom";
+import "../app.css";
+import Navbar from "../pages/components/Navbar";
 
 export default function Layout() {
-  const { user } = useContext(AuthContext) || {}; // Simula Auth::user() de Laravel
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -14,13 +10,6 @@ export default function Layout() {
       <header className="py-3 text-center">
         <h1 className="mb-0">OcioEducativo.es</h1>
       </header>
-
-      {/* Panel de administración */}
-      {user?.role === "admin" && (
-        <h2 className="mb-0 py-3 text-center">
-          <Link to="/activities/pending">Panel de Administración</Link>
-        </h2>
-      )}
 
       {/* Navbar */}
       <Navbar />

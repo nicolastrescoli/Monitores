@@ -6,25 +6,72 @@ export default function Schedule2({
   cellMap,
   handleRemoveActivity,
   handleDropActivity,
-  isEditing
+  isEditing,
+  scheduleId,
+  startDate,
+  endDate,
 }) {
+  const [localMap, setLocalMap] = useState(cellMap);
   const [dates, setDates] = useState([]);
 
-  useEffect(() => {
-    const allDates = Object.keys(cellMap).sort();
-    const oldestDate = allDates[0] || new Date().toISOString().split("T")[0];
+// Formatear fechas en local YYYY-MM-DD
+function formatDateLocal(date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
 
-    const tableDates = [];
-    const start = new Date(oldestDate);
+useEffect(() => {
+  if (!startDate || !endDate) {
+    setLocalMap(cellMap);
+
+    // Inicializar dates a 7 días consecutivos desde el día más antiguo del cellMap
+    const keys = Object.keys(cellMap).sort();
+    const base = keys[0] || formatDateLocal(new Date());
+    const ds = [];
+    const start = new Date(base);
     for (let i = 0; i < 7; i++) {
       const d = new Date(start);
       d.setDate(start.getDate() + i);
-      tableDates.push(d.toISOString().split("T")[0]);
+      ds.push(formatDateLocal(d));
     }
+    setDates(ds);
+    return;
+  }
 
-    setDates(tableDates);
-  }, [cellMap]);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
+  const oldValues = Object.values(cellMap);
+
+  // Construir rango de fechas exacto en local
+  const dateRange = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dateRange.push(formatDateLocal(d));
+  }
+
+  // Validar que hay suficientes días para las actividades existentes
+  if (dateRange.length < oldValues.length) {
+    alert("Has seleccionado menos días que los que ya tienes programados");
+    return;
+  }
+
+  // Construir nuevo mapa solo con fechas dentro del rango
+  const newMap = {};
+  let i = 0;
+  for (const dateKey of dateRange) {
+    newMap[dateKey] = oldValues[i] ?? {};
+    i++;
+  }
+
+  setLocalMap(newMap);
+  setDates(dateRange);
+}, [startDate, endDate, cellMap]);
+
+
+  // ---------------------------------------------------
+  // Horas
   const generateTimes = () => {
     const times = [];
     for (let h = 0; h < 24; h++) {
@@ -45,14 +92,13 @@ export default function Schedule2({
     handleDropActivity?.(data.activityId, date, time, times, data.instanceId);
   };
 
-  // Referencia para mostrar la tabla desde las 8:00
+  // Scroll a 07:30
   const tableWrapperRef = useRef(null);
   useEffect(() => {
-    // Buscar la fila que corresponde a las 8:00
     if (tableWrapperRef.current) {
       const row = Array.from(
         tableWrapperRef.current.querySelectorAll("tbody tr")
-      ).find((tr) => tr.firstChild.textContent.startsWith("07:45"));
+      ).find((tr) => tr.firstChild.textContent.startsWith("07:30"));
       if (row) {
         row.scrollIntoView({ block: "start" });
       }
@@ -79,18 +125,19 @@ export default function Schedule2({
             <tr key={time}>
               <td style={{ height: 5, padding: 0 }}>{time}</td>
               {dates.map((date) => {
-                const activity = cellMap[date]?.[time] || null;
+                const activity = localMap[date]?.[time] || null;
                 return (
                   <td
                     key={date + time}
                     style={{ height: 5, padding: 0 }}
                     onDrop={(e) => handleDrop(e, date, time)}
-                    onDragOver={(e) => e.preventDefault()} // permite el drop
+                    onDragOver={(e) => e.preventDefault()}
                   >
                     <Cell2
                       activity={activity}
                       handleRemoveActivity={handleRemoveActivity}
                       isEditing={isEditing}
+                      scheduleId={scheduleId}
                     />
                   </td>
                 );

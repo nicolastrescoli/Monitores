@@ -1,7 +1,7 @@
-export default function Cell2({ activity, handleRemoveActivity, isEditing }) {
+export default function Cell2({ activity, handleRemoveActivity, isEditing, scheduleId }) {
   if (!activity) return null;
 
-  const dragProps = isEditing // Solo draggable si estamos editando
+  const dragProps = isEditing || !scheduleId // Solo draggable si estamos editando o creando
     ? {
         draggable: true,
         onDragStart: (e) => {
@@ -38,7 +38,7 @@ export default function Cell2({ activity, handleRemoveActivity, isEditing }) {
             <strong>{activity.title}</strong>
           </span>
 
-          {isEditing && (
+          {(isEditing || !scheduleId) && (
             <button
               className="btn btn-sm btn-danger"
               onClick={() => handleRemoveActivity?.(activity.instanceId)}

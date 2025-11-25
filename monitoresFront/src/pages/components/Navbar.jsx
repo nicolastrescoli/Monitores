@@ -15,6 +15,11 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-green">
       <div className="container">
         <Link className="navbar-brand" to="/">Inicio</Link>
+ 
+      {/* Panel de administración */}
+      {currentUser?.role === "admin" && (
+        <Link className="navbar-brand" to="/activities/pending">Panel de Administración</Link>
+      )}
 
         {currentUser ? (
           <>
