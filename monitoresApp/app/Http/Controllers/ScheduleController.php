@@ -272,9 +272,65 @@ class ScheduleController extends Controller
         return back();
     }
 
-    public function generatePdf()
+    public function generatePdf(Schedule $schedule)
     {
-        $pdf = Pdf::loadView('pdf.plantillaSchedule');
+        $cellMap = $schedule->cell_map ?? [];
+
+        // Fechas
+        $fechas = array_keys($cellMap);
+        sort($fechas);
+
+        $firstDate = $fechas[0] ?? Carbon::today()->format('Y-m-d');
+        $lastDate = $fechas[count($fechas)-1] ?? $firstDate;
+
+        // Todas las fechas intermedias
+        $allDates = [];
+        $current = Carbon::parse($firstDate);
+        $end = Carbon::parse($lastDate);
+        while ($current->lte($end)) {
+            $d = $current->format('Y-m-d');
+            $allDates[$d] = $cellMap[$d] ?? [];
+            $current->addDay();
+        }
+
+        // Calcular primera y última hora
+        $allHours = [];
+        foreach ($allDates as $date => $hours) {
+            foreach ($hours as $h => $activity) {
+                $allHours[] = $h;
+            }
+        }
+        sort($allHours);
+        $firstHour = $allHours[0] ?? '08:00';
+        $lastHour  = $allHours[count($allHours)-1] ?? '18:00';
+
+        // Actividades
+        $activityIds = [];
+        foreach ($allDates as $date => $hours) {
+            foreach ($hours as $time => $activity) {
+                $activityIds[] = $activity['id'];
+
+            }
+        }
+        $activityIds = array_unique($activityIds);
+
+        // Carga de datos de actividad
+        $activitiesData = [];
+        foreach ($activityIds as $id) {
+            $act = Activity::find($id);
+            if ($act) $activitiesData[] = $act->loadDataForPdf($act);
+        }
+
+        $data = [
+            'name' => $schedule->name,
+            'description' => $schedule->description,
+            'cellMap' => $allDates,
+            'firstHour' => $firstHour,
+            'lastHour' => $lastHour,
+            'activities' => $activitiesData
+        ];
+            
+        $pdf = Pdf::loadView('pdf.plantillaSchedule', $data);
         return $pdf->stream('archivo.pdf');
         // return $pdf->download('ejemplo.pdf'); // para forzar descarga
     }

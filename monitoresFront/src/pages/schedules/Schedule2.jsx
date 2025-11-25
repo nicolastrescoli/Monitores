@@ -77,13 +77,13 @@ export default function Schedule2({
         <tbody>
           {times.map((time) => (
             <tr key={time}>
-              <td>{time}</td>
+              <td style={{ height: 5, padding: 0 }}>{time}</td>
               {dates.map((date) => {
                 const activity = cellMap[date]?.[time] || null;
                 return (
                   <td
                     key={date + time}
-                    style={{ height: 15, padding: 0 }}
+                    style={{ height: 5, padding: 0 }}
                     onDrop={(e) => handleDrop(e, date, time)}
                     onDragOver={(e) => e.preventDefault()} // permite el drop
                   >

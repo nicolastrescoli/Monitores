@@ -40,7 +40,7 @@ export default function Buttons({ scheduleId, isEditing, setIsEditing, name, des
           <button className="btn btn-dark" onClick={() => { onEditStart(); setIsEditing(true);}}>
             Editar
           </button>
-          <button className="btn btn-dark" onClick={() => openSchedulePdf()}>
+          <button className="btn btn-dark" onClick={() => openSchedulePdf(scheduleId)}>
             Imprimir
           </button>
           <button className="btn btn-dark" onClick={handleExit}>

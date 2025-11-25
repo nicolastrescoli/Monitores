@@ -724,35 +724,9 @@ class ActivityController extends Controller
 
     public function generatePdf(Activity $activity)
     {
-        $data = [
-            'title' => $activity->title,
-            'num_participants' => $activity->num_participants,
-            'min_age' => $activity->min_age,
-            'max_age' => $activity->max_age,
-            'duration' => $activity->duration,
-            'objectives' => $activity->objectives,
-            'introduction' => $activity->introduction,
-            'description' => $activity->description,
-            'conclusion' => $activity->conclusion,
-            'visibility' => $activity->visibility,
-            'type' => $activity->type ? $activity->type->name : null,
-            'creator' => $activity->creator ? $activity->creator->name : null,
-            'materials' => $activity->materials->map(function ($material) {
-                return [
-                    'name' => $material->name,
-                    'quantity' => $material->pivot->quantity,
-                    'notes' => $material->pivot->notes,
-                ];
-            })->toArray(),
-            'risks' => $activity->risks->map(function ($risk) {
-                return [
-                    'name' => $risk->name,
-                    'description' => $risk->description,
-                ];
-            })->toArray(),
-        ];
+        $activity->loadDataForPdf($activity);
 
-        $pdf = Pdf::loadView('pdf.plantillaActivity', $data);
+        $pdf = Pdf::loadView('pdf.plantillaActivity', ['activity' => $activity]);
 
         // return $pdf->stream('archivo.pdf');
         return $pdf->download('ejemplo.pdf'); // para forzar descarga

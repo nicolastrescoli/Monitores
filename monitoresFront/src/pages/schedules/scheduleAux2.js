@@ -3,7 +3,7 @@ export function placeActivity(cellMap, activity, date, hour, times) {
   if (rowIndex < 0) return cellMap;
 
   const instanceId = activity.instanceId || crypto.randomUUID();
-  const durationRows = Math.ceil(activity.duration / 60);
+  const durationRows = Math.ceil((activity.duration / 60)*4);
 
   const newMap = structuredClone(cellMap);
   if (!newMap[date]) newMap[date] = {};

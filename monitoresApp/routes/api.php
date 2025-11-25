@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
-| Autenticación
+| Autenticación y gesión de cuenta de usuario
 |--------------------------------------------------------------------------
 */
 Route::post('/login', [AuthController::class, 'apiLogin']);
@@ -24,7 +24,6 @@ Route::middleware('auth:sanctum')->delete('/user/{user}', [AuthController::class
 | CRUD Actividades
 |--------------------------------------------------------------------------
 */
-
 // Top actividades favoritas
 Route::get('/activities/top-favorites', [ActivityController::class, 'topFavorites']);
 Route::get('/activities', [ActivityController::class, 'apiIndex']);
@@ -63,7 +62,7 @@ Route::middleware('auth:sanctum')->delete('/schedule/{schedule}', [ScheduleContr
 
 /*
 |--------------------------------------------------------------------------
-| Usuarios y Social
+| Comunidad y Social
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->get('/users', [AuthController::class, 'apiIndex']);
@@ -76,11 +75,11 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 
 /*
 |--------------------------------------------------------------------------
-| Generar PDFs
+| Generador PDFs
 |--------------------------------------------------------------------------
 */
 Route::get('/pdf/activity/{activity}', [ActivityController::class, 'generatePdf']);
-Route::get('/pdf/schedule', [ScheduleController::class, 'generatePdf']); // NO IMPLEMENTADO
+Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf']); // NO IMPLEMENTADO
 
 /*
 |--------------------------------------------------------------------------

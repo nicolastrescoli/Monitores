@@ -226,7 +226,7 @@ async function handleUpdateUser() {
               ) : (
                 <div className="row gy-4 mb-5">
                   {created.map((activity) => (
-                    <div className="col-md-4">
+                    <div className="col-md-4" key={activity.id}>
                     <ActivityCard
                       key={activity.id}
                       activity={activity}
@@ -249,7 +249,7 @@ async function handleUpdateUser() {
                 ) : (
                   <div className="row gy-4 mb-5">
                     {joined.map((activity) => (
-                      <div className="col-md-4">
+                      <div className="col-md-4" key={activity.id}>
                       <ActivityCard
                         key={activity.id}
                         activity={activity}
@@ -304,10 +304,6 @@ async function handleUpdateUser() {
                           {isOwner && (
                           <>
                           <div>
-                            <button className="btn btn-sm btn-primary me-2"
-                              onClick={() => handleCloneSchedule(schedule.id)}
-                            >Hacer una copia
-                            </button>
                             <button className="btn btn-sm btn-danger"
                               onClick={() => handleDeleteSchedule(schedule.id)}
                             >Eliminar

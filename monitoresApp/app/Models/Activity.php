@@ -29,7 +29,7 @@ class Activity extends Model
 
     public function materials()
     {
-        return $this->belongsToMany(Material::class, 'activity_material')->withPivot(['quantity', 'notes']);
+        return $this->belongsToMany(Material::class, 'activity_material')->withPivot('quantity', 'notes');
     }
 
     public function risks()
@@ -67,6 +67,39 @@ class Activity extends Model
     public function favoredBy()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function loadDataForPdf(Activity $activity) 
+    {
+        $data = [
+            'title' => $activity->title,
+            'num_participants' => $activity->num_participants,
+            'min_age' => $activity->min_age,
+            'max_age' => $activity->max_age,
+            'duration' => $activity->duration,
+            'objectives' => $activity->objectives,
+            'introduction' => $activity->introduction,
+            'description' => $activity->description,
+            'conclusion' => $activity->conclusion,
+            'visibility' => $activity->visibility,
+            'type' => $activity->type ? $activity->type->name : null,
+            'creator' => $activity->creator ? $activity->creator->name : null,
+            'materials' => $activity->materials->map(function ($material) {
+                return [
+                    'name' => $material->name,
+                    'quantity' => $material->pivot->quantity, //no es necesaria esta linea
+                    'notes' => $material->pivot->notes,  // no es necesaria esta linea
+                ];
+            }),
+            'risks' => $activity->risks->map(function ($risk) {
+                return [
+                    'name' => $risk->name,
+                    'description' => $risk->description,
+                ];
+            }),
+        ];
+        
+        return $data;
     }
 
 }

@@ -131,16 +131,6 @@ export default function ActivityCard({ activity, userJoinedActivities = [] }) {
                   </button>
                 ) : null}
 
-                {/* Clonar si es favorito y público */}
-                {isFavorite && visibility === "public" && (
-                  <button
-                    className="btn btn-sm ms-1"
-                    onClick={() => console.log("Clonar actividad", activity.id)}
-                  >
-                    Modificar
-                  </button>
-                )}
-
                 {/* Publicación */}
                 {isOwner && (
                   <div className="mt-2">

@@ -174,8 +174,8 @@ export const openActivityPdf = async (id) => {
 };
 
 // Imprimir en PDF
-export const openSchedulePdf = async () => {
-  const response = await axios.get(`${API_URL}/pdf/schedule`, {
+export const openSchedulePdf = async (id) => {
+  const response = await axios.get(`${API_URL}/pdf/schedule/${id}`, {
     responseType: "blob",
   });
   const url = window.URL.createObjectURL(response.data);
