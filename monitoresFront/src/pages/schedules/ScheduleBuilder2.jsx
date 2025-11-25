@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { placeActivity, removeActivity } from "./scheduleAux2.js";
 import { useLocation } from "react-router-dom"; // para traer states pasados por <Link>
 import DatePicker from "react-datepicker";
+import DescriptionModal from "./DescriptionModal.jsx";
 
 export default function ScheduleBuilder2() {
   const { id: scheduleId } = useParams();
@@ -84,22 +85,18 @@ export default function ScheduleBuilder2() {
 
   return (
     <div className="d-flex">
-      <div className="d-flex flex-column col-2 me-4">
+      <div className="d-flex flex-column col-2 me-3">
         {!scheduleId || isEditing ? (
           <>
             <h3>
               <input
                 type="text"
+                className="col-11"
                 value={name}
                 placeholder="Nueva Programación"
                 onChange={(e) => setName(e.target.value)}
               />
             </h3>
-            <textarea
-              value={description}
-              placeholder="descripción..."
-              onChange={(e) => setDescription(e.target.value)}
-            />
             <div className="d-flex gap-2 col-md-11 my-2">
               <DatePicker
                 selected={startDate}
@@ -138,16 +135,12 @@ export default function ScheduleBuilder2() {
       </div>
       <div className="calendar col">
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <div className="col-2"></div>
-          <div>
-            {/* <Paginador
-            days={days}
-            page={page}
-            endIndex={endIndex}
-            daysSlice={daysSlice}
-            setPage={setPage}
-          /> */}
-          </div>
+          {!scheduleId || isEditing ? (
+            <DescriptionModal description={description} setDescription={setDescription}/> 
+            ) : (
+              <div className="col-2"></div>  
+            )
+          }
           <Buttons
             scheduleId={scheduleId}
             isEditing={isEditing}

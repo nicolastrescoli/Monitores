@@ -81,6 +81,19 @@ main {
   left: 0;
 }
 
+.table-wrapper table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2; 
+}
+
+.table-wrapper table td:first-child {
+  position: sticky;
+  left: 0;
+  background: #fff; /* Fondo para que no se vea transparente */
+  z-index: 2;       /* Para que quede encima de otras celdas */
+}
+
 .table-wrapper table thead th,
 .table-wrapper table tbody td {
   border: 1px solid #000;

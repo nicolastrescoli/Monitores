@@ -109,27 +109,27 @@ useEffect(() => {
     <div
       className="table-wrapper"
       ref={tableWrapperRef}
-      style={{ maxHeight: "542px", overflowY: "auto" }}
+      style={{ maxHeight: "542px", maxWidth:"1500px", overflowY: "auto", overflowX: "auto" }}
     >
       <table className="table table-bordered" style={{ tableLayout: "fixed" }}>
         <thead>
           <tr>
-            <th style={{ width: 60 }}>Hora</th>
+            <th style={{ width: 75 }}>Hora</th>
             {dates.map((date) => (
-              <th key={date}>{date}</th>
+              <th key={date} style={{ width: 200 }}>{date}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {times.map((time) => (
             <tr key={time}>
-              <td style={{ height: 5, padding: 0 }}>{time}</td>
+              <td style={{ height: 5, width: 75, padding: 0 }}>{time}</td>
               {dates.map((date) => {
                 const activity = localMap[date]?.[time] || null;
                 return (
                   <td
                     key={date + time}
-                    style={{ height: 5, padding: 0 }}
+                    style={{ width: 200, height: 5, padding: 0 }}
                     onDrop={(e) => handleDrop(e, date, time)}
                     onDragOver={(e) => e.preventDefault()}
                   >
