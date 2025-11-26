@@ -79,7 +79,7 @@ Route::middleware('auth:sanctum')->delete('/friends/remove/{user}', [AuthControl
 |--------------------------------------------------------------------------
 */
 Route::get('/pdf/activity/{activity}', [ActivityController::class, 'generatePdf']);
-Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf']); // NO IMPLEMENTADO
+Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf']);
 
 /*
 |--------------------------------------------------------------------------

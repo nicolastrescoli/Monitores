@@ -42,20 +42,19 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        // Chapuza? Guardar directamente el JSON del CellMap para rápido envio y reconstrucción en React. No se van a hacer muchas consultas tampoco.
         $user = Auth::user();
 
         $validated = $request->validate([
             'name' => 'required|string',
-            'description' => 'required|string',
-            'cell_map' => 'required|array',
+            'description' => 'nullable|string',
+            'cell_map' => 'nullable|array',
         ]);
 
         $schedule = Schedule::create([
             'name' => $validated['name'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? 'Ninguna descripción',
             'user_id' => $user->id,
-            'cell_map' => $validated['cell_map'],
+            'cell_map' => $validated['cell_map'] ?? [],
         ]);
 
         return response()->json([

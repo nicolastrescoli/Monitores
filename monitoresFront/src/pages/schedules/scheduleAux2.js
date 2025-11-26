@@ -33,7 +33,7 @@ export function removeActivity(cellMap, instanceId) {
         delete newMap[dateKey][hourKey];
       }
     }
-    if (Object.keys(newMap[dateKey]).length === 0) delete newMap[dateKey];
+    // if (Object.keys(newMap[dateKey]).length === 0) delete newMap[dateKey];
   }
   return newMap;
 }

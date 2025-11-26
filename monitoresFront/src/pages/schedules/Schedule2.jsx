@@ -23,50 +23,68 @@ function formatDateLocal(date) {
 }
 
 useEffect(() => {
+  const keys = Object.keys(cellMap).sort();
+
+  // MODO SIN startDate / endDate
   if (!startDate || !endDate) {
+
     setLocalMap(cellMap);
 
-    // Inicializar dates a 7 días consecutivos desde el día más antiguo del cellMap
-    const keys = Object.keys(cellMap).sort();
-    const base = keys[0] || formatDateLocal(new Date());
-    const ds = [];
-    const start = new Date(base);
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      ds.push(formatDateLocal(d));
+    // Si no hay fechas ya fijadas en UI (primer render)
+    if (dates.length === 0) {
+      const base = keys[0] || formatDateLocal(new Date());
+
+      const initialDates = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(base);
+        d.setDate(d.getDate() + i);
+        initialDates.push(formatDateLocal(d));
+      }
+
+      setDates(initialDates);
+      return;
     }
-    setDates(ds);
+
+    // Si ya hay fechas en UI mantenerlas
+    let updatedDates = [...dates];
+
+    // Asegurar mínimo 7 días siempre
+    while (updatedDates.length < 7) {
+      const last = new Date(updatedDates[updatedDates.length - 1]);
+      last.setDate(last.getDate() + 1);
+      updatedDates.push(formatDateLocal(last));
+    }
+
+    // IMPORTANTE: NO reconstruimos ni reordenamos el mapa aquí 💡
+    setDates(updatedDates);
     return;
   }
 
+  // MODO CON RANGO DEFINIDO
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  const oldValues = Object.values(cellMap);
-
-  // Construir rango de fechas exacto en local
   const dateRange = [];
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dateRange.push(formatDateLocal(d));
+    dateRange.push(formatDateLocal(new Date(d)));
   }
 
-  // Validar que hay suficientes días para las actividades existentes
-  if (dateRange.length < oldValues.length) {
-    alert("Has seleccionado menos días que los que ya tienes programados");
-    return;
+  // Asegurar mínimo 7 días visibles
+  while (dateRange.length < 7) {
+    const last = new Date(dateRange[dateRange.length - 1]);
+    last.setDate(last.getDate() + 1);
+    dateRange.push(formatDateLocal(last));
   }
 
-  // Construir nuevo mapa solo con fechas dentro del rango
+  // Reconstruir mapa pero sin reordenar actividades existentes
   const newMap = {};
-  let i = 0;
-  for (const dateKey of dateRange) {
-    newMap[dateKey] = oldValues[i] ?? {};
-    i++;
-  }
+  dateRange.forEach((dateKey) => {
+    newMap[dateKey] = cellMap[dateKey] ?? {};
+  });
 
   setLocalMap(newMap);
   setDates(dateRange);
+
 }, [startDate, endDate, cellMap]);
 
 

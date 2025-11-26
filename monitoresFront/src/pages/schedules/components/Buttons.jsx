@@ -4,7 +4,10 @@ export default function Buttons({ scheduleId, isEditing, setIsEditing, name, des
 
   async function handleStoreSchedule() {
     try {
-      await storeSchedule(name, description, cellMap);
+      const res = await storeSchedule(name, description, cellMap);
+      alert('Schedule creado correctamente.')
+      const newId = res.schedule?.id;
+      window.location.href = `/schedule/${newId}`;
     } catch (error) {
       console.log("Error al guardar", error);
     }

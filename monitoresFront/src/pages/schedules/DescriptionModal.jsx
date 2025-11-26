@@ -10,7 +10,7 @@ export default function DescriptionModal({description, setDescription}) {
     <>
       {/* Botón para abrir modal */}
       <button type="button" className="btn btn-primary" onClick={handleOpen}>
-        Modifica la descripción...
+        {!description ? ('Añade una descripción...') : ('Modifica la descripción...')}
       </button>
 
       {/* Modal */}
@@ -30,7 +30,7 @@ export default function DescriptionModal({description, setDescription}) {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                  Modifica la descripción
+                  {!description ? ('Añade una descripción') : ('Modifica la descripción')}
                 </h5>
                 <button
                   type="button"

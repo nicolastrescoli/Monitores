@@ -142,7 +142,7 @@ export const getSchedule = async (id) => {
 
 export const storeSchedule = async (name, description, cellMap ) => {
   const cell_map = JSON.parse(JSON.stringify(cellMap))
-  const response = await axios.post(API_URL + "/activities/store", {name, description, cell_map});
+  const response = await axios.post(API_URL + "/schedule/store", {name, description, cell_map});
   return response.data;
 };
 
