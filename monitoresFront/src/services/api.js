@@ -182,5 +182,8 @@ export const openSchedulePdf = async (id) => {
   window.open(url);
 };
 
-
-
+// Get types
+export const getTypes = async () => {
+  const response = await axios.get(API_URL + "/types");
+  return response.data;
+};

@@ -1,11 +1,18 @@
-import { openActivityPdf } from "../services/api";
+import { useEffect, useState } from "react";
+import { getTypes, openActivityPdf } from "../services/api";
 
 export default function ActivityDetail({ activity, creator, materials = [], risks = [], onBack }) {
-  const typeNames = {
-    1: "Juego",
-    2: "Actividad Física",
-    3: "Manualidad",
-  };
+
+  const [typeNames, setTypeNames] = useState([]);
+
+  useEffect(() => {
+    async function fetchTypes() {
+      const types = await getTypes();
+      setTypeNames(types)
+    };
+    fetchTypes();
+  },[]);
+
   const typeName = typeNames[activity.type_id] || "Otro";
 
   return (

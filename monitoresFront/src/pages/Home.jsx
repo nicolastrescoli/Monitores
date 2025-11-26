@@ -2,7 +2,7 @@ import { useState } from "react";
 import ActivityCard from "./components/ActivityCard";
 import RandomActivity from "./schedules/components/RandomActivity";
 
-export default function Home({activities, profileData}) {
+export default function Home({activities, typeNames, profileData}) {
 
   const [filters, setFilters] = useState({
     title: "",
@@ -153,6 +153,7 @@ export default function Home({activities, profileData}) {
             <ActivityCard 
               key={activity.id}
               activity={activity}
+              typeNames={typeNames}
               userJoinedActivities={joined.map((fav) => fav.id) || []}
             />
           </div>

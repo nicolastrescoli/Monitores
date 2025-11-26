@@ -8,7 +8,7 @@ import {
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 
-export default function ActivityCard({ activity, userJoinedActivities = [] }) {
+export default function ActivityCard({ activity, typeNames, userJoinedActivities = [] }) {
   const { user: currentUser, fetchProfile } = useContext(AuthContext);
 
   const isOwner = currentUser && activity.user_id === currentUser.id;
@@ -19,12 +19,6 @@ export default function ActivityCard({ activity, userJoinedActivities = [] }) {
 
   const [visibility, setVisibility] = useState(activity.visibility);
 
-  // Mapear type_id a nombre
-  const typeNames = {
-    1: "Juego",
-    2: "Actividad Física",
-    3: "Manualidad",
-  };
   const typeName = typeNames[activity.type_id] || "Otro";
 
   async function handleSubmitPublic(activityId) {

@@ -8,7 +8,7 @@ import { Contacts } from "./components/Contacts.jsx";
 import { getProfile, updateUser } from "../../services/api.js";
 import { RemoveFriend } from "../components/buttons/removeFriend.jsx";
 
-export default function Profile() {
+export default function Profile({typeNames}) {
   const { id } = useParams(); // id pasada en la URL
   const [externalProfile, setExternalProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -229,6 +229,7 @@ async function handleUpdateUser() {
                     <div className="col-md-4" key={activity.id}>
                     <ActivityCard
                       key={activity.id}
+                      typeNames={typeNames}
                       activity={activity}
                     />
                     </div>
@@ -252,6 +253,7 @@ async function handleUpdateUser() {
                       <div className="col-md-4" key={activity.id}>
                       <ActivityCard
                         key={activity.id}
+                        typeNames={typeNames}
                         activity={activity}
                         currentUserId={currentUser?.id}
                         userJoinedActivities={joined.map((fav) => fav.id)}

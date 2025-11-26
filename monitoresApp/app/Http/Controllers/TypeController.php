@@ -12,8 +12,11 @@ class TypeController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(
+            Type::pluck('name','id')
+        );
     }
+
 
     /**
      * Show the form for creating a new resource.

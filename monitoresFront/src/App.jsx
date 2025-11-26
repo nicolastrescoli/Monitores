@@ -9,12 +9,12 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Community from "./pages/Community";
 import AdminPanel from "./pages/AdminPanel.jsx";
-import TopColaborators from "./pages/TopColaborators.jsx"
+import TopColaborators from "./pages/TopColaborators.jsx";
 import { AuthContext } from "./contexts/AuthContext";
 import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm";
 import ScheduleBuilder2 from "./pages/schedules/ScheduleBuilder2";
-import { getActivities } from "./services/api.js";
+import { getActivities, getTypes } from "./services/api.js";
 
 function PrivateRoute({ children, roles }) {
   const { user } = useContext(AuthContext);
@@ -27,6 +27,7 @@ function PrivateRoute({ children, roles }) {
 
 export default function App() {
   const [activities, setActivities] = useState([]);
+  const [typeNames, setTypeNames] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const {
@@ -38,8 +39,13 @@ export default function App() {
   useEffect(() => {
     fetchActivities().catch((err) => {
       console.error("Error cargando actividades:", err);
-      setLoading(false);
     });
+    async function fetchTypes() {
+      const types = await getTypes();
+      setTypeNames(types);
+    }
+    fetchTypes();
+    setLoading(false);
   }, []);
 
   const fetchActivities = async () => {
@@ -59,7 +65,12 @@ export default function App() {
           <Route
             path="/"
             element={
-              <Home activities={activities} setActivities={setActivities} profileData={profileData}/>
+              <Home
+                activities={activities}
+                typeNames={typeNames}
+                setActivities={setActivities}
+                profileData={profileData}
+              />
             }
           />
           <Route path="/login" element={<Login />} />
@@ -67,10 +78,16 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/community" element={<Community />} />
-          <Route path="/topColaborators" element={
+          <Route
+            path="/topColaborators"
+            element={
               <PrivateRoute>
-                <TopColaborators activities={activities} setActivities={setActivities}/>
-              </PrivateRoute>} 
+                <TopColaborators
+                  activities={activities}
+                  setActivities={setActivities}
+                />
+              </PrivateRoute>
+            }
           />
 
           {/* Private pages */}
@@ -78,14 +95,16 @@ export default function App() {
             path="/profile"
             element={
               <PrivateRoute>
-                <Profile />
+                <Profile typeNames={typeNames}/>
               </PrivateRoute>
             }
           />
 
-          <Route path="/profile/:id" element={
+          <Route
+            path="/profile/:id"
+            element={
               <PrivateRoute>
-                <Profile/>
+                <Profile />
               </PrivateRoute>
             }
           />
@@ -118,7 +137,7 @@ export default function App() {
           />
 
           {/* Activity detail */}
-          <Route path="/activities/:id" element={<ActivityDetailWrapper />} />
+          <Route path="/activities/:id" element={<ActivityDetailWrapper typeNames={typeNames}/>} />
 
           <Route
             path="/schedule/create"

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,15 +84,23 @@ Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf'
 
 /*
 |--------------------------------------------------------------------------
+| Otros
+|--------------------------------------------------------------------------
+*/
+// Recuperar tabla types
+Route::get('/types', [TypeController::class, 'index']);
+
+/*
+|--------------------------------------------------------------------------
 | Faltan
 |--------------------------------------------------------------------------
 */
 
 // Eliminar cuenta de usuario
 // STATES para los filtros
-
-
 // Modal de eliminación
+
+
 // Optimizar fetches y duplicado de funciones
 // Eliminar vistas blade y sobrantes
 
@@ -99,3 +108,4 @@ Route::get('/pdf/schedule/{schedule}', [ScheduleController::class, 'generatePdf'
 // Novedades otros usuarios
 // Clonar actividad
 // Clonar calendario
+// Colores por types de actividades
