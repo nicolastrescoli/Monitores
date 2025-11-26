@@ -97,33 +97,6 @@ export default function ScheduleBuilder2() {
                 onChange={(e) => setName(e.target.value)}
               />
             </h3>
-            <div className="d-flex gap-2 col-md-11 my-2">
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                placeholderText="Fecha de inicio"
-                className="form-control"
-                maxDate={endDate}
-              />
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                maxDate={
-                  startDate
-                    ? new Date(startDate.getTime() + 14 * 86400000)
-                    : null
-                }
-                placeholderText="Fecha de fin"
-                className="form-control"
-              />
-            </div>
             <Activities activities={activities} />
           </>
         ) : (
@@ -136,11 +109,42 @@ export default function ScheduleBuilder2() {
       <div className="calendar col">
         <div className="d-flex justify-content-between align-items-center mb-2">
           {!scheduleId || isEditing ? (
-            <DescriptionModal description={description} setDescription={setDescription}/> 
-            ) : (
-              <div className="col-2"></div>  
-            )
-          }
+            <>
+              <DescriptionModal
+                description={description}
+                setDescription={setDescription}
+              />
+              <div className="d-flex gap-2 my-2">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  placeholderText="Fecha de inicio"
+                  className="form-control"
+                  maxDate={endDate}
+                />
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  maxDate={
+                    startDate
+                      ? new Date(startDate.getTime() + 14 * 86400000)
+                      : null
+                  }
+                  placeholderText="Fecha de fin"
+                  className="form-control"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="col-2"></div>
+          )}
           <Buttons
             scheduleId={scheduleId}
             isEditing={isEditing}
