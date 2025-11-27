@@ -18,7 +18,6 @@ export default function About() {
             <li><strong>Diversión:</strong> fomentamos el aprendizaje a través del juego</li>
             <li><strong>Accesibilidad:</strong> recursos gratuitos y fáciles de usar</li>
           </ul>
-
           <p>Gracias por formar parte de esta comunidad.</p>
         </div>
       </div>

@@ -139,11 +139,7 @@ export default function Home({activities, typeNames, profileData}) {
 
       {/* Botón aleatorio */}
       <div className="text-end mb-4">
-        {/* <button className="btn btn-outline-primary btn-lg" onClick={handleRandom}>
-          🎲 Actividad Aleatoria
-        </button> */}
         <RandomActivity buttonText={"🎲 Actividad Aleatoria"} handleRandom={handleRandom}/>
-        
       </div>
 
       {/* Lista de actividades */}

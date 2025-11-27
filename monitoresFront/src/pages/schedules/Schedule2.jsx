@@ -55,7 +55,7 @@ useEffect(() => {
       updatedDates.push(formatDateLocal(last));
     }
 
-    // IMPORTANTE: NO reconstruimos ni reordenamos el mapa aquí 💡
+    // IMPORTANTE: NO reconstruimos ni reordenamos el mapa aquí
     setDates(updatedDates);
     return;
   }
@@ -87,8 +87,6 @@ useEffect(() => {
 
 }, [startDate, endDate, cellMap]);
 
-
-  // ---------------------------------------------------
   // Horas
   const generateTimes = () => {
     const times = [];
