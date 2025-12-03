@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function RisksField({ formData, setFormData, risks }) {
 
     const addRisk = () => {

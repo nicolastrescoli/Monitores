@@ -4,23 +4,25 @@ import { useParams } from "react-router-dom";
 import StructuredForm from "./components/StructuredForm";
 import FreeForm from "./components/FreeForm";
 
+import { useDispatch, useSelector } from "react-redux";
 import {
-  getFormData,
-  showActivity,
-  storeActivity,
-  updateActivity,
-} from "../../services/api";
+  fetchFormData,
+  fetchActivityById,
+  createActivity,
+  updateActivityAction,
+} from "../../redux/features/activitySlice";
 
-export default function ActivityForm() {
+export default function ActivityForm2() {
   const { id: activityId } = useParams(); // si existe, estamos editando
 
   const isEditing = Boolean(activityId);
 
   const [mode, setMode] = useState("structured");
 
-  const [types, setTypes] = useState([]);
-  const [materials, setMaterials] = useState([]);
-  const [risks, setRisks] = useState([]);
+  const dispatch = useDispatch();
+
+  const { types, materials, risks } = useSelector((state) => state.activities);
+  const { currentActivity } = useSelector((state) => state.activities);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -34,72 +36,54 @@ export default function ActivityForm() {
     description: "",
     conclusion: "",
     materials: [],
-    risks: [], // ← para modo libre si editamos
+    risks: [],
   });
 
-  // ---------- 1. Cargar datos base: types, materials, risks ----------
   useEffect(() => {
-    async function fetchFormData() {
-      const res = await getFormData();
-      setTypes(res.types);
-      setMaterials(res.materials);
-      setRisks(res.risks);
+    if (!types.length || !materials.length || !risks.length) {
+      dispatch(fetchFormData());
     }
-    fetchFormData();
-  }, []);
+  }, [dispatch, types, materials, risks]);
 
-  // ---------- 2. Si estamos editando → cargar actividad ----------
   useEffect(() => {
-    if (!isEditing) return;
+    if (isEditing) dispatch(fetchActivityById(activityId));
+  }, [isEditing, activityId, dispatch]);
 
-    async function fetchActivity(activityId) {
-      const res = await showActivity(activityId);
-      setFormData((prev) => ({
-        ...prev,
-        title: res.activity.title ?? "",
-        type_id: res.activity.type_id ?? "",
-        num_participants: res.activity.num_participants ?? "",
-        min_age: res.activity.min_age ?? "",
-        max_age: res.activity.max_age ?? "",
-        duration: res.activity.duration ?? "",
-        objectives: res.activity.objectives ?? "",
-        introduction: res.activity.introduction ?? "",
-        description: res.activity.description ?? "",
-        conclusion: res.activity.conclusion ?? "",
-        materials:
-          res.activity.materials?.map((m) => ({
-            id: String(m.id),
-            quantity: m.pivot?.quantity || 1,
-            notes: m.pivot?.notes || "",
-          })) || [],
-        risks: res.activity.risks?.map((r) => String(r.id)) || [],
-        
-      }));
-    }
-    fetchActivity(activityId);
-
-  }, [isEditing, activityId]);
+  useEffect(() => {
+    if (!currentActivity) return;
+    setFormData((prev) => ({
+      ...prev,
+      title: currentActivity.activity.title ?? "",
+      type_id: currentActivity.activity.type_id ?? "",
+      num_participants: currentActivity.activity.num_participants ?? "",
+      min_age: currentActivity.activity.min_age ?? "",
+      max_age: currentActivity.activity.max_age ?? "",
+      duration: currentActivity.activity.duration ?? "",
+      objectives: currentActivity.activity.objectives ?? "",
+      introduction: currentActivity.activity.introduction ?? "",
+      description: currentActivity.activity.description ?? "",
+      conclusion: currentActivity.activity.conclusion ?? "",
+      materials:
+        currentActivity.materials?.map((m) => ({
+          id: String(m.id),
+          quantity: m.pivot?.quantity || 1,
+          notes: m.pivot?.notes || "",
+        })) || [],
+      risks: currentActivity.risks?.map((r) => String(r.id)) || [],
+    }));
+  }, [currentActivity]);
 
   // ---------- 3. Enviar formulario (crear / editar) ----------
   async function handleSubmit(e) {
     e.preventDefault();
-
     const payload = { ...formData, mode };
 
-    try {
-      if (isEditing) {
-        await updateActivity(activityId, payload);
-        alert("Actividad actualizada");
-      } else {
-        await storeActivity(payload);
-        alert("Actividad creada");
-      }
-
-      window.location.href = "/profile";
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar la actividad");
+    if (!isEditing) {
+      await dispatch(createActivity(payload)).unwrap();
+    } else {
+      await dispatch(updateActivityAction({ id: activityId, data: payload })).unwrap();
     }
+    window.location.href = "/profile"; // FUERZA RECARGAR TODO --> NO PUEDO RECARGAR ACTIVIDADES FAVORITAS POR ESTAR EN EL SLICE DE AUTH.
   }
 
   return (

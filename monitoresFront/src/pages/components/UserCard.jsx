@@ -4,7 +4,7 @@ import { SendRequest } from "./buttons/SendRequest";
 import { CancelRequest } from "./buttons/CancelRequest";
 
 export default function UserCard({ otherUser }) {
-  // Estado local de la relación de amistad
+  // Estado local de la relación de amistad para ver el cambio sin recargar
   const [status, setStatus] = useState(otherUser.friend_status || "none");
 
   return (

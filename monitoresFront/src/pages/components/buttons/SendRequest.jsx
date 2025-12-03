@@ -1,24 +1,20 @@
-import { sendRequest } from "../../../services/api.js";
+import { useDispatch } from "react-redux";
+import { sendFriendRequest } from "../../../redux/features/communitySlice";
 
-function SendRequest({ otherUserId, setStatus, text="Enviar solicitud" }) {
+export function SendRequest({ otherUserId, setStatus, text="Enviar solicitud" }) {
+  const dispatch = useDispatch();
+
   const handleSendRequest = async (otherUserId) => {
-    try {
-      await sendRequest(otherUserId);
-      if (setStatus) setStatus("pending_sent");
-    } catch (err) {
-      console.error(err);
-      alert("Error al enviar solicitud");
-    }
+    dispatch(sendFriendRequest(otherUserId))
+    setStatus("pending_sent");
   };
 
   return (
     <button
-      className="btn btn-sm btn-primary"
+      className="btn btn-primary btn-sm"
       onClick={() => handleSendRequest(otherUserId)}
     >
       {text}
     </button>
   );
 }
-
-export { SendRequest };

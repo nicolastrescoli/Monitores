@@ -1,24 +1,21 @@
-import { removeFriend } from "../../../services/api.js";
+import { useDispatch } from "react-redux";
+import { removeFriendAction } from "../../../redux/features/communitySlice";
 
-function RemoveFriend({otherUserId, setStatus, text="Eliminar amistad"}) {
-  const handleRemoveFriend = async (otherUserId) => {
-    try {
-      await removeFriend(otherUserId);
-      if (setStatus) setStatus("none");
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar amistad");
-    }
+export function RemoveFriend({ otherUserId, setStatus, text="Eliminar amistad" }) {
+  const dispatch = useDispatch();
+
+  const handleCancelRequest = async (otherUserId) => {
+    dispatch(removeFriendAction(otherUserId))
+    setStatus("none");
   };
 
   return (
     <button
-      className="btn btn-sm btn-danger"
-      onClick={() => handleRemoveFriend(otherUserId)}
+      className="btn btn-danger btn-sm"
+      onClick={() => handleCancelRequest(otherUserId)}
     >
       {text}
     </button>
   );
 }
 
-export { RemoveFriend };

@@ -1,28 +1,20 @@
-import { cancelRequest } from "../../../services/api.js";
+import { useDispatch } from "react-redux";
+import { cancelFriendRequest } from "../../../redux/features/communitySlice";
 
-function CancelRequest({
-  otherUserId,
-  setStatus,
-  text = "Cancelar solicitud",
-}) {
+export function CancelRequest({ otherUserId, setStatus, text="Cancelar solicitud", }) {
+  const dispatch = useDispatch();
+
   const handleCancelRequest = async (otherUserId) => {
-    try {
-      await cancelRequest(otherUserId);
-      if (setStatus) setStatus("none");
-    } catch (err) {
-      console.error(err);
-      alert("Error al cancelar solicitud");
-    }
+    dispatch(cancelFriendRequest(otherUserId))
+    setStatus("none");
   };
 
   return (
     <button
-      className="btn btn-sm btn-secondary"
+      className="btn btn-secondary btn-sm"
       onClick={() => handleCancelRequest(otherUserId)}
     >
       {text}
     </button>
   );
 }
-
-export { CancelRequest };

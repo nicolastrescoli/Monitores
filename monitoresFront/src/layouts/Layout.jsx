@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import "../app.css";
-import Navbar from "../pages/components/Navbar";
+import Navbar2 from "../pages/components/Navbar2";
 
 export default function Layout() {
 
@@ -12,7 +12,7 @@ export default function Layout() {
       </header>
 
       {/* Navbar */}
-      <Navbar />
+      <Navbar2 />
 
       {/* Contenido principal */}
       <main className="flex-grow-1">

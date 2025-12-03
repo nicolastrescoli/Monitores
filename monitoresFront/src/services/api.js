@@ -83,15 +83,16 @@ export const showActivity = async (activityId) => {
   return response.data;
 };
 
-export const storeActivity = async (formData, mode) => {
-  const response = await axios.post(API_URL + "/activities/store", formData, mode);
+export const storeActivity = async (formData) => {
+  const response = await axios.post(API_URL + "/activities/store", formData);
   return response.data;
 };
 
-export const updateActivity = async (activityId, formData, mode) => {
-  const response = await axios.put(API_URL + `/activities/${activityId}`, formData, mode);
+export const updateActivity = async (activityId, formData) => {
+  const response = await axios.put(API_URL + `/activities/${activityId}`, formData);
   return response.data;
 };
+
 
 export const deleteActivity = async (id) => {
   await axios.delete(`${API_URL + "/activities"}/${id}`);

@@ -1,12 +1,13 @@
 import { useState } from "react";
-import ActivityCard from "../../components/ActivityCard";
+import ActivityCard2 from "./components/ActivityCard2";
 
-export default function RandomActivity( {buttonText, handleRandom}) {
+export default function RandomActivity({buttonText, handleRandom}) {
   const [show, setShow] = useState(false);
 
   const handleOpen = () => setShow(true);
   const handleClose = () => setShow(false);
-// Evita que cerrar el modal al clicar dentro de la ventana
+
+  // Evita que cerrar el modal al clicar dentro de la ventana
   const handleModalClick = (e) => {
     e.stopPropagation();
   };
@@ -28,7 +29,7 @@ export default function RandomActivity( {buttonText, handleRandom}) {
                 <button type="button" className="btn-close" onClick={handleClose}></button>
               </div>
               <div className="modal-body">
-                <ActivityCard activity={activity}/>
+                <ActivityCard2 id={activity.id}/>
               </div>
             </div>
           </div>

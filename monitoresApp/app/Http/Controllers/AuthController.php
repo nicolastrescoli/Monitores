@@ -132,24 +132,28 @@ class AuthController extends Controller
         }
 
         // Actividades del usuario mostrado
-        $activities = Activity::where('user_id', $user->id)->get();
+        // $favoriteActivities = Activity::where('user_id', $user->id)->get();
+        $favoriteActivities = $user->favoriteActivities()->get();
 
         // Schedules del usuario mostrado
         $schedules = Schedule::where('user_id', $user->id)->get();
 
         // Solo si es mi perfil
         if ($user->id === Auth::id()) {
-            $favoriteActivities = $user->favoriteActivities()->get(); // Actividades favoritas
+            // $favoriteActivities = $user->favoriteActivities()->get(); // Actividades favoritas
             $user->load(['sentFriendRequests', 'receivedFriendRequests']);// Cargar relaciones necesarias
-            $contacts = $user->allFriends(); // Contactos
+            $user->contacts = $user->allFriends(); // Contactos
         }
+
+        // Adjuntamos las favoritas y contactos al objeto user
+        $user->favoriteActivities = $favoriteActivities;
 
         return response()->json([
             'user' => $user,
-            'activities' => $activities,
-            'favoriteActivities' => $favoriteActivities ?? $activities,
+            // 'activities' => $activities,
+            // 'favoriteActivities' => $favoriteActivities ?? $activities,
             'schedules' => $schedules,
-            'contacts' => $contacts ?? null,
+            // 'contacts' => $contacts ?? null,
         ]);
     }
 

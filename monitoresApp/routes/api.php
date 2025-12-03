@@ -99,9 +99,10 @@ Route::get('/types', [TypeController::class, 'index']);
 // Eliminar cuenta de usuario
 // STATES para los filtros
 // Modal de eliminación
+// Al volver de editar una actividad sin confirmar los datos de la actividad se quedan cargados en el formulario cuando pulsas nueva actividad
 
 
-// Optimizar fetches y duplicado de funciones
+// Optimizar fetches y duplicado de funciones --> Redux
 // Eliminar vistas blade y sobrantes
 
 

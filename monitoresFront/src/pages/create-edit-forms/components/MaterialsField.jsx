@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function MaterialsField({ formData, setFormData, materials }) {
 
     const addMaterial = () => {

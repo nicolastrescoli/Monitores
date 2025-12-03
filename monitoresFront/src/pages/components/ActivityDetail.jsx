@@ -1,17 +1,27 @@
-import { useEffect, useState } from "react";
-import { getTypes, openActivityPdf } from "../services/api";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { openActivityPdf } from "../../services/api";
+import { fetchActivityById } from "../../redux/features/activitySlice";
 
-export default function ActivityDetail({ activity, creator, materials = [], risks = [], onBack }) {
+export default function ActivityDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [typeNames, setTypeNames] = useState([]);
+  const { currentActivity, loadingActivity } = useSelector(state => state.activities);
+  const { activity, creator, materials, risks } = currentActivity || {};
 
+  const { typeNames } = useSelector(state => state.activities);
+
+  // Pide al servidor SOLO si es distinta a la última actividad vista
   useEffect(() => {
-    async function fetchTypes() {
-      const types = await getTypes();
-      setTypeNames(types)
-    };
-    fetchTypes();
-  },[]);
+    if (!currentActivity || currentActivity.activity?.id !== Number(id)) {
+      dispatch(fetchActivityById(id));
+    }
+  }, [dispatch, id]);
+
+  if (loadingActivity || !activity) return <p>Cargando...</p>;
 
   const typeName = typeNames[activity.type_id] || "Otro";
 
@@ -102,7 +112,7 @@ export default function ActivityDetail({ activity, creator, materials = [], risk
 
           <button
             className="btn btn-outline-success mt-3"
-            onClick={onBack}
+            onClick={() => navigate(-1)}
           >
             ← Volver
           </button>

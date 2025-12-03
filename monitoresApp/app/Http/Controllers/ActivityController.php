@@ -28,7 +28,8 @@ class ActivityController extends Controller
 
     public function apiIndex()
     {
-        $activities = Activity::where('visibility', 'public')->get();
+        // $activities = Activity::where('visibility', 'public')->get();
+        $activities = Activity::all();
         return response()->json($activities);
     }
 

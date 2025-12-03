@@ -62,9 +62,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           {/* Public pages */}
-          <Route
-            path="/"
-            element={
+          <Route path="/" element={
               <Home
                 activities={activities}
                 typeNames={typeNames}
