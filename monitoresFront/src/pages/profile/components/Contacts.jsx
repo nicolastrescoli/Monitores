@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { RemoveFriend } from "../../components/buttons/removeFriend.jsx";
+import { useSelector } from "react-redux";
 
-function Contacts({ contacts }) {
+export function Contacts() {
+
+  const { contacts } = useSelector((state) => state.auth.loggedUser);
+
   return (
     <div className="col-lg-3 col-md-12">
       <div className="card shadow border-0">
@@ -26,13 +30,13 @@ function Contacts({ contacts }) {
                       </Link>
                       <RemoveFriend otherUserId={contact.id} text={"X"} />
                     </div>
-                    {false ? (
+                    {/* {false ? (
                       <div className="text-start text-primary mx-3 mt-0 mb-2">
                         🔹 Nueva actividad
                       </div>
                     ) : (
                       ""
-                    )}
+                    )} */}
                   </div>
                 </div>
               ))}
@@ -44,4 +48,3 @@ function Contacts({ contacts }) {
   );
 }
 
-export { Contacts };

@@ -147,12 +147,13 @@ class AuthController extends Controller
 
         // Adjuntamos las favoritas y contactos al objeto user
         $user->favoriteActivities = $favoriteActivities;
+        $user->schedules = $schedules;
 
         return response()->json([
             'user' => $user,
             // 'activities' => $activities,
             // 'favoriteActivities' => $favoriteActivities ?? $activities,
-            'schedules' => $schedules,
+            // 'schedules' => $schedules,
             // 'contacts' => $contacts ?? null,
         ]);
     }

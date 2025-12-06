@@ -1,7 +1,6 @@
 import { useState } from "react";
-import ActivityCard2 from "./components/ActivityCard";
 
-export default function RandomActivity({buttonText, handleRandom}) {
+export default function DeleteModal({buttonText, modalText, deleteMethod}) {
   const [show, setShow] = useState(false);
 
   const handleOpen = () => setShow(true);
@@ -12,24 +11,26 @@ export default function RandomActivity({buttonText, handleRandom}) {
     e.stopPropagation();
   };
 
-  const activity = handleRandom();
-
   return (
-    <div className="text-end mb-4">
-      <button className="btn btn-outline-primary btn-lg" onClick={handleOpen}>
+    <>
+      <button className="btn btn-sm btn-danger ms-1" onClick={handleOpen}>
         {buttonText}
       </button>
 
       {show && (
-        <div className="modal fade show" style={{ display: "block" }} onClick={handleClose}>
+        <div className="modal fade show" style={{ display: "block" }}>
           <div className="modal-dialog modal-dialog-centered" onClick={handleModalClick}>
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Actividad Aleatoria</h5>
+                <h5 className="modal-title">Confirma eliminación</h5>
                 <button type="button" className="btn-close" onClick={handleClose}></button>
               </div>
               <div className="modal-body">
-                <ActivityCard2 id={activity.id}/>
+                {modalText}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-danger" onClick={deleteMethod}>Eliminar</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>Cancelar</button>
               </div>
             </div>
           </div>
@@ -37,6 +38,6 @@ export default function RandomActivity({buttonText, handleRandom}) {
       )}
 
       {show && <div className="modal-backdrop fade show"></div>}
-    </div>
+    </>
   );
 }

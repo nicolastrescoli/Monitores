@@ -1,22 +1,30 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
+import { loginUser, fetchLoggedUser } from "../../redux/features/authSlice";
+import { fetchUsers } from "../../redux/features/communitySlice";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      // Login
+      await dispatch(loginUser({ email, password })).unwrap();
+      // Cargar perfil completo tras login
+      await dispatch(fetchLoggedUser()).unwrap();
+      dispatch(fetchUsers());
+      // Redirigir al inicio
       navigate("/");
     } catch (err) {
-      console.error(err);
-      setError("Credenciales inválidas o error en el servidor.");
+      console.error("Error login:", err);
     }
   };
 
@@ -30,39 +38,39 @@ export default function Login() {
             </div>
             <div className="card-body bg-light">
               {error && <div className="alert alert-danger">{error}</div>}
+
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    Correo electrónico
-                  </label>
+                  <label className="form-label">Correo electrónico</label>
                   <input
                     type="email"
-                    id="email"
                     className="form-control"
                     value={email}
-                    autoComplete="name"
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
+
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Contraseña
-                  </label>
+                  <label className="form-label">Contraseña</label>
                   <input
                     type="password"
-                    id="password"
                     className="form-control"
                     value={password}
-                    autoComplete="current-password"
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-success w-100">
-                  Entrar
+
+                <button
+                  type="submit"
+                  className="btn btn-success w-100"
+                  disabled={loading}
+                >
+                  {loading ? "Entrando..." : "Entrar"}
                 </button>
               </form>
+
               <p className="mt-3 text-center">
                 ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
               </p>

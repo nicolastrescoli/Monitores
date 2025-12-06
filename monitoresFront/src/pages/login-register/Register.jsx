@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-// import axios from "axios";
-import { register } from "../../services/api.js";
+import { register } from "../../services/api";
+import { loginUser } from "../../redux/features/authSlice";
 
 export default function Register() {
-  const { login } = useContext(AuthContext); // reutilizamos login() tras el registro
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -40,16 +40,11 @@ export default function Register() {
 
     try {
       await register(form);
-      await login(form.email, form.password);
+      dispatch(loginUser({ email: form.email, password: form.password }));
       navigate("/");
     } catch (err) {
       console.error(err);
-      if (err.response?.data?.errors) {
-        const backendErrors = Object.values(err.response.data.errors).flat();
-        setErrors(backendErrors);
-      } else {
-        setErrors(["Error al registrar. Inténtalo de nuevo."]);
-      }
+      setErrors(["Error al registrar. Inténtalo de nuevo."]);
     }
   };
 

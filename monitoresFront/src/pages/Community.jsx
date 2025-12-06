@@ -1,58 +1,27 @@
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
 import UserCard from "./components/UserCard";
-import { getUsers, acceptRequest, rejectRequest } from "../services/api";
+import {
+  acceptFriendRequest,
+  rejectFriendRequest
+} from "../redux/features/communitySlice";
 
 export default function Community() {
-  const { user: currentUser } = useContext(AuthContext);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  // Fetch de usuarios al montar el componente
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsers();
-        setUsers(res.users || []);
-      } catch (err) {
-        console.error("Error cargando usuarios:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { loggedUser } = useSelector((state) => state.auth);
+  const { users, loading } = useSelector((state) => state.community);
 
-    fetchUsers();
-  }, []);
-
-  // Filtrar usuarios y organizaciones
+  // Filtrar usuarios y organizaciones que no sean el propio usuario
   const usersList = users.filter(
-    (u) => u.role === "user" && u.id !== currentUser?.id
+    (u) => u.role === "user" && u.id !== loggedUser?.id
   );
   const organizationsList = users.filter(
-    (u) => u.role === "organization" && u.id !== currentUser?.id
+    (u) => u.role === "organization" && u.id !== loggedUser?.id
   );
 
   if (loading) {
     return <div className="container py-5">Cargando usuarios...</div>;
   }
-
-  async function handleAcceptRequest(otherUserId) {
-    try {
-      await acceptRequest(otherUserId);
-    } catch (err) {
-      console.error(err);
-      alert("Error al aceptar solicitud");
-    }
-  };
-
-  async function handleRejectRequest(otherUserId) {
-    try {
-      await rejectRequest(otherUserId);
-    } catch (err) {
-      console.error(err);
-      alert("Error al rechazar solicitud");
-    }
-  };
 
   return (
     <div className="container py-4">
@@ -73,10 +42,10 @@ export default function Community() {
                     <small className="card-text">{otherUser.email}</small>
                   </div>
                   <div>
-                    <button className="btn btn-sm btn-success me-2" onClick={() => handleAcceptRequest(otherUser.id)}>
+                    <button className="btn btn-sm btn-success me-2" onClick={() => dispatch(acceptFriendRequest(otherUser.id))}>
                       Aceptar
                     </button>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleRejectRequest(otherUser.id)}>
+                    <button className="btn btn-sm btn-danger" onClick={() => dispatch(rejectFriendRequest(otherUser.id))}>
                       Rechazar
                     </button>
                   </div>

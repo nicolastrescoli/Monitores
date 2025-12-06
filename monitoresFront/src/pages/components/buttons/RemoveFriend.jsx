@@ -1,21 +1,31 @@
 import { useDispatch } from "react-redux";
-import { removeFriendAction } from "../../../redux/features/communitySlice";
+import DeleteModal from "../DeleteModal";
+import { removeFriend } from "../../../services/api";
+import { fetchLoggedUser } from "../../../redux/features/authSlice";
 
-export function RemoveFriend({ otherUserId, setStatus, text="Eliminar amistad" }) {
+export function RemoveFriend({
+  otherUserId,
+  text = "Eliminar amistad",
+}) {
   const dispatch = useDispatch();
 
-  const handleCancelRequest = async (otherUserId) => {
-    dispatch(removeFriendAction(otherUserId))
-    setStatus("none");
-  };
+  async function handleRemoveFriend(userId) {
+    try {
+      await dispatch(removeFriend(userId)).unwrap();
+      await dispatch(fetchLoggedUser()).unwrap();
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar contacto");
+    }
+  }
 
   return (
-    <button
-      className="btn btn-danger btn-sm"
-      onClick={() => handleCancelRequest(otherUserId)}
-    >
-      {text}
-    </button>
+    <DeleteModal
+      buttonText={text}
+      modalText={"¿Seguro que deseas eliminar esta amistad?"}
+      deleteMethod={() => {
+        handleRemoveFriend(otherUserId);
+      }}
+    />
   );
 }
-

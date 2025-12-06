@@ -1,99 +1,74 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import Layout from "./layouts/Layout";
-import Home from "./pages/Home";
-import Login from "./pages/login-register/Login";
-import Register from "./pages/login-register/Register";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import Layout from "./layouts/Layout.jsx";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/login-register/Login.jsx";
+import Register from "./pages/login-register/Register.jsx";
 import Profile from "./pages/profile/Profile.jsx";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Community from "./pages/Community";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
+import Community from "./pages/Community.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import TopColaborators from "./pages/TopColaborators.jsx";
-import { AuthContext } from "./contexts/AuthContext";
-import ActivityDetailWrapper from "./wrappers/ActivityDetailWrapper";
-import ActivityForm from "./pages/create-edit-forms/ActivityForm";
-import ScheduleBuilder2 from "./pages/schedules/ScheduleBuilder2";
-import { getActivities, getTypes } from "./services/api.js";
+import PrivateRoute from "./routes/PrivateRoute.jsx";
+import ActivityDetail from "./pages/components/ActivityDetail.jsx";
+import ActivityForm from "./pages/create-edit-forms/ActivityForm.jsx";
+import ScheduleBuilder from "./pages/schedules/ScheduleBuilder.jsx";
 
-function PrivateRoute({ children, roles }) {
-  const { user } = useContext(AuthContext);
-
-  if (!user) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
-
-  return children;
-}
+import { useDispatch } from "react-redux";
+// import { fetchLoggedUser } from "./redux/features/authSlice";
+import { fetchActivities } from "./redux/features/activitySlice.js";
+import { getTypes } from "./services/api.js";
 
 export default function App() {
-  const [activities, setActivities] = useState([]);
-  const [typeNames, setTypeNames] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const {
-    // user: currentUser,
-    profileData,
-    // fetchProfile,
-  } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.activities);
+  const [types, setTypes] = useState([])
 
   useEffect(() => {
-    fetchActivities().catch((err) => {
-      console.error("Error cargando actividades:", err);
-    });
-    async function fetchTypes() {
-      const types = await getTypes();
-      setTypeNames(types);
-    }
-    fetchTypes();
-    setLoading(false);
-  }, []);
+    // dispatch(fetchLoggedUser());
+    dispatch(fetchActivities());
+    const loadTypes = async () => {
+      const res = await getTypes();
+      setTypes(res);
+    };
 
-  const fetchActivities = async () => {
-    const data = await getActivities();
-    setActivities(data);
-    setLoading(false);
-  };
+    loadTypes()
+  }, [dispatch]);
 
-  if (loading)
+  if (loading || !types)
     return <div className="container py-5">Cargando actividades...</div>;
+  if (error) return <div className="alert alert-danger">Error: {error}</div>;
 
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           {/* Public pages */}
-          <Route path="/" element={
-              <Home
-                activities={activities}
-                typeNames={typeNames}
-                setActivities={setActivities}
-                profileData={profileData}
-              />
-            }
-          />
+          <Route path="/" element={<Home types={types}/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+          {/* <Route path="/contact" element={<Contact />} /> */}
           <Route path="/community" element={<Community />} />
+          <Route path="/activities/:id" element={<ActivityDetail />} />
+
+          {/* Private pages */}
           <Route
             path="/topColaborators"
             element={
               <PrivateRoute>
-                <TopColaborators
-                  activities={activities}
-                  setActivities={setActivities}
-                />
+                <TopColaborators />
               </PrivateRoute>
             }
           />
 
-          {/* Private pages */}
           <Route
             path="/profile"
             element={
               <PrivateRoute>
-                <Profile typeNames={typeNames}/>
+                <Profile />
               </PrivateRoute>
             }
           />
@@ -134,14 +109,11 @@ export default function App() {
             }
           />
 
-          {/* Activity detail */}
-          <Route path="/activities/:id" element={<ActivityDetailWrapper typeNames={typeNames}/>} />
-
           <Route
             path="/schedule/create"
             element={
               <PrivateRoute>
-                <ScheduleBuilder2 />
+                <ScheduleBuilder />
               </PrivateRoute>
             }
           />
@@ -150,7 +122,7 @@ export default function App() {
             path="/schedule/:id"
             element={
               <PrivateRoute>
-                <ScheduleBuilder2 />
+                <ScheduleBuilder />
               </PrivateRoute>
             }
           />

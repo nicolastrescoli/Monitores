@@ -1,74 +1,25 @@
-import { useEffect, useState } from "react";
-import { getTopFavoriteActivities, getUsers } from "../services/api";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsers, fetchTopFavorites } from "../redux/features/statsSlice";
 import { Link } from "react-router-dom";
 
-export default function TopFavorites({ activities }) {
-  const [topFavorites, setTopFavorites] = useState([]);
-  const [users, setUsers] = useState([]); // todos los usuarios
-  const [topUsers, setTopUsers] = useState([]); // top 5 usuarios con más actividades públicas
+export default function TopColaborators() {
+  const dispatch = useDispatch();
 
-  // Cargar usuarios solo una vez
+  const { topFavorites, topUsers, loading } = useSelector(state => state.stats);
+  const { activities } = useSelector(state => state.activities);
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsers();
-        setUsers(res.users || []);
-      } catch (err) {
-        console.error("Error cargando usuarios:", err);
-      }
-    };
-    fetchUsers();
-  }, []);
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
-  // Cargar top actividades favoritas cada vez que cambian las activities
   useEffect(() => {
-    const fetchTopFavorites = async () => {
-      try {
-        const topFavs = await getTopFavoriteActivities();
-        const merged = topFavs
-          .map((fav) => {
-            const activity = activities.find((a) => a.id === fav.activity_id);
-            if (!activity) return null; // evita undefined
-            return {
-              ...activity,
-              favorites_count: fav.favorites_count,
-            };
-          })
-          .filter(Boolean) // elimina null
-          .sort((a, b) => b.favorites_count - a.favorites_count); // ordena por número de favoritos
-
-        setTopFavorites(merged);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     if (activities.length > 0) {
-      fetchTopFavorites();
+      dispatch(fetchTopFavorites());
     }
-  }, [activities]);
+  }, [dispatch, activities]);
 
-  // Calcular top 5 usuarios con más actividades públicas
-  useEffect(() => {
-    if (activities.length === 0 || users.length === 0) return;
-
-    const publicActivities = activities.filter(
-      (act) => act.visibility === "public"
-    );
-
-    const userCounts = users.map((user) => {
-      const count = publicActivities.filter(
-        (act) => act.user_id === user.id
-      ).length;
-      return { ...user, publicActivitiesCount: count };
-    });
-
-    const sorted = userCounts
-      .sort((a, b) => b.publicActivitiesCount - a.publicActivitiesCount)
-      .slice(0, 5);
-
-    setTopUsers(sorted);
-  }, [activities, users]);
+  if (loading) return <p>Cargando...</p>;
 
   const styleMap = [
     { bg: "bg-warning", size: "h3", width: "col-md-12" },
@@ -89,8 +40,7 @@ export default function TopFavorites({ activities }) {
               <Link to={`/activities/${act.id}`}>
                 <div className={`card ${style.bg} text-dark border-3`}>
                   <div className={`p-2 ${style.size}`}>
-                    <strong>{act.title}</strong> – {act.favorites_count} veces
-                    guardada
+                    <strong>{act.title}</strong> – {act.favorites_count} veces guardada
                   </div>
                 </div>
               </Link>

@@ -1,153 +1,98 @@
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  cancelSubmission,
-  deleteActivity,
-  submitPublic,
-  toggleFavorite,
-} from "../../services/api";
-import { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+  requestPublication,
+  cancelPublication,
+  deleteActivityAction,
+} from "../../redux/features/activitySlice";
+import { toggleFavoriteActivity } from "../../redux/features/authSlice";
+import DeleteModal from "./DeleteModal";
 
-export default function ActivityCard({ activity, typeNames, userJoinedActivities = [] }) {
-  const { user: currentUser, fetchProfile } = useContext(AuthContext);
+export default function ActivityCard({ id }) {
+  const dispatch = useDispatch();
 
-  const isOwner = currentUser && activity.user_id === currentUser.id;
-  const [isFavorite, setIsFavorite] = useState(
-    userJoinedActivities.includes(activity.id)
-  );
+  const { activities, typeNames } = useSelector((state) => state.activities);
+  const { loggedUser } = useSelector((state) => state.auth);
+
+  // Buscar la actividad en redux
+  const activity = activities.find((a) => a.id === id);
+
+  if (!activity) {
+    return <div className="alert alert-info">Cargando actividad...</div>;
+  }
+
+  const favoriteIds = loggedUser?.favoriteActivities?.map(fav => fav.id) ?? [];
+  const isFavorite = favoriteIds.includes(activity.id);
+
+  const isOwner = loggedUser && activity.user_id === loggedUser.id;
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
-
-  const [visibility, setVisibility] = useState(activity.visibility);
 
   const typeName = typeNames[activity.type_id] || "Otro";
 
-  async function handleSubmitPublic(activityId) {
-    try {
-      await submitPublic(activityId);
-      setVisibility("pending");
-    } catch (err) {
-      console.error(
-        "Error al enviar actividad:",
-        err.response?.data || err.message
-      );
-      alert(err.response?.data?.message || "Error al solicitar publicación");
-    }
-  }
-
-  async function handleCancelSubmission(activityId) {
-    try {
-      await cancelSubmission(activityId);
-      setVisibility("private");
-    } catch (err) {
-      console.error("Error al cancelar:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Error al cancelar solicitud");
-    }
-  }
-
-  async function handleToggleFavorite(activityId) {
-    try {
-      await toggleFavorite(activityId);
-      setIsFavorite(!isFavorite);
-      await fetchProfile(); // 🔹 recarga profileData automáticamente
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar favorito");
-    }
-  }
-
-  // --- ELIMINAR ACTIVIDAD ---
-  async function handleDeleteActivity(activityId) {
-    try {
-      await deleteActivity(activityId);
-      await fetchProfile(); // 🔹 recarga profileData automáticamente
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar actividad");
-    }
-  }
-
   return (
-    <div
-      className="activity-item"
-      data-nombre={activity.title.toLowerCase()}
-      data-tipo={typeName}
-      data-edad={activity.min_age}
-      data-participantes={activity.num_participants}
-    >
-      <div
-        className={`card h-100 border-0 shadow-lg rounded-4 ${
-          isOwner ? "border-success bg-white" : "border-secondary bg-white"
-        }`}
-      >
+    <div className="activity-item">
+      <div className="card h-100 border-0 shadow-lg rounded-4 bg-white">
         <div className="card-body d-flex flex-column justify-content-between">
-          <div>
-            <Link
-              to={`/activities/${activity.id}`}
-              className="text-decoration-none text-dark"
-            >
-              <h5 className="card-title text-primary">{activity.title}</h5>
-              <p className="card-text text-dark">
-                <span className="badge bg-success mb-1">{typeName}</span>
-                <br />
-                <strong>Edad:</strong> {activity.min_age}+
-                <br />
-                <strong>Participantes:</strong> {activity.num_participants}
-              </p>
-            </Link>
-          </div>
-          {currentUser !== null &&
-            // Acciones del usuario
-            !isOwnerWithPublic && (
-              <div className="mt-3">
-                {isOwner ? (
-                  <>
-                    <Link
-                      to={`/activities/edit/${activity.id}`}
-                      className="btn btn-sm btn-warning ms-1"
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      className="btn btn-outline-danger btn-sm ms-1"
-                      onClick={() => handleDeleteActivity(activity.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </>
-                ) : visibility === "public" ? (
-                  <button
-                    className={`btn btn-sm ${
-                      isFavorite ? "btn-warning" : "btn-outline-secondary"
-                    }`}
-                    onClick={() => handleToggleFavorite(activity.id)}
-                  >
-                    {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
-                  </button>
-                ) : null}
+          
+          <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
+            <h5 className="card-title text-primary">{activity.title}</h5>
+            <p className="card-text">
+              <span className="badge bg-success mb-1">{typeName}</span><br />
+              <strong>Edad:</strong> {activity.min_age}+<br />
+              <strong>Participantes:</strong> {activity.num_participants}
+            </p>
+          </Link>
 
-                {/* Publicación */}
-                {isOwner && (
-                  <div className="mt-2">
-                    {visibility === "private" && (
-                      <button
-                        className="btn btn-primary btn-sm ms-1"
-                        onClick={() => handleSubmitPublic(activity.id)}
-                      >
-                        Solicitar publicación
-                      </button>
-                    )}
-                    {visibility === "pending" && (
-                      <button
-                        className="btn btn-outline-warning btn-sm ms-1"
-                        onClick={() => handleCancelSubmission(activity.id)}
-                      >
-                        Cancelar envío
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+          {(!isOwnerWithPublic && loggedUser ) && (
+            <div className="mt-3">
+              {isOwner ? (
+                <>
+                  <Link className="btn btn-warning btn-sm ms-1" to={`/activities/edit/${activity.id}`}>
+                    Editar
+                  </Link>
+                  <DeleteModal 
+                    buttonText={"Eliminar"} 
+                    modalText={"¿Seguro que deseas eliminar esta actividad?"} 
+                    deleteMethod={() => {                    
+                      dispatch(deleteActivityAction(activity.id))
+                      if (isFavorite) dispatch(toggleFavoriteActivity(activity.id))
+                    }}
+                  />
+                </>
+              ) : activity.visibility === "public" && (
+                <button
+                  className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-secondary"}`}
+                  onClick={() => dispatch(toggleFavoriteActivity(activity.id))}
+                >
+                  {isFavorite ? "★ Favorito" : "☆ Añadir a favoritos"}
+                </button>
+              )}
+
+              {isOwner && (
+                <div className="mt-2">
+                  {activity.visibility === "private" && (
+                    <button
+                      className="btn btn-primary btn-sm ms-1"
+                      onClick={() => dispatch(requestPublication(activity.id))}
+                    >
+                      Solicitar publicación
+                    </button>
+                  )}
+
+                  {activity.visibility === "pending" && (
+                    <button
+                      className="btn btn-outline-warning btn-sm ms-1"
+                      onClick={() => dispatch(cancelPublication(activity.id))}
+                    >
+                      Cancelar envío
+                    </button>
+                  )}
+                </div>
+              )}
+
+            </div>
+          )}
+
         </div>
       </div>
     </div>

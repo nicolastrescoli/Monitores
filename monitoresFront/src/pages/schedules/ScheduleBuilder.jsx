@@ -1,138 +1,187 @@
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import Activities from "./components/Activities.jsx";
-import Table from "./Table.jsx";
 import { useState, useEffect } from "react";
-import { placeActivity, removeActivity, moveActivity } from "./scheduleAux.js";
-import { getActivities } from "../../services/api.js";
+import Schedule from "./Schedule.jsx";
+import Buttons from "./components/Buttons.jsx";
+import { getSchedule } from "../../services/api.js";
+import { useParams } from "react-router-dom";
+import { placeActivity, removeActivity } from "./scheduleAux.js";
+import { useLocation } from "react-router-dom"; // para traer states pasados por <Link>
+import DatePicker from "react-datepicker";
+import DescriptionModal from "./DescriptionModal.jsx";
 
 export default function ScheduleBuilder() {
-  const [isEditing, setIsEditing] = useState(true);
-
-  // fetch de actividades
-  const [activities, setActivities] = useState([]);
-
-  useEffect(() => {
-    async function fetchActivities() {
-      const data = await getActivities();
-      setActivities(data);
-    }
-    fetchActivities();
-  }, []);
-
-  // Estados para el rango de fechas Datepicker
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  // numero de columnas
-  const days =
-    startDate && endDate
-      ? (() => {
-          const dates = [];
-          let current = new Date(startDate);
-          const end = new Date(endDate);
-          while (current <= end) {
-            dates.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-          }
-          return dates;
-        })()
-      : Array.from({ length: 7 }, (_, i) => {
-          const defaultDate = new Date();
-          defaultDate.setDate(defaultDate.getDate() + i);
-          return defaultDate;
-        });
-
-  // minutos por celda (tamaño de fila)
-  const timeInterval = 15;
-  // numero de celdas por día (nº de filas)
-  const hourSlots = Array.from(
-    { length: (24 * 60) / timeInterval },
-    (_, i) =>
-      `${String(Math.floor((i * timeInterval) / 60)).padStart(2, "0")}:${String(
-        (i * timeInterval) % 60
-      ).padStart(2, "0")}`
-  );
-
-  // Estado del cellMap como objeto row-col
+  const { id: scheduleId } = useParams();
+  
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [cellMap, setCellMap] = useState({});
+  const [isEditing, setIsEditing] = useState(scheduleId && false);
+  const [originalData, setOriginalData] = useState(null); // Para deshacer cambios si sale sin guardar
 
-  console.log("Cell map updated:", cellMap); // Para depuración
+  // Actividades creadas y guardadas del usuario
+  const location = useLocation();
+  const activities = location.state?.favoriteActivities || [];
 
-  // ---------- HANDLERS ----------
+  // Cargar schedule solo si existe un id
+  useEffect(() => {
+    async function fetchSchedule() {
+      if (!scheduleId) {
+        setCellMap({});
+        return;
+      }
 
-  const handleDropActivity = (activityId, date, hour) => {
-    const baseActivity = activities.find((a) => a.id === activityId);
-    if (!baseActivity) return;
-    setCellMap((prev) => placeActivity(prev, baseActivity, date, hour, days, hourSlots) || prev );
+      try {
+        const res = await getSchedule(scheduleId);
+        setCellMap(res.cellMap || {});
+        setName(res.name || "");
+        setDescription(res.description || "");
+      } catch (err) {
+        console.error("Error cargando schedule:", err);
+        setCellMap({});
+      }
+    }
+    fetchSchedule();
+  }, [scheduleId]);
+
+  const handleMoveActivity = (cellMap, instanceId, date, hour, times) => {
+    const newMap = structuredClone(cellMap);
+    let activity = null;
+
+    for (const dateKey in newMap) {
+      for (const hourKey in newMap[dateKey]) {
+        const cell = newMap[dateKey][hourKey];
+        if (cell.instanceId === instanceId) {
+          if (!activity) activity = { ...cell };
+          delete newMap[dateKey][hourKey];
+        }
+      }
+    }
+
+    if (!activity) return cellMap;
+    return placeActivity(newMap, activity, date, hour, times);
+  };
+
+  const handleDropActivity = (activityId, date, hour, times, instanceId) => {
+    if (instanceId) {
+      setCellMap(
+        (prev) =>
+          handleMoveActivity(prev, instanceId, date, hour, times) || prev
+      );
+    } else {
+      const baseActivity = activities.find((a) => a.id === activityId);
+      if (!baseActivity) return;
+      setCellMap(
+        (prev) => placeActivity(prev, baseActivity, date, hour, times) || prev
+      );
+    }
   };
 
   const handleRemoveActivity = (instanceId) => {
     setCellMap((prev) => removeActivity(prev, instanceId));
   };
 
-  const handleMoveActivity = (instanceId, date, hour) => {
-    setCellMap((prev) => moveActivity(prev, instanceId, date, hour, days, hourSlots) );
-  };
-  
+  // Estados para el rango de fechas Datepicker
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   return (
-    <>
-      <div className="d-flex">
-        <div className="d-flex flex-column col-2">
-          <div>
-            <h3>Nueva programación</h3>
-            {isEditing && (
-              <div className="my-3 align-items-center">
-                <details open>
-                  <summary>Rango de fechas</summary>
-                  <div className="d-flex gap-2 col-md-10 mx-2 my-2">
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      selectsStart
-                      startDate={startDate}
-                      endDate={endDate}
-                      placeholderText="Fecha de inicio"
-                      className="form-control"
-                      maxDate={endDate}
-                    />
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      maxDate={
-                        startDate
-                          ? new Date(startDate.getTime() + 14 * 86400000)
-                          : null
-                      }
-                      placeholderText="Fecha de fin"
-                      className="form-control"
-                    />
-                  </div>
-                </details>
+    <div className="d-flex">
+      <div className="d-flex flex-column col-2 me-3">
+        {!scheduleId || isEditing ? (
+          <>
+            <h3>
+              <input
+                type="text"
+                className="col-11"
+                value={name}
+                placeholder="Nueva Programación"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </h3>
+            <Activities activities={activities} />
+          </>
+        ) : (
+          <>
+            <h3>{name ? name : "Nueva programación"}</h3>
+            <p>{description ? description : "Ninguna descripción"}</p>
+          </>
+        )}
+      </div>
+      <div className="calendar col">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          {!scheduleId || isEditing ? (
+            <>
+              <DescriptionModal
+                description={description}
+                setDescription={setDescription}
+              />
+              <div className="d-flex gap-2 my-2">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  placeholderText="Fecha de inicio"
+                  className="form-control"
+                  maxDate={endDate}
+                />
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  maxDate={
+                    startDate
+                      ? new Date(startDate.getTime() + 14 * 86400000)
+                      : null
+                  }
+                  placeholderText="Fecha de fin"
+                  className="form-control"
+                />
               </div>
-            )}
-          </div>
-          {isEditing && <Activities activities={activities} />}
-        </div>
-
-        <div className="calendar col-10">
-          <Table
-            days={days}
-            hourSlots={hourSlots}
-            cellMap={cellMap}
-            handleDropActivity={handleDropActivity}
-            handleMoveActivity={handleMoveActivity}
-            handleRemoveActivity={handleRemoveActivity}
+            </>
+          ) : (
+            <div className="col-2"></div>
+          )}
+          <Buttons
+            scheduleId={scheduleId}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
+            name={name}
+            description={description}
+            cellMap={cellMap}
+            onEditStart={() => {
+              // Guardar snapshot al editar
+              setOriginalData({
+                name,
+                description,
+                cellMap: structuredClone(cellMap),
+              });
+            }}
+            onCancelEdit={() => {
+              // Al salir sin guardar
+              if (originalData) {
+                setName(originalData.name);
+                setDescription(originalData.description);
+                setCellMap(structuredClone(originalData.cellMap));
+              }
+              setIsEditing(false);
+            }}
           />
         </div>
+        <Schedule
+          cellMap={cellMap}
+          handleRemoveActivity={handleRemoveActivity}
+          handleDropActivity={handleDropActivity}
+          isEditing={isEditing}
+          scheduleId={scheduleId}
+          startDate={startDate}
+          endDate={endDate}
+        />
       </div>
-    </>
+    </div>
   );
 }

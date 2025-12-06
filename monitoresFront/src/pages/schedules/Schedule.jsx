@@ -1,8 +1,8 @@
 import "react-datepicker/dist/react-datepicker.css";
-import Cell2 from "./components/Cell2";
+import Cell from "./components/Cell";
 import { useEffect, useState, useRef } from "react";
 
-export default function Schedule2({
+export default function Schedule({
   cellMap,
   handleRemoveActivity,
   handleDropActivity,
@@ -149,7 +149,7 @@ useEffect(() => {
                     onDrop={(e) => handleDrop(e, date, time)}
                     onDragOver={(e) => e.preventDefault()}
                   >
-                    <Cell2
+                    <Cell
                       activity={activity}
                       handleRemoveActivity={handleRemoveActivity}
                       isEditing={isEditing}
