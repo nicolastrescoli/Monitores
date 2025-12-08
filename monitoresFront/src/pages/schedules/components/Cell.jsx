@@ -1,3 +1,5 @@
+import { typeColors } from "./typeColors";
+
 export default function Cell({ activity, handleRemoveActivity, isEditing, scheduleId }) {
   if (!activity) return null;
 
@@ -16,9 +18,11 @@ export default function Cell({ activity, handleRemoveActivity, isEditing, schedu
       }
     : {};
 
+  const color = typeColors[activity.type_id] || "dark"
+
   return (
     <div
-      className="bg-success text-white p-1"
+      className={`bg-${color} text-white p-1`}
       {...dragProps}
       style={{
         borderTopLeftRadius: activity.isHead ? 8 : 0,

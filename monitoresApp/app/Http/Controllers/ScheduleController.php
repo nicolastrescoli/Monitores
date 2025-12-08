@@ -317,7 +317,10 @@ class ScheduleController extends Controller
         $activitiesData = [];
         foreach ($activityIds as $id) {
             $act = Activity::find($id);
-            if ($act) $activitiesData[] = $act->loadDataForPdf($act);
+            // if ($act) $activitiesData[] = $act->loadDataForPdf($act);
+            $act->loadDataForPdf($act);
+            $activitiesData[] = $act;
+
         }
 
         $data = [

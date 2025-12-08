@@ -19,7 +19,7 @@ export default function Community() {
     (u) => u.role === "organization" && u.id !== loggedUser?.id
   );
 
-  if (loading) {
+  if (loading || !users) {
     return <div className="container py-5">Cargando usuarios...</div>;
   }
 

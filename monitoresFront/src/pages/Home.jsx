@@ -62,12 +62,13 @@ export default function Home({types}) {
   const displayedActivities = filtrarYOrdenar();
 
   return (
-    <div className="container py-4">
-      {/* Filtros */}
-      <Filters filters={filters} setFilters={setFilters} types={types}/>
-
-      {/* Botón aleatorio */}
-      <RandomActivity buttonText={"🎲 Actividad Aleatoria"} handleRandom={handleRandom} />
+    <div className="container py-3">
+      <div className="d-flex d-md-block justify-content-between">
+        {/* Filtros */}
+        <Filters filters={filters} setFilters={setFilters} types={types}/>
+        {/* Botón aleatorio */}
+        <RandomActivity buttonText={"🎲 Actividad Aleatoria"} handleRandom={handleRandom} />
+      </div>
 
       {/* Lista de actividades */}
       <div className="row gy-4" id="listaactivities">

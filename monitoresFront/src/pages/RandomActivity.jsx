@@ -15,7 +15,7 @@ export default function RandomActivity({buttonText, handleRandom}) {
   const activity = handleRandom();
 
   return (
-    <div className="text-end mb-4">
+    <div className="text-end mb-4 ms-2">
       <button className="btn btn-outline-primary btn-lg" onClick={handleOpen}>
         {buttonText}
       </button>

@@ -30,7 +30,7 @@ export default function TopColaborators() {
   ];
 
   return (
-    <div className="container py-4">
+    <div className="container py-3">
       <h2 className="text-center mb-4">Top Actividades</h2>
       <div className="row g-2 justify-content-center">
         {topFavorites.map((act, index) => {

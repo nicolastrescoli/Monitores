@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Layout from "./layouts/Layout.jsx";
 import Home from "./pages/Home.jsx";
@@ -15,30 +15,28 @@ import PrivateRoute from "./routes/PrivateRoute.jsx";
 import ActivityDetail from "./pages/components/ActivityDetail.jsx";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm.jsx";
 import ScheduleBuilder from "./pages/schedules/ScheduleBuilder.jsx";
+import {OrbitProgress} from "react-loading-indicators"
 
 import { useDispatch } from "react-redux";
 // import { fetchLoggedUser } from "./redux/features/authSlice";
 import { fetchActivities } from "./redux/features/activitySlice.js";
-import { getTypes } from "./services/api.js";
 
 export default function App() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.activities);
-  const [types, setTypes] = useState([])
+  const { loading, error, typeNames } = useSelector((state) => state.activities);
 
   useEffect(() => {
     // dispatch(fetchLoggedUser());
     dispatch(fetchActivities());
-    const loadTypes = async () => {
-      const res = await getTypes();
-      setTypes(res);
-    };
-
-    loadTypes()
   }, [dispatch]);
 
-  if (loading || !types)
-    return <div className="container py-5">Cargando actividades...</div>;
+  if (loading || !typeNames)
+    return (
+      <div className="text-center">
+        <OrbitProgress dense color="#32cd32" size="medium" text="" textColor="" />
+        <div className="container py-5">Cargando actividades...</div>
+      </div>
+      )
   if (error) return <div className="alert alert-danger">Error: {error}</div>;
 
   return (
@@ -46,7 +44,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           {/* Public pages */}
-          <Route path="/" element={<Home types={types}/>} />
+          <Route path="/" element={<Home types={typeNames}/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />

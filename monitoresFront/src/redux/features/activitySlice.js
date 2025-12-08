@@ -20,11 +20,14 @@ import {
 export const fetchActivities = createAsyncThunk(
   "activities/fetchActivities",
   async () => {
-    const activities = await getActivities();
-    const types = await getTypes();
+    const [activities, types] = await Promise.all([
+      getActivities(),
+      getTypes()
+    ]);
     return { activities, types };
   }
 );
+
 
 // Fetch de una actividad por ID
 export const fetchActivityById = createAsyncThunk(
@@ -175,7 +178,11 @@ const activitySlice = createSlice({
     materials: [],
     risks: [],
   },
-  reducers: {},
+  reducers: {
+    clearCurrentActivity(state) {
+      state.currentActivity = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Obtener actividades
@@ -310,5 +317,7 @@ const activitySlice = createSlice({
       });
   },
 });
+
+export const { clearCurrentActivity } = activitySlice.actions;
 
 export default activitySlice.reducer;

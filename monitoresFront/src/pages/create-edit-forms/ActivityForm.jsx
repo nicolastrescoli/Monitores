@@ -11,6 +11,7 @@ import {
   createActivity,
   updateActivityAction,
 } from "../../redux/features/activitySlice";
+import { clearCurrentActivity } from "../../redux/features/activitySlice";
 
 export default function ActivityForm() {
   const { id: activityId } = useParams(); // si existe, estamos editando
@@ -44,6 +45,12 @@ export default function ActivityForm() {
       dispatch(fetchFormData());
     }
   }, [dispatch, types, materials, risks]);
+
+  useEffect(() => {
+    if (!isEditing) {
+      dispatch(clearCurrentActivity());
+    }
+  }, [isEditing, dispatch]);
 
   useEffect(() => {
     if (isEditing) dispatch(fetchActivityById(activityId));

@@ -7,7 +7,7 @@ export function Contacts() {
   const { contacts } = useSelector((state) => state.auth.loggedUser);
 
   return (
-    <div className="col-lg-3 col-md-12">
+    <div className="col-lg-3 col-12">
       <div className="card shadow border-0">
         <div className="card-header bg-secondary text-white">
           <h5 className="mb-0">Contactos</h5>

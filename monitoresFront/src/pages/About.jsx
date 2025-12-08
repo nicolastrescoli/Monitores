@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <div className="container py-4">
+    <div className="container py-3">
       <div className="card border-0 shadow">
         <div className="card-header bg-dark text-white">
           <h2>Sobre el Proyecto</h2>

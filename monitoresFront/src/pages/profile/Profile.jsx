@@ -11,6 +11,7 @@ import { fetchLoggedUser, updateLoggedUser,
   // removeFriend 
 } from "../../redux/features/authSlice.js";
 import DeleteModal from "../components/DeleteModal.jsx";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -51,7 +52,12 @@ export default function Profile() {
   const dataToShow = id ? externalUser : loggedUser;
 
   if (authLoading || userLoading || localLoading) {
-    return <div className="alert">Loading...</div>;
+    return (
+      <div className="text-center">
+        <OrbitProgress dense color="#32cd32" size="medium" text="" textColor="" />
+        <div className="container py-5">Cargando...</div>
+      </div>
+    )
   }
 
   if (!dataToShow) {
@@ -109,7 +115,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="container py-4 d-flex flex-wrap flex-lg-nowrap gap-4">
+    <div className="container py-3 d-flex flex-wrap flex-lg-nowrap gap-4">
       {/* PERFIL */}
       <div className="flex-grow-1">
         <div className="card shadow border-0">

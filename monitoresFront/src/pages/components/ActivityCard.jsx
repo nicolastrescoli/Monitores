@@ -7,6 +7,7 @@ import {
 } from "../../redux/features/activitySlice";
 import { toggleFavoriteActivity } from "../../redux/features/authSlice";
 import DeleteModal from "./DeleteModal";
+import { typeColors } from "../schedules/components/typeColors";
 
 export default function ActivityCard({ id }) {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ export default function ActivityCard({ id }) {
   const isOwnerWithPublic = isOwner && activity.visibility === "public";
 
   const typeName = typeNames[activity.type_id] || "Otro";
+  const color = typeColors[activity.type_id] || "dark";
 
   return (
     <div className="activity-item">
@@ -37,7 +39,7 @@ export default function ActivityCard({ id }) {
           <Link to={`/activities/${activity.id}`} className="text-decoration-none text-dark">
             <h5 className="card-title text-primary">{activity.title}</h5>
             <p className="card-text">
-              <span className="badge bg-success mb-1">{typeName}</span><br />
+              <span className={`badge bg-${color} mb-1`}>{typeName}</span><br />
               <strong>Edad:</strong> {activity.min_age}+<br />
               <strong>Participantes:</strong> {activity.num_participants}
             </p>

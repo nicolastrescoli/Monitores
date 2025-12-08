@@ -16,7 +16,7 @@ export default function AdminPanel() {
   }, [dispatch]);
 
   return (
-    <div className="container">
+    <div className="container py-3">
       <h2 className="mb-4">Actividades pendientes de revisión</h2>
 
       {pendingLoading && <p>Cargando...</p>}

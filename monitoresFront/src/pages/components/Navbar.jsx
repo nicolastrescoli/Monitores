@@ -38,7 +38,7 @@ export default function Navbar() {
         )}
 
         <Link className="navbar-brand" to="/topColaborators">
-          Top Actividades & Colaboradores
+          Top Actividades
         </Link>
         <Link className="navbar-brand" to="/about">Sobre el Proyecto</Link>
         {isAuthenticated && (            
