@@ -15,6 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use App\Notifications\ActivityApproved;
+use App\Notifications\ActivityDenied;
+
 class ActivityController extends Controller
 {
     /**
@@ -694,7 +697,10 @@ class ActivityController extends Controller
         $activity->visibility = 'public';
         $activity->save();
 
-        return response()->json(['message' => 'Actividad publicada exitosamente.']);
+        // Notificar al creador de la actividad
+        $activity->creator->notify(new ActivityApproved($activity));
+
+        return response()->json(['message' => 'Actividad publicada exitosamente y usuario notificado.']);
     }
 
     public function rejectPublic(Request $request, Activity $activity)
@@ -720,7 +726,10 @@ class ActivityController extends Controller
         $activity->visibility = 'private'; // Cambia a 'private'
         $activity->save();
 
-        return response()->json(['message' =>  'Actividad denegada exitosamente.']);
+        // Notificar al creador de la actividad
+        $activity->creator->notify(new ActivityDenied($activity));
+
+        return response()->json(['message' =>  'Actividad denegada exitosamente y usuario notificado.']);
     }
 
     public function generatePdf(Activity $activity)

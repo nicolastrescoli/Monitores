@@ -92,5 +92,9 @@ https://4geeks.com/es/lesson/contexto-de-autenticacion-con-react
 npm install react-loading-indicators
 https://react-loading-indicators.netlify.app/
 
+Brevo
 
 php artisan make:notification VerifyEmailCustom
+
+php artisan make:notification ActivityApproved
+php artisan make:notification ActivityDenied
