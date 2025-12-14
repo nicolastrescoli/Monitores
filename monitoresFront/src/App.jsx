@@ -44,7 +44,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           {/* Public pages */}
-          <Route path="/" element={<Home types={typeNames}/>} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />

@@ -14,78 +14,76 @@ export default function Schedule({
   const [localMap, setLocalMap] = useState(cellMap);
   const [dates, setDates] = useState([]);
 
-// Formatear fechas en local YYYY-MM-DD
-function formatDateLocal(date) {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
+  // Formatear fechas en local YYYY-MM-DD
+  function formatDateLocal(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
-useEffect(() => {
-  const keys = Object.keys(cellMap).sort();
+  useEffect(() => {
+    const keys = Object.keys(cellMap).sort();
 
-  // MODO SIN startDate / endDate
-  if (!startDate || !endDate) {
+    // MODO SIN startDate / endDate
+    if (!startDate || !endDate) {
+      setLocalMap(cellMap);
 
-    setLocalMap(cellMap);
+      // Si no hay fechas ya fijadas en UI (primer render)
+      if (dates.length === 0) {
+        const base = keys[0] || formatDateLocal(new Date());
 
-    // Si no hay fechas ya fijadas en UI (primer render)
-    if (dates.length === 0) {
-      const base = keys[0] || formatDateLocal(new Date());
+        const initialDates = [];
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(base);
+          d.setDate(d.getDate() + i);
+          initialDates.push(formatDateLocal(d));
+        }
 
-      const initialDates = [];
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(base);
-        d.setDate(d.getDate() + i);
-        initialDates.push(formatDateLocal(d));
+        setDates(initialDates);
+        return;
       }
 
-      setDates(initialDates);
+      // Si ya hay fechas en UI mantenerlas
+      let updatedDates = [...dates];
+
+      // Asegurar mínimo 7 días siempre
+      while (updatedDates.length < 7) {
+        const last = new Date(updatedDates[updatedDates.length - 1]);
+        last.setDate(last.getDate() + 1);
+        updatedDates.push(formatDateLocal(last));
+      }
+
+      // IMPORTANTE: NO reconstruimos ni reordenamos el mapa aquí
+      setDates(updatedDates);
       return;
     }
 
-    // Si ya hay fechas en UI mantenerlas
-    let updatedDates = [...dates];
+    // MODO CON RANGO DEFINIDO
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    // Asegurar mínimo 7 días siempre
-    while (updatedDates.length < 7) {
-      const last = new Date(updatedDates[updatedDates.length - 1]);
-      last.setDate(last.getDate() + 1);
-      updatedDates.push(formatDateLocal(last));
+    const dateRange = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      dateRange.push(formatDateLocal(new Date(d)));
     }
 
-    // IMPORTANTE: NO reconstruimos ni reordenamos el mapa aquí
-    setDates(updatedDates);
-    return;
-  }
+    // Asegurar mínimo 7 días visibles
+    while (dateRange.length < 7) {
+      const last = new Date(dateRange[dateRange.length - 1]);
+      last.setDate(last.getDate() + 1);
+      dateRange.push(formatDateLocal(last));
+    }
 
-  // MODO CON RANGO DEFINIDO
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+    // Reconstruir mapa pero sin reordenar actividades existentes
+    const newMap = {};
+    dateRange.forEach((dateKey) => {
+      newMap[dateKey] = cellMap[dateKey] ?? {};
+    });
 
-  const dateRange = [];
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dateRange.push(formatDateLocal(new Date(d)));
-  }
-
-  // Asegurar mínimo 7 días visibles
-  while (dateRange.length < 7) {
-    const last = new Date(dateRange[dateRange.length - 1]);
-    last.setDate(last.getDate() + 1);
-    dateRange.push(formatDateLocal(last));
-  }
-
-  // Reconstruir mapa pero sin reordenar actividades existentes
-  const newMap = {};
-  dateRange.forEach((dateKey) => {
-    newMap[dateKey] = cellMap[dateKey] ?? {};
-  });
-
-  setLocalMap(newMap);
-  setDates(dateRange);
-
-}, [startDate, endDate, cellMap]);
+    setLocalMap(newMap);
+    setDates(dateRange);
+  }, [startDate, endDate, cellMap]);
 
   // Horas
   const generateTimes = () => {
@@ -125,15 +123,25 @@ useEffect(() => {
     <div
       className="table-wrapper"
       ref={tableWrapperRef}
-      style={{ maxHeight: "542px", maxWidth:"1500px", overflowY: "auto", overflowX: "auto" }}
+      style={{
+        maxHeight: "542px",
+        maxWidth: "1500px",
+        overflowY: "auto",
+        overflowX: "auto",
+      }}
     >
       <table className="table table-bordered" style={{ tableLayout: "fixed" }}>
         <thead>
           <tr>
             <th style={{ width: 75 }}>Hora</th>
-            {dates.map((date) => (
-              <th key={date} style={{ width: 200 }}>{date}</th>
-            ))}
+            {dates.map((date) => {
+              const formatted = new Date(date).toLocaleDateString("es-ES");
+              return (
+                <th key={date} style={{ width: 200 }}>
+                  {formatted}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>

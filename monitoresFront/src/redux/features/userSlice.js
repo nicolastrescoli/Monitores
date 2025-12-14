@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = "http://localhost:8000/api";
+import { getProfile } from "../../services/api";
 
 export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async (id, thunkAPI) => {
     try {
-      const res = await axios.get(`${API_URL}/profile/${id}`);
-      return res.data.user;
+      const data = await getProfile(id);
+      return data.user;
     } catch {
       return thunkAPI.rejectWithValue("Error cargando perfil del usuario");
     }

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 export function Contacts() {
 
-  const { contacts } = useSelector((state) => state.auth.loggedUser);
+  const contacts = useSelector((state) => state.auth.loggedUser?.contacts ?? []);
 
   return (
     <div className="col-lg-3 col-12">

@@ -6,7 +6,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loggedUser, isAuthenticated } = useSelector((state) => state.auth);
+  const { loggedUser } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -25,7 +25,7 @@ export default function Navbar() {
           </Link>
         )}
 
-        {isAuthenticated ? (
+        {loggedUser ? (
           <>
             <Link className="navbar-brand" to="/profile">Perfil</Link>
             <Link className="navbar-brand" to="/community">Comunidad</Link>
@@ -41,7 +41,7 @@ export default function Navbar() {
           Top Actividades
         </Link>
         <Link className="navbar-brand" to="/about">Sobre el Proyecto</Link>
-        {isAuthenticated && (            
+        {loggedUser && (            
           <button className="btn btn-link navbar-brand"
               onClick={handleLogout}
             >

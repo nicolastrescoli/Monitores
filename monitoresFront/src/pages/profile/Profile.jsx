@@ -7,9 +7,7 @@ import { deleteSchedule } from "../../services/api.js";
 import { Contacts } from "./components/Contacts.jsx";
 
 import { fetchUser } from "../../redux/features/userSlice.js";
-import { fetchLoggedUser, updateLoggedUser, 
-  // removeFriend 
-} from "../../redux/features/authSlice.js";
+import { fetchLoggedUser, updateLoggedUser } from "../../redux/features/authSlice.js";
 import DeleteModal from "../components/DeleteModal.jsx";
 import { OrbitProgress } from "react-loading-indicators";
 
@@ -161,22 +159,32 @@ export default function Profile() {
                     <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
                   )}
                 </p>
-                {!isEditing && isOwner && (
+                {!isEditing && isOwner ? (
                   <Link to="/community" className="btn btn-outline-primary mt-2">
                     Encontrar Usuarios / Organizaciones
                   </Link>
-                )}
+                ) :
+                (
+                  <>
+                    <strong>Profile image:</strong>{" "}
+                    <input type="text" value={url_image} onChange={(e) => setImage(e.target.value)} />
+                  </>
+                )
+                }
               </div>
 
               {/* Botones edición */}
               {isOwner && (
-                <div className="col-md-3 d-flex flex-column">
+                <div className="col-md-3 d-flex justify-content-end align-self-start">
                   {!isEditing ? (
-                    <button className="btn btn-warning mb-2" onClick={startEditing}>Editar Perfil</button>
+                    <>
+                      <button className="btn btn-sm btn-warning mb-2" onClick={startEditing}>Editar Perfil</button>
+                      <button className="btn btn-sm btn-danger mb-2 ms-2" >Eliminar Cuenta</button>
+                    </>
                   ) : (
                     <>
-                      <button className="btn btn-success mb-2" onClick={handleUpdateUser}>Guardar cambios</button>
-                      <button className="btn btn-danger" onClick={cancelEditing}>Cancelar</button>
+                      <button className="btn btn-sm btn-success mb-2" onClick={handleUpdateUser}>Guardar cambios</button>
+                      <button className="btn btn-sm btn-danger ms-2 mb-2" onClick={cancelEditing}>Cancelar</button>
                     </>
                   )}
                 </div>

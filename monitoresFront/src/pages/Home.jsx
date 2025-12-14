@@ -1,73 +1,19 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import ActivityCard from "./components/ActivityCard";
 import RandomActivity from "./RandomActivity";
 import Filters from "./Filters";
 
-export default function Home({types}) {
+export default function Home() {
 
-  const { activities } = useSelector(state => state.activities);
-
-  const [filters, setFilters] = useState({
-    title: "",
-    type_id: "",
-    edadMin: 0,
-    edadMax: 99,
-    participantes: "",
-    ordenarPor: "",
-  });
-
-  const filtrarYOrdenar = () => {
-
-    const publicActivities = activities.filter((a) => a.visibility === 'public')
-
-    let filtrados = [...publicActivities];
-
-    filtrados = filtrados.filter((a) =>
-      a.title.toLowerCase().includes(filters.title.toLowerCase())
-    );
-
-    if (filters.type_id)
-      filtrados = filtrados.filter((a) => String(a.type_id) === filters.type_id);
-
-    filtrados = filtrados.filter(
-      (a) => a.min_age <= filters.edadMax && a.max_age >= filters.edadMin
-    );
-
-    if (filters.participantes) {
-      filtrados = filtrados.filter(
-        (a) => a.num_participants <= parseInt(filters.participantes)
-      );
-    }
-
-    if (filters.ordenarPor) {
-      filtrados.sort((a, b) => {
-        const va = a[filters.ordenarPor];
-        const vb = b[filters.ordenarPor];
-        return isNaN(va) ? String(va).localeCompare(String(vb)) : va - vb;
-      });
-    }
-
-    return filtrados;
-  };
-
-  const handleRandom = () => {
-    const items = filtrarYOrdenar();
-    if (items.length > 0) {
-      const random = items[Math.floor(Math.random() * items.length)];
-      return random;
-    }
-  };
-
-  const displayedActivities = filtrarYOrdenar();
+  const [ displayedActivities, setDisplayedActivities ] = useState([]);
 
   return (
     <div className="container py-3">
       <div className="d-flex d-md-block justify-content-between">
         {/* Filtros */}
-        <Filters filters={filters} setFilters={setFilters} types={types}/>
+        <Filters setDisplayedActivities={setDisplayedActivities}/>
         {/* Botón aleatorio */}
-        <RandomActivity buttonText={"🎲 Actividad Aleatoria"} handleRandom={handleRandom} />
+        <RandomActivity buttonText={"🎲 Actividad Aleatoria"} />
       </div>
 
       {/* Lista de actividades */}

@@ -28,7 +28,6 @@ export const fetchActivities = createAsyncThunk(
   }
 );
 
-
 // Fetch de una actividad por ID
 export const fetchActivityById = createAsyncThunk(
   "activities/fetchById",

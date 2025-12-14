@@ -1,13 +1,20 @@
+import { useDispatch } from "react-redux";
 import { storeSchedule, updateSchedule, openSchedulePdf } from "../../../services/api.js";
+import { useNavigate } from "react-router-dom";
+import { fetchLoggedUser } from "../../../redux/features/authSlice.js";
 
 export default function Buttons({ scheduleId, isEditing, setIsEditing, name, description, cellMap, onEditStart, onCancelEdit }) {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function handleStoreSchedule() {
     try {
       const res = await storeSchedule(name, description, cellMap);
       alert('Schedule creado correctamente.')
       const newId = res.schedule?.id;
-      window.location.href = `/schedule/${newId}`;
+      navigate(`/schedule/${newId}`);
+      await dispatch(fetchLoggedUser()).unwrap();
     } catch (error) {
       console.log("Error al guardar", error);
     }
@@ -23,7 +30,7 @@ export default function Buttons({ scheduleId, isEditing, setIsEditing, name, des
   }
 
   const handleExit = () => {
-    window.location.href = "/profile";
+    navigate('/profile');
   };
 
   return (

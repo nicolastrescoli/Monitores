@@ -1,10 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { toggleFavorite } from "../../services/api";
+import { login, register, getProfile, updateUser, deleteUser, toggleFavorite } from "../../services/api";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api";
-
-// Configurar token inicial desde localStorage
 const token = localStorage.getItem("authToken");
 if (token) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -12,16 +9,15 @@ if (token) {
 
 // ---------------- LOGIN ----------------
 export const loginUser = createAsyncThunk(
-  "user/loginUser",
-  async ({ email, password }, thunkAPI) => {
+  "auth/loginUser",
+  async (credentials, thunkAPI) => {
     try {
-      const res = await axios.post(`${API_URL}/login`, { email, password });
-      const token = res.data.token;
+      const { token, user } = await login(credentials);
 
       localStorage.setItem("authToken", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      return res.data.user;
+      return user;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Error en el login"
@@ -32,22 +28,15 @@ export const loginUser = createAsyncThunk(
 
 // ---------------- REGISTER ----------------
 export const registerUser = createAsyncThunk(
-  "user/registerUser",
+  "auth/registerUser",
   async (data, thunkAPI) => {
     try {
-      const res = await axios.post(`${API_URL}/register`, {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        password_confirmation: data.passwordConfirmation,
-        role: data.role,
-      });
+      const { token, user } = await register(data);
 
-      const token = res.data.token;
       localStorage.setItem("authToken", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      return res.data.user;
+      return user;
     } catch {
       return thunkAPI.rejectWithValue("Error en el registro");
     }
@@ -56,10 +45,10 @@ export const registerUser = createAsyncThunk(
 
 // ---------------- LOGGED USER PROFILE ----------------
 export const fetchLoggedUser = createAsyncThunk(
-  "user/fetchLoggedUser",
+  "auth/fetchLoggedUser",
   async (_, thunkAPI) => {
     try {
-      const {data} = await axios.get(`${API_URL}/profile`);
+      const data = await getProfile();
       return data.user;
     } catch {
       return thunkAPI.rejectWithValue("No se pudo cargar el perfil del usuario autenticado");
@@ -69,23 +58,24 @@ export const fetchLoggedUser = createAsyncThunk(
 
 // ---------------- UPDATE LOGGED USER ----------------
 export const updateLoggedUser = createAsyncThunk(
-  "user/updateLoggedUser",
+  "auth/updateLoggedUser",
   async (formData, thunkAPI) => {
     try {
-      const res = await axios.put(`${API_URL}/user/${formData.id}`, formData);
-      return res.data.user;
+      const data = await updateUser(formData);
+      return data.user;
     } catch {
       return thunkAPI.rejectWithValue("Error actualizando datos del usuario");
     }
   }
 );
 
+
 // ---------------- DELETE ACCOUNT ----------------
 export const deleteAccount = createAsyncThunk(
-  "user/deleteAccount",
+  "auth/deleteAccount",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${API_URL}/user/${id}`);
+      await deleteUser(id);
       return true;
     } catch {
       return thunkAPI.rejectWithValue("Error eliminando cuenta");
@@ -111,7 +101,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     loggedUser: null,
-    isAuthenticated: !!token,
     loading: false,
     error: null,
   },
@@ -120,7 +109,6 @@ const authSlice = createSlice({
       localStorage.removeItem("authToken");
       delete axios.defaults.headers.common["Authorization"];
       state.loggedUser = null;
-      state.isAuthenticated = false;
     },
   },
   extraReducers: (builder) => {
@@ -133,7 +121,6 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.loggedUser = action.payload;  // usuario loggeado
-        state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -148,7 +135,6 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.loggedUser = action.payload;
-        state.isAuthenticated = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -165,7 +151,6 @@ const authSlice = createSlice({
       })
       .addCase(fetchLoggedUser.rejected, (state) => {
         state.loading = false;
-        state.isAuthenticated = false;
       })
 
       // UPDATE LOGGED USER
@@ -175,13 +160,15 @@ const authSlice = createSlice({
 
       // DELETE ACCOUNT
       .addCase(deleteAccount.fulfilled, (state) => {
+        localStorage.removeItem("authToken");
+        delete axios.defaults.headers.common["Authorization"];
         state.loggedUser = null;
-        state.isAuthenticated = false;
       })
 
       // Favoritos
       .addCase(toggleFavoriteActivity.fulfilled, (state, action) => {
         const { activityId } = action.payload;
+        if (!state.loggedUser) return;
         const favs = state.loggedUser.favoriteActivities ?? [];
         const exists = favs.some(f => f.id === activityId);
         if (exists) {

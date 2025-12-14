@@ -18,7 +18,7 @@ export const getProfile = async (userId = null) => {
 };
 
 export const register = async (user) => {
-  const response = await axios.post(API_URL + "/register", {
+  const response = await axios.post(`${API_URL}/register`, {
     name: user.name,
     email: user.email,
     password: user.password,
@@ -28,16 +28,16 @@ export const register = async (user) => {
   return response.data;
 };
 
-export const updateUser = async (id, name, description, email, password, password_confirmation, url_image) => {
-    const payload = { name, description, email, url_image };
+export const login = async ({ email, password }) => {
+  const response = await axios.post(`${API_URL}/login`, { email, password });
+  return response.data;
+};
 
-    if (password && password_confirmation) {
-        payload.password = password;
-        payload.password_confirmation = password_confirmation;
-    }
+export const updateUser = async (formData) => {
+  const { id, ...payload } = formData;
 
-    const response = await axios.put(`${API_URL}/user/${id}`, payload);
-    return response.data;
+  const response = await axios.put(`${API_URL}/user/${id}`, payload);
+  return response.data;
 };
 
 export const deleteUser = async (id) => {

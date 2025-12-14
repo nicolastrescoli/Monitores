@@ -1,7 +1,11 @@
 import { useState } from "react";
 import ActivityCard2 from "./components/ActivityCard";
+import { useSelector } from "react-redux";
 
-export default function RandomActivity({buttonText, handleRandom}) {
+export default function RandomActivity({buttonText}) {
+
+  const { activities } = useSelector(state => state.activities);
+
   const [show, setShow] = useState(false);
 
   const handleOpen = () => setShow(true);
@@ -12,7 +16,8 @@ export default function RandomActivity({buttonText, handleRandom}) {
     e.stopPropagation();
   };
 
-  const activity = handleRandom();
+  const publicActivities = activities.filter((a) => a.visibility === 'public')
+  const random = publicActivities[Math.floor(Math.random() * publicActivities.length)];
 
   return (
     <div className="text-end mb-4 ms-2">
@@ -29,7 +34,7 @@ export default function RandomActivity({buttonText, handleRandom}) {
                 <button type="button" className="btn-close" onClick={handleClose}></button>
               </div>
               <div className="modal-body">
-                <ActivityCard2 id={activity.id}/>
+                <ActivityCard2 id={random.id}/>
               </div>
             </div>
           </div>
