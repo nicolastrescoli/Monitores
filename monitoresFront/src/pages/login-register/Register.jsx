@@ -41,7 +41,7 @@ export default function Register() {
     try {
       await register(form);
       dispatch(loginUser({ email: form.email, password: form.password }));
-      navigate("/");
+      navigate("/email-notverified");
     } catch (err) {
       console.error(err);
       setErrors(["Error al registrar. Inténtalo de nuevo."]);

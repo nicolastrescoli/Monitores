@@ -33,6 +33,11 @@ export const login = async ({ email, password }) => {
   return response.data;
 };
 
+export const resendVerificationEmail = async () => {
+  const res = await axios.post(`${API_URL}/email/resend`);
+  return res.data;
+};
+
 export const updateUser = async (formData) => {
   const { id, ...payload } = formData;
 

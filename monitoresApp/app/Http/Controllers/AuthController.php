@@ -26,10 +26,42 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
+            'role' => $validated['role'], // inseguro, podria manipularse a admin
         ]);
 
-        return response()->json(['message' => 'Usuario registrado', 'user' => $user]);
+        $user->sendEmailVerificationNotification();
+        $token = $user->createToken('auth')->plainTextToken;
+
+        return response()->json(['message' => 'Usuario registrado', 'user' => $user, 'token' => $token]);
+    }
+
+    public function verifyEmail($id, $hash) 
+    {
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link'], 403);
+        }
+        if ($user->hasVerifiedEmail()) {
+            return redirect(config('app.frontend_url') . '/email-already-verified');
+        }
+
+        $user->markEmailAsVerified();
+
+        return redirect(config('app.frontend_url') . '/email-verified');
+    }
+
+    public function resendVerfificationEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email ya verificado']);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Email reenviado']);
     }
 
     public function update(Request $request, User $user)

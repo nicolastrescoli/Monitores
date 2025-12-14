@@ -91,3 +91,6 @@ https://4geeks.com/es/lesson/contexto-de-autenticacion-con-react
 
 npm install react-loading-indicators
 https://react-loading-indicators.netlify.app/
+
+
+php artisan make:notification VerifyEmailCustom

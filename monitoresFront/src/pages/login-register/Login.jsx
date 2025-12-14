@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser, fetchLoggedUser } from "../../redux/features/authSlice";
 import { fetchUsers } from "../../redux/features/communitySlice";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -16,17 +17,29 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Login
-      await dispatch(loginUser({ email, password })).unwrap();
-      // Cargar perfil completo tras login
-      await dispatch(fetchLoggedUser()).unwrap();
-      dispatch(fetchUsers());
-      // Redirigir al inicio
-      navigate("/");
+      const user = await dispatch(loginUser({ email, password })).unwrap();
+      if (!user.email_verified_at) {
+        navigate("/email-notverified");
+      } 
+      else {
+        // Cargar perfil completo tras login
+        await dispatch(fetchLoggedUser()).unwrap();
+        dispatch(fetchUsers());
+        navigate("/");
+      }
     } catch (err) {
       console.error("Error login:", err);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <OrbitProgress dense color="#32cd32" size="medium" text="" textColor="" />
+        <div className="container py-5">Cargando...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="container py-5">

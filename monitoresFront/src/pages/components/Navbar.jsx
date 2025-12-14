@@ -24,8 +24,9 @@ export default function Navbar() {
             Panel de Administración
           </Link>
         )}
+        {/* if (loggedUser && !loggedUser.email_verified_at) return <Navigate to="/email-not-verified" />; */}
 
-        {loggedUser ? (
+        {loggedUser?.email_verified_at ? (
           <>
             <Link className="navbar-brand" to="/profile">Perfil</Link>
             <Link className="navbar-brand" to="/community">Comunidad</Link>
@@ -41,7 +42,7 @@ export default function Navbar() {
           Top Actividades
         </Link>
         <Link className="navbar-brand" to="/about">Sobre el Proyecto</Link>
-        {loggedUser && (            
+        {loggedUser?.email_verified_at && (            
           <button className="btn btn-link navbar-brand"
               onClick={handleLogout}
             >

@@ -15,6 +15,8 @@ import PrivateRoute from "./routes/PrivateRoute.jsx";
 import ActivityDetail from "./pages/components/ActivityDetail.jsx";
 import ActivityForm from "./pages/create-edit-forms/ActivityForm.jsx";
 import ScheduleBuilder from "./pages/schedules/ScheduleBuilder.jsx";
+import EmailVerified from "./pages/EmailVerified";
+import EmailNotVerified from "./pages/EmailNotVerified";
 import {OrbitProgress} from "react-loading-indicators"
 
 import { useDispatch } from "react-redux";
@@ -51,6 +53,10 @@ export default function App() {
           {/* <Route path="/contact" element={<Contact />} /> */}
           <Route path="/community" element={<Community />} />
           <Route path="/activities/:id" element={<ActivityDetail />} />
+
+          <Route path="/email-verified" element={<EmailVerified />} />
+          <Route path="/email-notverified" element={<EmailNotVerified />} />
+
 
           {/* Private pages */}
           <Route
@@ -127,7 +133,7 @@ export default function App() {
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
