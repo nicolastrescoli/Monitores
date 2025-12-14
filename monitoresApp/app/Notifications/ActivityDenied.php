@@ -36,12 +36,19 @@ class ActivityDenied extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        // return (new MailMessage)
+        //     ->subject('Actividad no publicada')
+        //     ->greeting('¡Hola ' . $notifiable->name . '!')
+        //     ->line('Tu solicitud de publicación de la actividad "' . $this->activity->title . '" ha sido desestimada.')
+        //     ->line('Sigue participando y haciendo crecer esta comunidad.')
+        //     ->line('¡Gracias por tu colaboración!');
+
         return (new MailMessage)
             ->subject('Actividad no publicada')
-            ->greeting('¡Hola ' . $notifiable->name . '!')
-            ->line('Tu solicitud de publicación de la actividad "' . $this->activity->title . '" ha sido desestimada.')
-            ->line('Sigue participando y haciendo crecer esta comunidad.')
-            ->line('¡Gracias por tu colaboración!');
+            ->view('emails.activity-denied', [
+            'user' => $notifiable,
+            'activity' => $this->activity,
+            ]);
     }
 
     /**

@@ -38,10 +38,14 @@ class ActivityApproved extends Notification
     {
         return (new MailMessage)
             ->subject('Tu actividad ha sido aprobada')
-            ->greeting('¡Hola ' . $notifiable->name . '!')
-            ->line('Tu actividad "' . $this->activity->title . '" ha sido aprobada por el administrador.')
-            ->line('A partir de ahora estará disponible para toda la comunidad.')
-            ->line('¡Gracias por tu aportación!');
+            ->view('emails.activity-approved', [
+            'user' => $notifiable,
+            'activity' => $this->activity,
+            ]);
+            // ->greeting('¡Hola ' . $notifiable->name . '!')
+            // ->line('Tu actividad "' . $this->activity->title . '" ha sido aprobada por el administrador.')
+            // ->line('A partir de ahora estará disponible para toda la comunidad.')
+            // ->line('¡Gracias por tu aportación!');
     }
 
     /**

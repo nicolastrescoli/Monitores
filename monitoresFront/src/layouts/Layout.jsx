@@ -22,6 +22,7 @@ export default function Layout() {
           </button>
         </div>
         <h1 className="mb-0">OcioEducativo.es</h1>
+        {/* <img src="/src/assets/logo.png" width={60} alt="Logo" /> */}
       </header>
 
       {/* Navbar */}

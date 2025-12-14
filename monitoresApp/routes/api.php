@@ -7,19 +7,9 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TypeController;
 
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
+use Illuminate\Foundation\Auth\EmailVerificationRequest; // no se si eliminar estas 3 dependencias
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Mail\Message;
-
-Route::get('/test-mail', function () {
-    Mail::raw('Email real desde Brevo 🎉', function ($message) {
-        $message->to('ocioeducativoes@gmail.com')
-                ->subject('Prueba Brevo Laravel');
-    });
-
-    return 'Email enviado';
-});
 
 
 /*
