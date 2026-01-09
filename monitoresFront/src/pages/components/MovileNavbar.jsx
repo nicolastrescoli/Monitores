@@ -6,7 +6,7 @@ export default function MovileNavbar({ setOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loggedUser, isAuthenticated } = useSelector((state) => state.auth);
+  const { loggedUser } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -33,7 +33,7 @@ export default function MovileNavbar({ setOpen }) {
           </li>
         )}
 
-        {isAuthenticated ? (
+        {loggedUser?.email_verified_at ? (
           <>
             <li className="nav-item">
               <Link
@@ -92,7 +92,7 @@ export default function MovileNavbar({ setOpen }) {
           </Link>
         </li>
 
-        {isAuthenticated && (
+        {loggedUser?.email_verified_at && (
           <li className="nav-item">
             <button
               className="btn nav-link"

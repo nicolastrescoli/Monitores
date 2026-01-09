@@ -44,7 +44,6 @@ Route::get('/activities/{activity}', [ActivityController::class, 'apiActivityDet
 Route::middleware(['auth:sanctum', 'verified'])->put('/activities/{activity}', [ActivityController::class, 'apiUpdate']);
 Route::middleware(['auth:sanctum', 'verified'])->delete('/activities/{activity}', [ActivityController::class, 'apiDestroy']);
 Route::middleware(['auth:sanctum', 'verified'])->post('/activities/favorite/{activity}', [ActivityController::class, 'apiToggleFavorite']);
-
 // Enviar para revisión
 Route::middleware(['auth:sanctum', 'verified'])->put('/activities/submit/{activity}', [ActivityController::class,'apiSubmitPublic']);
 // Cancelar envio para revisión
@@ -107,3 +106,24 @@ Route::get('/types', [TypeController::class, 'index']);
 
 // Eliminar cuenta de usuario
 // Eliminar vistas blade y sobrantes
+
+
+/*
+|--------------------------------------------------------------------------
+| Seguridad y optimización
+|--------------------------------------------------------------------------
+*/
+
+// Limitar nº de reenvios de emails de verificación
+// Solo enviar la lista de actividades PUBLICAS al no estar loggeado.
+// Limitar cantidad de actividades y schedules creados.
+// No permitir crear cuentas admin.
+
+// Evitar recarga completa despues de crear actividad
+// Eliminar cuenta de usuario conservando las actividades publicadas
+// Rutina diaria de eliminar actividades no publicadas con user eliminado
+// Filtros en el backend
+// Paginación, fetch parcial de actividades
+
+// Pasar a TypeScript
+// Pasar a NextJS

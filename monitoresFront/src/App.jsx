@@ -1,13 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Layout from "./layouts/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/login-register/Login.jsx";
 import Register from "./pages/login-register/Register.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import About from "./pages/About.jsx";
-import Contact from "./pages/Contact.jsx";
 import Community from "./pages/Community.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import TopColaborators from "./pages/TopColaborators.jsx";
@@ -17,10 +16,8 @@ import ActivityForm from "./pages/create-edit-forms/ActivityForm.jsx";
 import ScheduleBuilder from "./pages/schedules/ScheduleBuilder.jsx";
 import EmailVerified from "./pages/EmailVerified";
 import EmailNotVerified from "./pages/EmailNotVerified";
-import {OrbitProgress} from "react-loading-indicators"
+import { OrbitProgress } from "react-loading-indicators"
 
-import { useDispatch } from "react-redux";
-// import { fetchLoggedUser } from "./redux/features/authSlice";
 import { fetchActivities } from "./redux/features/activitySlice.js";
 
 export default function App() {
@@ -28,7 +25,6 @@ export default function App() {
   const { loading, error, typeNames } = useSelector((state) => state.activities);
 
   useEffect(() => {
-    // dispatch(fetchLoggedUser());
     dispatch(fetchActivities());
   }, [dispatch]);
 
@@ -50,7 +46,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />
-          {/* <Route path="/contact" element={<Contact />} /> */}
           <Route path="/community" element={<Community />} />
           <Route path="/activities/:id" element={<ActivityDetail />} />
 

@@ -261,13 +261,10 @@ class ScheduleController extends Controller
         $schedule->name = $request->name;
         $schedule->save();
 
-        // En una petición AJAX se podría devolver JSON, pero como lo haces sin JS fetch,
-        // haremos una redirección o simplemente nada (la vista lo manejará).
         if ($request->ajax()) {
             return response()->json(['success' => true]);
         }
 
-        // Esto solo se usará si llegas a enviar de forma tradicional (fallback)
         return back();
     }
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// La URL base de tu backend Laravel
+// La URL base del backend
 axios.defaults.baseURL = 'http://localhost:8000';
 
 // Muy importante: esto permite que Axios envíe las cookies (necesario para CSRF)
